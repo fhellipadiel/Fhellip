@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Fhellip | Área Exclusiva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #050505; font-family: 'Inter', sans-serif; color: #ffffff; line-height: 1.4; min-height: 100vh; overflow-x: hidden; }
+        
+        .page-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-color: #050505;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.3s ease;
+        }
+        
+        .container { max-width: 450px; width: 100%; margin: 0 auto; position: relative; z-index: 2; padding: 0.8rem 0.8rem 1.5rem 0.8rem; }
+
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            height: 480px;
+            background: url('https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to bottom, 
+                transparent 0%,
+                rgba(0,0,0,0.3) 20%,
+                rgba(0,0,0,0.6) 35%,
+                rgba(0,0,0,0.85) 50%,
+                rgba(0,0,0,0.95) 70%,
+                #050505 100%);
+            pointer-events: none;
+        }
+        
+        .banner-name {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 15;
+            cursor: pointer;
+        }
+        
+        .banner-name .glow-name-banner {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: white;
+            text-shadow: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .banner-name .glow-name-banner:hover {
+            transform: scale(1.02);
+        }
+        
+        .edit-banner-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+            color: white;
+            transition: 0.2s;
+        }
+        
+        .edit-banner-icon:hover {
+            background: #1DA1F2;
+            transform: scale(1.05);
+        }
+
+        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1500; display: none; }
+        .side-menu { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: rgba(10,10,12,0.95); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.08); z-index: 1501; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 1.2rem 1rem; display: flex; flex-direction: column; overflow-y: auto; }
+        .side-menu.open { left: 0; }
+        .menu-header { text-align: center; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .menu-avatar-wrapper { position: relative; width: 70px; height: 70px; margin: 0 auto 0.6rem; cursor: pointer; }
+        .menu-avatar { width: 100%; height: 100%; border-radius: 50%; background: #1a1a1e; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #ccc; object-fit: cover; border: 2px solid rgba(255,255,255,0.2); }
+        .edit-avatar-icon { position: absolute; bottom: 0; right: 0; background: #1DA1F2; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; cursor: pointer; border: 2px solid rgba(10,10,12,0.95); }
+        .menu-name-edit { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 5px; }
+        .menu-name { font-size: 0.9rem; font-weight: 600; color: #fff; }
+        .edit-name-icon { font-size: 0.65rem; color: #aaa; cursor: pointer; }
+        .menu-email { font-size: 0.6rem; color: #777; margin-top: 3px; }
+        .menu-items { flex: 1; display: flex; flex-direction: column; gap: 0.15rem; }
+        .menu-item { padding: 8px 12px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: #ccc; transition: 0.2s; }
+        .menu-item i { width: 20px; font-size: 0.9rem; }
+        .menu-item:hover { background: rgba(255,255,255,0.1); color: white; }
+        .menu-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 0.5rem 0; }
+        .menu-footer { margin-top: auto; padding-top: 0.6rem; border-top: 1px solid rgba(255,255,255,0.06); }
+        .profile-icon-btn { position: fixed; top: 12px; right: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; border: 1px solid rgba(255,255,255,0.2); font-size: 1rem; color: white; transition: transform 0.2s; }
+        .profile-icon-btn:hover { transform: scale(1.05); }
+
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(5,5,5,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 0.5rem 1rem;
+            transform: translateY(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+        .sticky-header.visible { transform: translateY(0); }
+        .sticky-content { display: flex; align-items: center; gap: 10px; max-width: 450px; margin: 0 auto; }
+        .sticky-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #1DA1F2; cursor: pointer; transition: transform 0.2s; }
+        .sticky-avatar:hover { transform: scale(1.05); }
+        .sticky-info { flex: 1; }
+        .sticky-name { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .sticky-role { font-size: 0.65rem; color: #888; margin-top: 2px; }
+        .verified-badge { background: #1DA1F2; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 7px; color: white; }
+
+        .edit-mode-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(10,10,15,0.95); backdrop-filter: blur(20px); border-radius: 30px; padding: 6px 12px; display: flex; gap: 6px; z-index: 1000; border: 0.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.4); flex-wrap: nowrap; overflow-x: auto; max-width: 95%; scrollbar-width: none; }
+        .edit-mode-bar::-webkit-scrollbar { display: none; }
+        .edit-mode-bar button { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 10px; border-radius: 25px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease; font-size: 0.65rem; white-space: nowrap; }
+        .edit-mode-bar button i { font-size: 0.7rem; }
+        .edit-mode-bar button:hover { background: rgba(255,255,255,0.2); transform: scale(0.96); }
+        .edit-mode-bar .exit-edit { background: #ff4757; }
+
+        .intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000000; z-index: 10000; display: flex; align-items: center; justify-content: center; animation: fadeOutIntro 0.8s ease 2.5s forwards; }
+        @keyframes fadeOutIntro { from { opacity: 1; visibility: visible; } to { opacity: 0; visibility: hidden; } }
+        .intro-content { text-align: center; animation: bounceInIntro 0.8s ease; }
+        @keyframes bounceInIntro { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 70% { transform: scale(0.95); } 100% { transform: scale(1); opacity: 1; } }
+        .intro-logo-text { font-size: 4.5rem; font-weight: 800; letter-spacing: -3px; background: linear-gradient(110deg, transparent 35%, #ffffff 50%, transparent 65%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shineIntro 3s infinite linear; }
+        @keyframes shineIntro { 0% { background-position: 150% 0; } 100% { background-position: -150% 0; } }
+        .intro-logo-text img { max-width: 200px; height: auto; }
+
+        .tabs-container { display: flex; gap: 1.2rem; margin: 1rem 0 1.2rem; flex-wrap: wrap; justify-content: center; background: transparent; }
+        .tab-btn { background: transparent; border: none; color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 500; padding: 0.5rem 0; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .tab-btn.active { color: white; border-bottom: 2px solid white; }
+        .tab-btn:hover { color: white; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active-tab { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .cards-grid { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 0.8rem; }
+        .card-photo { position: relative; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
+        .card-photo:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); }
+        .card-photo-bg { position: relative; width: 100%; height: 160px; background-size: cover; background-position: center; transition: transform 0.5s; }
+        .card-photo:hover .card-photo-bg { transform: scale(1.05); }
+        .card-icon-corner { position: absolute; top: 10px; left: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 20px; font-size: 1.3rem; z-index: 3; }
+        .card-title-bottom { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 70%, transparent 100%); padding: 0.8rem; text-align: center; }
+        .card-title-bottom h3 { font-size: 1rem; font-weight: 600; color: white; }
+        .card-icon-only { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; position: relative; }
+        .card-icon-only:hover { background: rgba(0,0,0,0.7); transform: translateX(3px); border-color: rgba(255,255,255,0.2); }
+        .card-icon-link { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0.9rem; text-decoration: none; color: white; }
+        .social-icon-big { font-size: 1.6rem; width: 38px; text-align: center; transition: transform 0.2s; }
+        .social-icon-big i, .card-icon-corner i { color: white; }
+        .card-icon-only:hover .social-icon-big { transform: scale(1.1); }
+        .card-info h4 { font-size: 0.85rem; font-weight: 500; }
+        
+        .edit-btn-overlay { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); border-radius: 25px; padding: 4px 8px; display: flex; gap: 6px; z-index: 10; }
+        .edit-btn-overlay button { background: rgba(255,255,255,0.2); border: none; color: white; padding: 3px 6px; border-radius: 18px; cursor: pointer; font-size: 0.6rem; transition: 0.2s; }
+        .edit-btn-overlay button.delete-btn:hover { background: #ff4757; }
+        .edit-btn-overlay button.edit-btn:hover { background: #1DA1F2; }
+        .stats-badge { position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); border-radius: 16px; padding: 2px 6px; font-size: 0.55rem; display: flex; align-items: center; gap: 3px; z-index: 5; }
+
+        .media-feed { display: flex; flex-direction: column; gap: 1.2rem; }
+        .media-post { background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; position: relative; transition: transform 0.2s; }
+        .media-post:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); }
+        .media-post-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 0.5px solid rgba(255,255,255,0.06); }
+        .media-post-user { display: flex; align-items: center; gap: 10px; }
+        .media-post-avatar { width: 36px; height: 36px; border-radius: 50%; background-size: cover; background-position: center; background-color: #1a1a1e; }
+        .media-post-name { font-weight: 600; font-size: 0.9rem; }
+        .media-post-like { background: rgba(255,255,255,0.1); border: none; color: #aaa; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 20px; transition: 0.2s; }
+        .media-post-like:hover { background: rgba(255,255,255,0.2); }
+        .media-post-like.liked { color: #ff4d6d; }
+        .media-post-like.liked i { animation: heartBeat 0.3s ease; }
+        @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .media-post-content { min-height: 220px; display: flex; align-items: center; justify-content: center; background: transparent; cursor: pointer; }
+        .media-post-content img { width: 100%; max-height: 280px; object-fit: cover; cursor: pointer; transition: transform 0.3s; border-radius: 12px; }
+        .media-post-content img:hover { transform: scale(1.02); }
+        .media-post-lock { font-size: 2rem; color: rgba(255,255,255,0.3); background: transparent; display: flex; align-items: center; justify-content: center; }
+        .media-post-caption { padding: 10px 14px; color: #ccc; font-size: 0.75rem; border-top: 0.5px solid rgba(255,255,255,0.05); }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0.8rem 0; }
+        .gallery-item { aspect-ratio: 1 / 1; border-radius: 16px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: all 0.3s; background: rgba(0,0,0,0.3); }
+        .gallery-item:hover { transform: scale(0.98); border-color: rgba(255,255,255,0.2); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.3s; }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0.8rem 0; }
+        .product-card { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 18px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: all 0.3s; }
+        .product-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); }
+        .product-image { width: 100%; height: 100px; object-fit: cover; transition: transform 0.3s; }
+        .product-card:hover .product-image { transform: scale(1.05); }
+        .product-info { padding: 8px 10px; }
+        .product-title { font-size: 0.8rem; font-weight: 600; color: white; }
+        .product-price { font-size: 0.85rem; font-weight: 700; color: #ccc; margin-top: 3px; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); z-index: 2000; align-items: center; justify-content: center; animation: fadeInModal 0.3s ease; }
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        .modal-card { background: #111115; border-radius: 28px; max-width: 350px; width: 90%; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); max-height: 85vh; overflow-y: auto; animation: slideUpModal 0.3s ease; }
+        @keyframes slideUpModal { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-card h3 { font-size: 1.3rem; text-align: center; margin-bottom: 1.2rem; color: white; }
+        .modal-card h3 i { margin-right: 8px; color: #1DA1F2; }
+        .input-group { margin-bottom: 0.9rem; position: relative; }
+        .input-group i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #888; z-index: 1; font-size: 0.9rem; }
+        .modal-input { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 12px 16px 12px 42px; color: white; font-size: 0.85rem; transition: all 0.2s; }
+        .modal-input:focus { outline: none; border-color: #1DA1F2; background: rgba(255,255,255,0.12); }
+        .modal-btn { background: #2a2a2e; border: none; padding: 12px; border-radius: 28px; color: white; font-weight: 600; cursor: pointer; width: 100%; margin-top: 0.5rem; transition: all 0.2s; font-size: 0.85rem; }
+        .modal-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .modal-btn-primary { background: #1DA1F2; }
+        .modal-btn-danger { background: #ff4757; }
+        .modal-btn-success { background: #4CAF50; }
+        .auth-switch { text-align: center; color: #888; font-size: 0.75rem; margin: 1rem 0 0.3rem; cursor: pointer; }
+        .auth-switch span { color: #1DA1F2; }
+        .error-msg { color: #ff6b6b; font-size: 0.7rem; text-align: center; }
+        .pix-area { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 12px; margin: 12px 0; text-align: center; }
+        .copy-btn { background: #2a2a2e; border: none; padding: 8px 14px; border-radius: 25px; color: white; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
+        .copy-btn:hover { background: #1DA1F2; }
+        
+        .users-list { margin-top: 1rem; }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 18px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; transition: all 0.2s; }
+        .user-item:hover { background: rgba(255,255,255,0.1); transform: translateX(3px); }
+        .user-item .user-info { flex: 1; }
+        .user-item .user-name { font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: white; }
+        .user-item .user-email { font-size: 0.7rem; color: #888; margin-top: 3px; word-break: break-all; }
+        .user-status { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 500; margin-top: 4px; }
+        .user-status.access-true { background: rgba(76,175,80,0.2); color: #4CAF50; border: 1px solid rgba(76,175,80,0.3); }
+        .user-status.access-false { background: rgba(255,152,0,0.2); color: #ff9800; border: 1px solid rgba(255,152,0,0.3); }
+        .user-status.banned-true { background: rgba(255,71,87,0.2); color: #ff4757; border: 1px solid rgba(255,71,87,0.3); }
+        .user-status.pending { background: rgba(33,150,243,0.2); color: #2196F3; border: 1px solid rgba(33,150,243,0.3); }
+        .user-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .user-actions button { background: rgba(255,255,255,0.1); border: none; padding: 6px 10px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: white; }
+        .user-actions button:hover { transform: scale(0.95); background: rgba(255,255,255,0.2); }
+        
+        .icons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0; max-height: 160px; overflow-y: auto; padding: 5px; }
+        .icon-option { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .icon-option:hover { background: #1DA1F2; transform: scale(1.05); }
+        .icon-option i { font-size: 1.3rem; color: white; }
+        .icon-option.selected { background: #1DA1F2; border: 2px solid white; }
+        
+        .fullscreen-img-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 3000; display: none; align-items: center; justify-content: center; cursor: pointer; }
+        .fullscreen-img-modal img { max-width: 95%; max-height: 95%; object-fit: contain; animation: zoomIn 0.3s ease; }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .toast-msg { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2a2a2e; color: white; padding: 8px 18px; border-radius: 40px; font-size: 0.75rem; z-index: 3000; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .footer-note { text-align: center; margin-top: 1.5rem; font-size: 0.6rem; color: rgba(255,255,255,0.4); margin-bottom: 80px; letter-spacing: 1px; }
+        
+        .new-payment-badge { background: #4CAF50; border-radius: 50%; width: 8px; height: 8px; display: inline-block; margin-left: 5px; animation: pulse 1s infinite; }
+        
+        @media (max-width: 480px) { 
+            .card-photo-bg { height: 140px; } 
+            .hero-banner { height: 380px; }
+            .banner-name .glow-name-banner { font-size: 2rem; }
+            .intro-logo-text { font-size: 3rem; letter-spacing: -1.5px; }
+            .tab-btn { font-size: 0.8rem; }
+            .tabs-container { gap: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-background" id="pageBackground"></div>
+
+<div id="introOverlay" class="intro-overlay">
+    <div class="intro-content">
+        <div class="intro-logo-text" id="introLogoText">Fhellip</div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <div class="profile-icon-btn" id="profileIconBtn"><i class="fas fa-user-circle"></i></div>
+
+    <div id="editModeBar" class="edit-mode-bar" style="display: none;">
+        <button id="showAddPhotoCardModalBtn"><i class="fas fa-image"></i> <span>Card Foto</span></button>
+        <button id="showAddIconCardModalBtn"><i class="fas fa-icons"></i> <span>Card Ícone</span></button>
+        <button id="showAddMediaPostModalBtn"><i class="fas fa-plus-circle"></i> <span>Nova Mídia</span></button>
+        <button id="showAddGalleryModalBtn"><i class="fas fa-images"></i> <span>Galeria</span></button>
+        <button id="showAddShopModalBtn"><i class="fas fa-store"></i> <span>Loja</span></button>
+        <button id="showStatsBtn"><i class="fas fa-chart-bar"></i> <span>Stats</span></button>
+        <button id="resetStatsBtn"><i class="fas fa-sync-alt"></i> <span>Reset Contagens</span></button>
+        <button id="resetClickLogsBtn"><i class="fas fa-trash-alt"></i> <span>Reset Logs</span></button>
+        <button id="showPaymentRequestsBtn"><i class="fas fa-money-bill-wave"></i> <span>Pagamentos</span></button>
+        <button id="changeBackgroundBtn"><i class="fas fa-image"></i> <span>Mudar Fundo</span></button>
+        <button id="exitEditModeBtn" class="exit-edit"><i class="fas fa-sign-out-alt"></i> <span>Sair</span></button>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="menu-avatar-wrapper">
+                <img class="menu-avatar" id="menuAvatar" src="">
+                <div class="edit-avatar-icon" id="editAvatarIconBtn" style="display: none;"><i class="fas fa-camera"></i></div>
+            </div>
+            <div class="menu-name-edit">
+                <span class="menu-name" id="menuName">Visitante</span>
+                <i class="fas fa-pencil-alt edit-name-icon" id="editNameIconBtn" style="display: none;"></i>
+            </div>
+            <div class="menu-email" id="menuEmail">Faça login</div>
+        </div>
+        <div class="menu-items">
+            <div class="menu-item" id="menuUsersBtn" style="display: none;"><i class="fas fa-users"></i> <span>Gerenciar Usuários</span></div>
+            <div class="menu-item" id="menuPaymentRequestsBtn" style="display: none;"><i class="fas fa-money-bill-wave"></i> <span>Solicitações Pagamento</span></div>
+            <div class="menu-item" id="menuPixBtn" style="display: none;"><i class="fas fa-qrcode"></i> <span>Configurar PIX</span></div>
+            <div class="menu-item" id="menuProfileEditBtn" style="display: none;"><i class="fas fa-user-edit"></i> <span>Editar Perfil (Admin)</span></div>
+            <div class="menu-item" id="menuLogoBtn" style="display: none;"><i class="fas fa-image"></i> <span>Personalizar Logo</span></div>
+            <div class="menu-divider" id="menuDivider" style="display: none;"></div>
+            <div class="menu-item" id="menuLoginBtn" style="display: flex;"><i class="fas fa-sign-in-alt"></i> <span>Entrar / Criar Conta</span></div>
+            <div class="menu-item" id="menuLogoutBtn" style="display: none;"><i class="fas fa-sign-out-alt"></i> <span>Sair</span></div>
+        </div>
+        <div class="menu-footer">
+            <div class="menu-item" id="closeMenuBtn"><i class="fas fa-times"></i> <span>Fechar</span></div>
+        </div>
+    </div>
+
+    <div class="sticky-header" id="stickyHeader">
+        <div class="sticky-content">
+            <img class="sticky-avatar" id="stickyAvatar" src="https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F">
+            <div class="sticky-info">
+                <div class="sticky-name" id="stickyName">Fhellip <span class="verified-badge"><i class="fas fa-check"></i></span></div>
+                <div class="sticky-role">Poused scenario</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-banner" id="heroBanner">
+        <div class="edit-banner-icon" id="editBannerIcon" style="display: none;"><i class="fas fa-camera"></i></div>
+        <div class="banner-name" id="bannerNameClick">
+            <div class="glow-name-banner" id="bannerNameText">Fhellip</div>
+        </div>
+    </div>
+
+    <div id="dynamic-cards"></div>
+
+    <div class="tabs-container" id="tabsContainer"></div>
+
+    <div id="mediaPage" class="tab-content"></div>
+    <div id="galleryPage" class="tab-content"></div>
+    <div id="shopPage" class="tab-content"></div>
+    <div class="footer-note"><i class="fas fa-shield-alt"></i>Fhellip</div>
+</div>
+
+<div id="fullscreenModal" class="fullscreen-img-modal" onclick="closeFullscreen()">
+    <img id="fullscreenImage" src="">
+</div>
+
+<div id="addPhotoCardModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-image"></i> Adicionar Card com Foto</h3><div class="input-group"><i class="fas fa-heading"></i><input type="text" id="photoCardTitle" class="modal-input" placeholder="Título"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="photoCardLink" class="modal-input" placeholder="Link"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="photoCardUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div id="photoCardIconGrid" class="icons-grid"></div><button id="savePhotoCardBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closePhotoCardModal" class="modal-btn">Cancelar</button></div></div>
+
+<div id="addIconCardModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-icons"></i> Adicionar Card sem Foto</h3><div class="input-group"><i class="fas fa-heading"></i><input type="text" id="iconCardTitle" class="modal-input" placeholder="Título"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="iconCardLink" class="modal-input" placeholder="Link"></div><div id="iconCardIconGrid" class="icons-grid"></div><button id="saveIconCardBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closeIconCardModal" class="modal-btn">Cancelar</button></div></div>
+
+<div id="addMediaPostModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-plus-circle"></i> Nova Mídia</h3><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="mediaPostUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-comment"></i><input type="text" id="mediaPostCaption" class="modal-input" placeholder="Legenda"></div><div class="input-group"><i class="fas fa-heart"></i><input type="number" id="mediaPostLikes" class="modal-input" placeholder="Likes" value="0"></div><button id="saveMediaPostBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closeMediaPostModal" class="modal-btn">Cancelar</button></div></div>
+
+<div id="editMediaPostModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-edit"></i> Editar Mídia</h3><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="editMediaUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-comment"></i><input type="text" id="editMediaCaption" class="modal-input" placeholder="Legenda"></div><div class="input-group"><i class="fas fa-heart"></i><input type="number" id="editMediaLikes" class="modal-input" placeholder="Likes"></div><button id="updateMediaPostBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closeEditMediaModal" class="modal-btn">Cancelar</button></div></div>
+
+<div id="addGalleryModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-images"></i> Adicionar à Galeria</h3><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="galleryUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><button id="saveGalleryBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closeGalleryModal" class="modal-btn">Cancelar</button></div></div>
+
+<div id="addShopModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-store"></i> Adicionar Produto</h3><div class="input-group"><i class="fas fa-tag"></i><input type="text" id="productTitle" class="modal-input" placeholder="Nome do produto"></div><div class="input-group"><i class="fas fa-dollar-sign"></i><input type="text" id="productPrice" class="modal-input" placeholder="Preço (ex: R$ 49,90)"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="productUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="productLink" class="modal-input" placeholder="Link do produto"></div><button id="saveProductBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closeShopModal" class="modal-btn">Cancelar</button></div></div>
+
+<div id="editItemModal" class="modal-overlay"><div class="modal-card"><h3 id="editModalTitle">Editar Item</h3><div id="editModalFields"></div><button id="saveEditItemBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closeEditModal" class="modal-btn">Cancelar</button></div></div>
+
+<div id="authModal" class="modal-overlay"><div class="modal-card"><h3 id="authTitle">Criar Conta</h3><div id="authFormContainer"><div class="input-group" id="nameGroup"><i class="fas fa-user"></i><input type="text" id="authName" class="modal-input" placeholder="Nome completo"></div><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="authEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="authPassword" class="modal-input" placeholder="Senha"></div><div class="input-group" id="confirmGroup"><i class="fas fa-check-circle"></i><input type="password" id="authConfirmPassword" class="modal-input" placeholder="Confirmar senha"></div><div id="authError" class="error-msg"></div><button id="authSubmitBtn" class="modal-btn">Criar Conta</button></div><div id="authSwitch" class="auth-switch">Já tem conta? <span>Fazer login</span></div><button id="closeAuthModal" class="modal-btn" style="margin-top:8px;background:rgba(255,255,255,0.1);">Fechar</button></div></div>
+
+<div id="adminLoginModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-crown" style="font-size:1.8rem;color:#ffd700;display:block;text-align:center;"></i><h3>Seja bem-vindo</h3><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="adminEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="adminPassword" class="modal-input" placeholder="Senha"></div><div id="adminError" class="error-msg"></div><button id="adminLoginBtn" class="modal-btn modal-btn-primary">Entrar</button><button id="closeAdminModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="paymentModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-qrcode" style="font-size:1.8rem;color:#ccc;display:block;text-align:center;"></i><h3>Pagamento - Liberar Mídia</h3><div id="qrcode" style="display:flex;justify-content:center;margin:0.6rem 0;"></div><div class="pix-area"><div id="pixKeyDisplay">Carregando...</div><button class="copy-btn" id="copyPixBtn"><i class="fas fa-copy"></i> Copiar PIX</button></div><p style="text-align:center; font-size:0.8rem;">Valor: <strong>R$ <span id="pixValue">9,90</span></strong></p><button id="paymentCompletedBtn" class="modal-btn modal-btn-success"><i class="fas fa-check-circle"></i> Pagamento Concluído</button><p style="text-align:center; font-size:0.65rem; color:#888; margin-top:8px;">Após clicar, aguarde a liberação do administrador</p><button id="closePaymentModal" class="modal-btn" style="margin-top:6px;">Fechar</button></div></div>
+
+<div id="usersModal" class="modal-overlay"><div class="modal-card" style="max-width: 450px;"><h3><i class="fas fa-users"></i> Gerenciar Usuários</h3><div id="usersListContainer" class="users-list"></div><div style="margin-top: 10px; display: flex; gap: 8px;"><button id="emailAllApprovedBtn" class="modal-btn" style="background: #4CAF50;"><i class="fas fa-envelope"></i> Email Aprovados</button><button id="emailAllRejectedBtn" class="modal-btn" style="background: #ff9800;"><i class="fas fa-envelope"></i> Email Reprovados</button></div><button id="closeUsersModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="paymentRequestsModal" class="modal-overlay"><div class="modal-card" style="max-width: 450px;"><h3><i class="fas fa-money-bill-wave"></i> Solicitações de Pagamento</h3><div id="paymentRequestsList" class="users-list"></div><button id="closePaymentRequestsModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="pixConfigModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-qrcode"></i> Configurar PIX</h3><div class="input-group"><i class="fas fa-key"></i><input type="text" id="pixKeyConfig" class="modal-input" placeholder="Chave PIX"></div><div class="input-group"><i class="fas fa-dollar-sign"></i><input type="text" id="pixValueConfig" class="modal-input" placeholder="Valor (ex: 9.90)"></div><div id="qrcodeConfig" style="display:flex;justify-content:center;margin:0.6rem 0;"></div><button id="savePixConfigBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closePixModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="logoConfigModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-image"></i> Personalizar Logo</h3><div class="input-group"><i class="fas fa-font"></i><input type="text" id="logoTextInput" class="modal-input" placeholder="Texto (ex: Fhellip)"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="logoUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="logoUrlInput" class="modal-input" placeholder="Ou URL da imagem"></div><button id="saveLogoBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closeLogoModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="profileEditModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-user-edit"></i> Editar Meu Perfil</h3><div class="input-group"><i class="fas fa-user"></i><input type="text" id="profileNameInput" class="modal-input" placeholder="Nome"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="profileUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><button id="saveProfileBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closeProfileModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="adminProfileEditModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-user-cog"></i> Editar Perfil (Dono)</h3><div class="input-group"><i class="fas fa-user"></i><input type="text" id="adminProfileNameInput" class="modal-input" placeholder="Nome do Dono"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="adminProfileUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><button id="saveAdminProfileBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closeAdminProfileModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="changeBackgroundModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-image"></i> Mudar Fundo da Página</h3><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="backgroundUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="backgroundUrl" class="modal-input" placeholder="Ou URL da imagem"></div><div class="input-group"><i class="fas fa-palette"></i><input type="color" id="backgroundColor" class="modal-input" value="#050505" style="padding: 8px 16px;"></div><button id="saveBackgroundBtn" class="modal-btn modal-btn-primary">Salvar Fundo</button><button id="resetBackgroundBtn" class="modal-btn">Resetar Padrão</button><button id="closeBackgroundModal" class="modal-btn">Cancelar</button></div></div>
+
+<div id="statsModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-chart-bar"></i> Estatísticas de Acesso</h3><div id="statsContent" class="users-list"></div><button id="closeStatsModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="clickLogModal" class="modal-overlay"><div class="modal-card" style="max-width: 450px;"><h3><i class="fas fa-history"></i> Log de Cliques</h3><div id="clickLogContent" class="users-list" style="max-height: 400px; overflow-y: auto;"></div><button id="closeClickLogModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="toastMessage" class="toast-msg"></div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCOUO3b0CAB9-ZcKw6xNpbwz6BdVO3eMQU",
+        authDomain: "queor-ea93a.firebaseapp.com",
+        databaseURL: "https://queor-ea93a-default-rtdb.firebaseio.com",
+        projectId: "queor-ea93a",
+        storageBucket: "queor-ea93a.firebasestorage.app",
+        messagingSenderId: "1068256130878",
+        appId: "1:1068256130878:web:c883dbff354a742ff0de6f"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+    
+    const IMGBB_API_KEY = "39d6fa29c5d1a99652d6dcb6bd611757";
+    
+    let isEditMode = false;
+    let currentAdmin = null;
+    let currentUser = null;
+    let editingPostId = null;
+    let hasNewPayment = false;
+    
+    let photoCards = [];
+    let iconCards = [];
+    let mediaPosts = [];
+    let galleryItems = [];
+    let shopItems = [];
+    let pixConfig = { key: "", value: "9.90" };
+    let logoConfig = { type: "text", text: "Fhellip", imageUrl: "" };
+    let userProfile = { name: "Visitante", avatar: "" };
+    let adminProfile = { name: "Fhellip", avatar: "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F", bannerImage: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=2070&auto=format&fit=crop" };
+    let clickLogs = [];
+    let pageBackground = { type: "color", value: "#050505" };
+    
+    const availableIcons = [
+        "fab fa-instagram", "fab fa-youtube", "fab fa-twitter", "fab fa-facebook",
+        "fab fa-tiktok", "fab fa-spotify", "fab fa-github", "fab fa-linkedin",
+        "fab fa-whatsapp", "fab fa-telegram", "fab fa-discord", "fab fa-snapchat",
+        "fas fa-heart", "fas fa-star", "fas fa-music", "fas fa-video",
+        "fas fa-camera", "fas fa-gamepad", "fas fa-shopping-cart", "fas fa-bolt"
+    ];
+    
+    let selectedPhotoIcon = "fab fa-instagram";
+    let selectedIconCardIcon = "fab fa-link";
+    
+    function renderIconGrid(containerId, selectedIcon, onSelect) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        availableIcons.forEach(icon => {
+            const div = document.createElement('div');
+            div.className = 'icon-option' + (selectedIcon === icon ? ' selected' : '');
+            div.innerHTML = `<i class="${icon}"></i>`;
+            div.onclick = () => {
+                document.querySelectorAll(`#${containerId} .icon-option`).forEach(opt => opt.classList.remove('selected'));
+                div.classList.add('selected');
+                onSelect(icon);
+            };
+            container.appendChild(div);
+        });
+    }
+    
+    async function uploadToImgBB(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        if (data.success) return data.data.url;
+        showToast("Erro no upload: " + (data.error?.message || "Desconhecido"));
+        return null;
+    }
+    
+    function showToast(msg) { 
+        let toast = document.getElementById('toastMessage'); 
+        toast.innerText = msg; 
+        toast.style.opacity = '1'; 
+        setTimeout(() => toast.style.opacity = '0', 2500); 
+    }
+    
+    function openFullscreen(imageUrl) {
+        const modal = document.getElementById('fullscreenModal');
+        const img = document.getElementById('fullscreenImage');
+        img.src = imageUrl;
+        modal.style.display = 'flex';
+    }
+    
+    function closeFullscreen() {
+        document.getElementById('fullscreenModal').style.display = 'none';
+    }
+    
+    function saveCards() { database.ref('cards').set({ photoCards, iconCards }); }
+    function saveMediaPosts() { database.ref('mediaPosts').set(mediaPosts); }
+    function saveGallery() { database.ref('gallery').set({ items: galleryItems }); }
+    function saveShop() { database.ref('shop').set({ items: shopItems }); }
+    function saveClickLogs() { database.ref('clickLogs').set(clickLogs); }
+    function savePageBackground() { database.ref('pageBackground').set(pageBackground); }
+    
+    function updateIntroLogo() {
+        const introLogo = document.getElementById('introLogoText');
+        if (introLogo) {
+            if (logoConfig.type === 'image' && logoConfig.imageUrl) {
+                introLogo.innerHTML = `<img src="${logoConfig.imageUrl}" style="max-width: 180px; height: auto;">`;
+            } else {
+                introLogo.innerHTML = logoConfig.text || "Fhellip";
+            }
+        }
+    }
+    
+    function updatePageBackground() {
+        const bgDiv = document.getElementById('pageBackground');
+        if (pageBackground.type === 'image' && pageBackground.value) {
+            bgDiv.style.backgroundImage = `url('${pageBackground.value}')`;
+            bgDiv.style.backgroundColor = 'transparent';
+        } else {
+            bgDiv.style.backgroundImage = 'none';
+            bgDiv.style.backgroundColor = pageBackground.value || '#050505';
+        }
+    }
+    
+    function updateHeroBanner() {
+        const banner = document.getElementById('heroBanner');
+        if (adminProfile.bannerImage) {
+            banner.style.backgroundImage = `url('${adminProfile.bannerImage}')`;
+        }
+        document.getElementById('bannerNameText').innerHTML = adminProfile.name;
+        document.getElementById('stickyName').innerHTML = `${adminProfile.name} <span class="verified-badge"><i class="fas fa-check"></i></span>`;
+        const avatarUrl = adminProfile.avatar || "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
+        document.getElementById('stickyAvatar').src = avatarUrl;
+    }
+    
+    function loadAllData() {
+        database.ref('cards').on('value', (snapshot) => {
+            const data = snapshot.val();
+            photoCards = data?.photoCards || [];
+            iconCards = data?.iconCards || [];
+            renderCards();
+        });
+        
+        database.ref('mediaPosts').on('value', (snapshot) => {
+            const data = snapshot.val();
+            mediaPosts = data ? Object.values(data) : [];
+            renderMediaTab();
+            renderTabs();
+        });
+        
+        database.ref('gallery').on('value', (snapshot) => {
+            galleryItems = snapshot.val()?.items || [];
+            renderGalleryTab();
+            renderTabs();
+        });
+        
+        database.ref('shop').on('value', (snapshot) => {
+            shopItems = snapshot.val()?.items || [];
+            renderShopTab();
+            renderTabs();
+        });
+        
+        database.ref('pixConfig').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) pixConfig = data;
+            document.getElementById('pixKeyDisplay').innerText = pixConfig.key || "Chave não configurada";
+            document.getElementById('pixValue').innerText = pixConfig.value;
+            refreshQRCode();
+        });
+        
+        database.ref('logoConfig').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) logoConfig = data;
+            updateLogoDisplay();
+            updateIntroLogo();
+        });
+        
+        database.ref('userProfile').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data && currentUser) userProfile = data;
+            updateProfileUI();
+        });
+        
+        database.ref('adminProfile').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                adminProfile = data;
+                updateHeroBanner();
+                renderMediaTab();
+            }
+        });
+        
+        database.ref('clickLogs').on('value', (snapshot) => {
+            const data = snapshot.val();
+            clickLogs = data ? Object.values(data) : [];
+        });
+        
+        database.ref('paymentRequests').on('value', (snapshot) => {
+            const requests = snapshot.val();
+            if (requests && Object.keys(requests).length > 0) {
+                if (!hasNewPayment) {
+                    hasNewPayment = true;
+                    updatePaymentButtonBadge();
+                }
+            } else {
+                hasNewPayment = false;
+                updatePaymentButtonBadge();
+            }
+        });
+        
+        database.ref('pageBackground').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) pageBackground = data;
+            updatePageBackground();
+        });
+    }
+    
+    function updatePaymentButtonBadge() {
+        const btn = document.getElementById('showPaymentRequestsBtn');
+        if (btn && hasNewPayment) {
+            btn.style.position = 'relative';
+            btn.innerHTML = '<i class="fas fa-money-bill-wave"></i> <span>Pagamentos <span class="new-payment-badge"></span></span>';
+        } else if (btn) {
+            btn.innerHTML = '<i class="fas fa-money-bill-wave"></i> <span>Pagamentos</span>';
+        }
+    }
+    
+    function updateLogoDisplay() {
+        const heroDiv = document.getElementById('bannerNameText');
+        if (logoConfig.type === 'image' && logoConfig.imageUrl) {
+            heroDiv.innerHTML = `<img src="${logoConfig.imageUrl}" style="max-width: 180px; height: auto;">`;
+            heroDiv.style.background = 'none';
+            heroDiv.style.webkitTextFillColor = 'initial';
+        } else {
+            heroDiv.innerHTML = logoConfig.text || "Fhellip";
+            heroDiv.style.background = "none";
+            heroDiv.style.color = "white";
+            heroDiv.style.webkitTextFillColor = "white";
+            heroDiv.style.backgroundSize = "auto";
+            heroDiv.style.animation = "none";
+        }
+    }
+    
+    function updateProfileUI() {
+        if (currentUser && !isEditMode) {
+            if (userProfile.avatar && userProfile.avatar !== "") {
+                document.getElementById('menuAvatar').src = userProfile.avatar;
+            } else {
+                document.getElementById('menuAvatar').src = `https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=80&name=${encodeURIComponent(currentUser.name)}`;
+            }
+            document.getElementById('menuName').innerText = currentUser.name;
+            document.getElementById('menuEmail').innerText = currentUser.email;
+            document.getElementById('editAvatarIconBtn').style.display = 'block';
+            document.getElementById('editNameIconBtn').style.display = 'block';
+        } else {
+            document.getElementById('menuAvatar').src = "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=80&name=Visitante";
+            document.getElementById('menuName').innerText = "Visitante";
+            document.getElementById('menuEmail').innerText = 'Faça login';
+            document.getElementById('editAvatarIconBtn').style.display = 'none';
+            document.getElementById('editNameIconBtn').style.display = 'none';
+        }
+    }
+    
+    function addClickLog(itemType, itemId, userName, userEmail, hasAccount) {
+        const log = {
+            id: Date.now().toString(),
+            itemType: itemType,
+            itemId: itemId,
+            userName: userName || (currentUser ? currentUser.name : "Visitante"),
+            userEmail: userEmail || (currentUser ? currentUser.email : "sem conta"),
+            hasAccount: hasAccount || (currentUser ? true : false),
+            timestamp: new Date().toISOString(),
+            date: new Date().toLocaleDateString('pt-BR'),
+            time: new Date().toLocaleTimeString('pt-BR')
+        };
+        clickLogs.unshift(log);
+        if (clickLogs.length > 500) clickLogs.pop();
+        saveClickLogs();
+    }
+    
+    function showClickLogModal() {
+        const container = document.getElementById('clickLogContent');
+        const loggedUsers = clickLogs.filter(l => l.hasAccount === true);
+        const guestUsers = clickLogs.filter(l => l.hasAccount === false);
+        
+        let html = '<h4 style="margin: 10px 0 5px; color: #4CAF50;">📱 Usuários com conta:</h4>';
+        if (loggedUsers.length === 0) html += '<div class="user-item">Nenhum clique de usuário logado</div>';
+        else {
+            loggedUsers.forEach(log => {
+                html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-circle"></i> <strong>${log.userName}</strong></div><div class="user-email">${log.userEmail}</div><div style="font-size: 0.6rem; color: #888;">${log.date} às ${log.time} - ${log.itemType}</div></div></div>`;
+            });
+        }
+        
+        html += '<h4 style="margin: 15px 0 5px; color: #ff9800;">👤 Visitantes (sem conta):</h4>';
+        if (guestUsers.length === 0) html += '<div class="user-item">Nenhum clique de visitante</div>';
+        else {
+            guestUsers.forEach(log => {
+                html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-secret"></i> <strong>Visitante</strong></div><div style="font-size: 0.6rem; color: #888;">${log.date} às ${log.time} - ${log.itemType}</div></div></div>`;
+            });
+        }
+        
+        container.innerHTML = html;
+        document.getElementById('clickLogModal').style.display = 'flex';
+    }
+    
+    function resetClickLogs() {
+        if (confirm('Tem certeza que deseja resetar TODOS os logs de cliques? Isso NÃO afetará os likes.')) {
+            clickLogs = [];
+            saveClickLogs();
+            showToast('Logs de cliques resetados!');
+        }
+    }
+    
+    function renderCards() {
+        let container = document.getElementById('dynamic-cards');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        if (photoCards.length === 0 && iconCards.length === 0) {
+            if (!isEditMode) return;
+            container.innerHTML = '<div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.5);"><i class="fas fa-plus-circle" style="font-size: 1.5rem;"></i><p style="font-size:0.7rem;">Clique nos botões abaixo</p></div>';
+            return;
+        }
+        
+        if (photoCards.length > 0) {
+            let photoGroup = document.createElement('div'); photoGroup.className = 'cards-grid';
+            photoCards.forEach(card => {
+                let cardDiv = document.createElement('div'); cardDiv.className = 'card-photo';
+                cardDiv.style.position = 'relative';
+                
+                let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.style.textDecoration = 'none';
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    incrementClicks('photo', card.id);
+                    window.open(card.link, '_blank');
+                };
+                
+                let bg = document.createElement('div'); bg.className = 'card-photo-bg'; bg.style.backgroundImage = `url('${card.img}')`;
+                let iconCorner = document.createElement('div'); iconCorner.className = 'card-icon-corner';
+                let icon = document.createElement('i'); icon.className = card.icon; iconCorner.appendChild(icon);
+                let bottom = document.createElement('div'); bottom.className = 'card-title-bottom';
+                let title = document.createElement('h3'); title.innerText = card.title; bottom.appendChild(title);
+                bg.appendChild(iconCorner); bg.appendChild(bottom); link.appendChild(bg); cardDiv.appendChild(link);
+                
+                if (isEditMode) {
+                    let statsBadge = document.createElement('div'); statsBadge.className = 'stats-badge';
+                    statsBadge.innerHTML = `<i class="fas fa-eye"></i> ${card.clicks || 0}`;
+                    cardDiv.appendChild(statsBadge);
+                    let editOverlay = document.createElement('div'); editOverlay.className = 'edit-btn-overlay';
+                    editOverlay.innerHTML = `<button class="edit-btn" data-id="${card.id}" data-type="photo"><i class="fas fa-edit"></i></button><button class="delete-btn" data-id="${card.id}" data-type="photo"><i class="fas fa-trash"></i></button>`;
+                    cardDiv.appendChild(editOverlay);
+                }
+                photoGroup.appendChild(cardDiv);
+            });
+            container.appendChild(photoGroup);
+        }
+        
+        if (iconCards.length > 0) {
+            let iconGroup = document.createElement('div'); iconGroup.className = 'cards-grid';
+            iconCards.forEach(card => {
+                let cardDiv = document.createElement('div'); cardDiv.className = 'card-icon-only';
+                cardDiv.style.position = 'relative';
+                
+                let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.className = 'card-icon-link';
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    incrementClicks('icon', card.id);
+                    window.open(card.link, '_blank');
+                };
+                
+                let iconWrap = document.createElement('div'); iconWrap.className = 'social-icon-big';
+                let icon = document.createElement('i'); icon.className = card.icon; iconWrap.appendChild(icon);
+                let info = document.createElement('div'); info.className = 'card-info';
+                let title = document.createElement('h4'); title.innerText = card.title; info.appendChild(title);
+                link.appendChild(iconWrap); link.appendChild(info); cardDiv.appendChild(link);
+                
+                if (isEditMode) {
+                    let statsBadge = document.createElement('div'); statsBadge.className = 'stats-badge';
+                    statsBadge.innerHTML = `<i class="fas fa-eye"></i> ${card.clicks || 0}`;
+                    cardDiv.appendChild(statsBadge);
+                    let editOverlay = document.createElement('div'); editOverlay.className = 'edit-btn-overlay';
+                    editOverlay.innerHTML = `<button class="edit-btn" data-id="${card.id}" data-type="icon"><i class="fas fa-edit"></i></button><button class="delete-btn" data-id="${card.id}" data-type="icon"><i class="fas fa-trash"></i></button>`;
+                    cardDiv.appendChild(editOverlay);
+                }
+                iconGroup.appendChild(cardDiv);
+            });
+            container.appendChild(iconGroup);
+        }
+        
+        if (isEditMode) {
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const type = btn.getAttribute('data-type');
+                    openEditCardModal(id, type);
+                };
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const type = btn.getAttribute('data-type');
+                    if (type === 'photo') photoCards = photoCards.filter(c => c.id !== id);
+                    else iconCards = iconCards.filter(c => c.id !== id);
+                    saveCards();
+                    renderCards();
+                    showToast('Card removido!');
+                };
+            });
+        }
+    }
+    
+    function incrementClicks(type, id) {
+        if (isEditMode) return;
+        
+        if (type === 'photo') {
+            const card = photoCards.find(c => c.id === id);
+            if (card) { 
+                card.clicks = (card.clicks || 0) + 1; 
+                saveCards(); 
+                if(isEditMode) renderCards();
+                addClickLog('Card Foto', id, currentUser?.name, currentUser?.email, !!currentUser);
+            }
+        } else {
+            const card = iconCards.find(c => c.id === id);
+            if (card) { 
+                card.clicks = (card.clicks || 0) + 1; 
+                saveCards(); 
+                if(isEditMode) renderCards();
+                addClickLog('Card Ícone', id, currentUser?.name, currentUser?.email, !!currentUser);
+            }
+        }
+    }
+    
+    function openEditCardModal(id, type) {
+        const card = type === 'photo' ? photoCards.find(c => c.id === id) : iconCards.find(c => c.id === id);
+        if (!card) return;
+        document.getElementById('editModalTitle').innerText = type === 'photo' ? 'Editar Card com Foto' : 'Editar Card sem Foto';
+        let fieldsHtml = `
+            <div class="input-group"><i class="fas fa-heading"></i><input type="text" id="editTitle" value="${card.title.replace(/"/g, '&quot;')}" class="modal-input" placeholder="Título"></div>
+            <div class="input-group"><i class="fas fa-link"></i><input type="url" id="editLink" value="${card.link}" class="modal-input" placeholder="Link"></div>
+            <div class="input-group"><i class="fas fa-icons"></i><input type="text" id="editIcon" value="${card.icon}" class="modal-input" placeholder="Ícone"></div>
+        `;
+        if (type === 'photo') {
+            fieldsHtml += `<div class="input-group"><i class="fas fa-upload"></i><input type="file" id="editImgUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div>`;
+        }
+        document.getElementById('editModalFields').innerHTML = fieldsHtml;
+        document.getElementById('editItemModal').style.display = 'flex';
+        if (type === 'photo') {
+            document.getElementById('editImgUpload').onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const url = await uploadToImgBB(file);
+                    if (url) { card.img = url; showToast('Imagem atualizada!'); }
+                }
+            };
+        }
+        document.getElementById('saveEditItemBtn').onclick = () => {
+            card.title = document.getElementById('editTitle').value;
+            card.link = document.getElementById('editLink').value;
+            card.icon = document.getElementById('editIcon').value;
+            saveCards(); renderCards();
+            document.getElementById('editItemModal').style.display = 'none';
+            showToast('Card atualizado!');
+        };
+    }
+    
+    function renderTabs() {
+        const tabsContainer = document.getElementById('tabsContainer');
+        const hasMedia = mediaPosts.length > 0;
+        const hasGallery = galleryItems.length > 0;
+        const hasShop = shopItems.length > 0;
+        if (!hasMedia && !hasGallery && !hasShop) {
+            tabsContainer.innerHTML = '';
+            return;
+        }
+        let tabsHtml = '';
+        if (hasMedia) tabsHtml += `<button class="tab-btn" data-page="media">Mídia</button>`;
+        if (hasGallery) tabsHtml += `<button class="tab-btn" data-page="gallery">Galeria</button>`;
+        if (hasShop) tabsHtml += `<button class="tab-btn" data-page="shop">Loja</button>`;
+        tabsContainer.innerHTML = tabsHtml;
+        
+        let activeTab = localStorage.getItem('activeTab') || (hasMedia ? 'media' : (hasGallery ? 'gallery' : 'shop'));
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                const page = btn.getAttribute('data-page');
+                localStorage.setItem('activeTab', page);
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+                document.getElementById(`${page}Page`).classList.add('active-tab');
+            };
+            if (btn.getAttribute('data-page') === activeTab) btn.classList.add('active');
+        });
+        
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+        document.getElementById(`${activeTab}Page`).classList.add('active-tab');
+    }
+    
+    function renderMediaTab() {
+        const container = document.getElementById('mediaPage');
+        if (!container) return;
+        
+        if (mediaPosts.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.5); font-size:0.7rem;">Nenhuma mídia disponível.</div>';
+            return;
+        }
+        
+        const isUnlocked = currentUser && localStorage.getItem(`media_unlocked_${currentUser.email}`) === 'true';
+        const showContent = isEditMode || isUnlocked;
+        const adminAvatarUrl = adminProfile.avatar || "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
+        
+        let html = '<div class="media-feed">';
+        
+        mediaPosts.forEach(post => {
+            const isLiked = currentUser && localStorage.getItem(`liked_post_${post.id}_${currentUser.email}`) === 'true';
+            const postLikes = post.likes || 0;
+            
+            html += `
+                <div class="media-post" data-id="${post.id}" style="position: relative;">
+                    <div class="media-post-header">
+                        <div class="media-post-user">
+                            <div class="media-post-avatar" style="background-image: url('${adminAvatarUrl}'); background-size: cover;"></div>
+                            <div class="media-post-name">${adminProfile.name} <i class="fas fa-check-circle" style="color:#1DA1F2; font-size:10px;"></i></div>
+                        </div>
+                        <button class="media-post-like ${isLiked ? 'liked' : ''}" data-id="${post.id}">
+                            <i class="fas fa-heart"></i> <span class="like-count">${postLikes}</span>
+                        </button>
+                    </div>
+                    <div class="media-post-content" data-id="${post.id}">
+                        ${showContent ? `<img src="${post.imageUrl}" alt="Mídia">` : `<div class="media-post-lock"><i class="fas fa-lock"></i></div>`}
+                    </div>
+                    <div class="media-post-caption"><strong>Mídia</strong> — ${post.caption || "Conteúdo exclusivo"}</div>
+                    ${isEditMode ? `<div class="media-post-stats"><i class="fas fa-eye"></i> ${post.clicks || 0}</div>` : ''}
+                    ${isEditMode ? `
+                        <div class="edit-btn-overlay" style="position: absolute; top: 50px; right: 6px;">
+                            <button class="edit-media-post" data-id="${post.id}"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="delete-media-post" data-id="${post.id}"><i class="fas fa-trash"></i> Apagar</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+        
+        document.querySelectorAll('.media-post-like').forEach(btn => {
+            btn.onclick = async (e) => {
+                e.stopPropagation();
+                if (!currentUser) { showToast('Faça login para curtir!'); openAuthModal(); return; }
+                const postId = btn.getAttribute('data-id');
+                const post = mediaPosts.find(p => p.id === postId);
+                if (!post) return;
+                
+                const isLikedNow = localStorage.getItem(`liked_post_${postId}_${currentUser.email}`) === 'true';
+                if (isLikedNow) {
+                    localStorage.removeItem(`liked_post_${postId}_${currentUser.email}`);
+                    post.likes = Math.max(0, (post.likes || 0) - 1);
+                    btn.classList.remove('liked');
+                    showToast('Descurtido!');
+                } else {
+                    localStorage.setItem(`liked_post_${postId}_${currentUser.email}`, 'true');
+                    post.likes = (post.likes || 0) + 1;
+                    btn.classList.add('liked');
+                    showToast('Curtido! ❤️');
+                }
+                saveMediaPosts();
+                renderMediaTab();
+            };
+        });
+        
+        document.querySelectorAll('.media-post-content').forEach(content => {
+            content.onclick = (e) => {
+                if (e.target.closest('.edit-btn-overlay')) return;
+                const postId = content.getAttribute('data-id');
+                const post = mediaPosts.find(p => p.id === postId);
+                if (!post) return;
+                
+                if (!isEditMode && !isUnlocked) {
+                    if (!currentUser) openAuthModal();
+                    else showPaymentModal();
+                } else if (showContent && post.imageUrl) {
+                    openFullscreen(post.imageUrl);
+                    if (!isEditMode && isUnlocked) {
+                        post.clicks = (post.clicks || 0) + 1;
+                        saveMediaPosts();
+                        addClickLog('Mídia', postId, currentUser?.name, currentUser?.email, !!currentUser);
+                        renderMediaTab();
+                    }
+                }
+            };
+        });
+        
+        if (isEditMode) {
+            document.querySelectorAll('.edit-media-post').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const postId = btn.getAttribute('data-id');
+                    openEditMediaPostModal(postId);
+                };
+            });
+            document.querySelectorAll('.delete-media-post').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const postId = btn.getAttribute('data-id');
+                    if (confirm('Tem certeza que deseja excluir esta mídia?')) {
+                        mediaPosts = mediaPosts.filter(p => p.id !== postId);
+                        saveMediaPosts();
+                        renderMediaTab();
+                        renderTabs();
+                        showToast('Mídia removida!');
+                    }
+                };
+            });
+        }
+    }
+    
+    function openEditMediaPostModal(postId) {
+        const post = mediaPosts.find(p => p.id === postId);
+        if (!post) return;
+        editingPostId = postId;
+        document.getElementById('editMediaCaption').value = post.caption || '';
+        document.getElementById('editMediaLikes').value = post.likes || 0;
+        document.getElementById('editMediaUpload').value = '';
+        document.getElementById('editMediaPostModal').style.display = 'flex';
+    }
+    
+    async function updateMediaPost() {
+        const post = mediaPosts.find(p => p.id === editingPostId);
+        if (!post) return;
+        
+        const file = document.getElementById('editMediaUpload').files[0];
+        const caption = document.getElementById('editMediaCaption').value;
+        const likes = parseInt(document.getElementById('editMediaLikes').value) || 0;
+        
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) post.imageUrl = imgUrl;
+        }
+        post.caption = caption || post.caption;
+        post.likes = likes;
+        
+        saveMediaPosts();
+        renderMediaTab();
+        document.getElementById('editMediaPostModal').style.display = 'none';
+        showToast('Mídia atualizada!');
+    }
+    
+    async function addMediaPost() {
+        const file = document.getElementById('mediaPostUpload').files[0];
+        const caption = document.getElementById('mediaPostCaption').value;
+        const likes = parseInt(document.getElementById('mediaPostLikes').value) || 0;
+        
+        if (!file) { showToast('Selecione uma imagem!'); return; }
+        const imgUrl = await uploadToImgBB(file);
+        if (!imgUrl) return;
+        
+        const newPost = {
+            id: Date.now().toString(),
+            imageUrl: imgUrl,
+            caption: caption || "Conteúdo exclusivo",
+            likes: likes,
+            clicks: 0
+        };
+        mediaPosts.unshift(newPost);
+        saveMediaPosts();
+        renderMediaTab();
+        renderTabs();
+        document.getElementById('addMediaPostModal').style.display = 'none';
+        document.getElementById('mediaPostUpload').value = '';
+        document.getElementById('mediaPostCaption').value = '';
+        document.getElementById('mediaPostLikes').value = '0';
+        showToast('Mídia adicionada!');
+    }
+    
+    function renderGalleryTab() {
+        const container = document.getElementById('galleryPage');
+        if (!container) return;
+        if (galleryItems.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.5); font-size:0.7rem;">Nenhuma imagem na galeria.</div>';
+            return;
+        }
+        let html = '<div class="gallery-grid">';
+        galleryItems.forEach(item => {
+            html += `<div class="gallery-item" data-id="${item.id}" data-url="${item.url}" style="position: relative;"><img src="${item.url}" loading="lazy">${isEditMode ? `<div class="stats-badge"><i class="fas fa-eye"></i> ${item.clicks || 0}</div><div class="edit-btn-overlay" style="position: absolute; top: 5px; right: 5px;"><button class="edit-gallery" data-id="${item.id}"><i class="fas fa-edit"></i> Editar</button><button class="delete-gallery" data-id="${item.id}"><i class="fas fa-trash"></i> Apagar</button></div>` : ''}</div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+        
+        if (isEditMode) {
+            document.querySelectorAll('.edit-gallery').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const input = document.createElement('input');
+                    input.type = 'file'; input.accept = 'image/*';
+                    input.onchange = async (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const url = await uploadToImgBB(file);
+                            if (url) {
+                                const item = galleryItems.find(i => i.id === id);
+                                if (item) item.url = url;
+                                saveGallery(); renderGalleryTab();
+                                showToast('Imagem atualizada!');
+                            }
+                        }
+                    };
+                    input.click();
+                };
+            });
+            document.querySelectorAll('.delete-gallery').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    galleryItems = galleryItems.filter(i => i.id !== id);
+                    saveGallery(); renderGalleryTab(); renderTabs();
+                    showToast('Imagem removida!');
+                };
+            });
+        }
+        
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.onclick = (e) => {
+                if (e.target.closest('.edit-btn-overlay')) return;
+                const url = item.getAttribute('data-url');
+                if (url) openFullscreen(url);
+                const id = item.getAttribute('data-id');
+                const galleryItem = galleryItems.find(i => i.id === id);
+                if (galleryItem) { 
+                    if (!isEditMode) {
+                        galleryItem.clicks = (galleryItem.clicks || 0) + 1; 
+                        saveGallery(); 
+                        if(isEditMode) renderGalleryTab();
+                        addClickLog('Galeria', id, currentUser?.name, currentUser?.email, !!currentUser);
+                    }
+                }
+            };
+        });
+    }
+    
+    function renderShopTab() {
+        const container = document.getElementById('shopPage');
+        if (!container) return;
+        if (shopItems.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.5); font-size:0.7rem;">Nenhum produto na loja.</div>';
+            return;
+        }
+        let html = '<div class="shop-grid">';
+        shopItems.forEach(item => {
+            html += `<div class="product-card" data-id="${item.id}" data-link="${item.link}" style="position: relative;"><img class="product-image" src="${item.img}"><div class="product-info"><div class="product-title">${item.title}</div><div class="product-price">${item.price}</div></div>${isEditMode ? `<div class="stats-badge"><i class="fas fa-eye"></i> ${item.clicks || 0}</div><div class="edit-btn-overlay" style="position: absolute; top: 5px; right: 5px;"><button class="edit-shop" data-id="${item.id}"><i class="fas fa-edit"></i> Editar</button><button class="delete-shop" data-id="${item.id}"><i class="fas fa-trash"></i> Apagar</button></div>` : ''}</div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+        
+        if (isEditMode) {
+            document.querySelectorAll('.edit-shop').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const item = shopItems.find(i => i.id === id);
+                    if (item) {
+                        document.getElementById('editModalTitle').innerText = 'Editar Produto';
+                        document.getElementById('editModalFields').innerHTML = `
+                            <div class="input-group"><i class="fas fa-tag"></i><input type="text" id="editTitle" value="${item.title.replace(/"/g, '&quot;')}" class="modal-input" placeholder="Nome"></div>
+                            <div class="input-group"><i class="fas fa-dollar-sign"></i><input type="text" id="editPrice" value="${item.price}" class="modal-input" placeholder="Preço"></div>
+                            <div class="input-group"><i class="fas fa-upload"></i><input type="file" id="editImgUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div>
+                            <div class="input-group"><i class="fas fa-link"></i><input type="url" id="editLink" value="${item.link}" class="modal-input" placeholder="Link"></div>
+                        `;
+                        document.getElementById('editItemModal').style.display = 'flex';
+                        document.getElementById('editImgUpload').onchange = async (e) => {
+                            const file = e.target.files[0];
+                            if (file) { const url = await uploadToImgBB(file); if (url) { item.img = url; showToast('Imagem atualizada!'); } }
+                        };
+                        document.getElementById('saveEditItemBtn').onclick = () => {
+                            item.title = document.getElementById('editTitle').value;
+                            item.price = document.getElementById('editPrice').value;
+                            item.link = document.getElementById('editLink').value;
+                            saveShop(); renderShopTab();
+                            document.getElementById('editItemModal').style.display = 'none';
+                            showToast('Produto atualizado!');
+                        };
+                    }
+                };
+            });
+            document.querySelectorAll('.delete-shop').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    shopItems = shopItems.filter(i => i.id !== id);
+                    saveShop(); renderShopTab(); renderTabs();
+                    showToast('Produto removido!');
+                };
+            });
+        }
+        
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.onclick = (e) => {
+                if (e.target.closest('.edit-btn-overlay')) return;
+                const id = card.getAttribute('data-id');
+                const link = card.getAttribute('data-link');
+                const product = shopItems.find(i => i.id === id);
+                if (product) { 
+                    if (!isEditMode) {
+                        product.clicks = (product.clicks || 0) + 1; 
+                        saveShop(); 
+                        if(isEditMode) renderShopTab();
+                        addClickLog('Loja', id, currentUser?.name, currentUser?.email, !!currentUser);
+                    }
+                }
+                if (link && link !== '#') window.open(link, '_blank');
+            };
+        });
+    }
+    
+    function resetAllStats() {
+        if (confirm('Tem certeza que deseja resetar TODAS as contagens? Isso NÃO afetará os likes.')) {
+            photoCards.forEach(c => { c.clicks = 0; });
+            iconCards.forEach(c => { c.clicks = 0; });
+            mediaPosts.forEach(p => { p.clicks = 0; });
+            galleryItems.forEach(i => { i.clicks = 0; });
+            shopItems.forEach(i => { i.clicks = 0; });
+            saveCards(); saveMediaPosts(); saveGallery(); saveShop();
+            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab();
+            showToast('Todas as contagens foram resetadas! (Likes mantidos)');
+        }
+    }
+    
+    function showStats() {
+        let totalCardClicks = 0;
+        photoCards.forEach(c => totalCardClicks += (c.clicks || 0));
+        iconCards.forEach(c => totalCardClicks += (c.clicks || 0));
+        let totalMediaClicks = 0;
+        let totalMediaLikes = 0;
+        mediaPosts.forEach(p => { totalMediaClicks += (p.clicks || 0); totalMediaLikes += (p.likes || 0); });
+        let totalGalleryClicks = 0;
+        galleryItems.forEach(i => totalGalleryClicks += (i.clicks || 0));
+        let totalShopClicks = 0;
+        shopItems.forEach(i => totalShopClicks += (i.clicks || 0));
+        
+        const statsHtml = `
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-chart-line"></i> Cliques em Cards:</strong> ${totalCardClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-eye"></i> Visualizações na Mídia:</strong> ${totalMediaClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-heart"></i> Likes na Mídia:</strong> ${totalMediaLikes}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-images"></i> Visualizações na Galeria:</strong> ${totalGalleryClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-store"></i> Cliques na Loja:</strong> ${totalShopClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-photo-video"></i> Total de Mídias:</strong> ${mediaPosts.length}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-history"></i> Total de Cliques Registrados:</strong> ${clickLogs.length}</div></div>
+        `;
+        document.getElementById('statsContent').innerHTML = statsHtml;
+        document.getElementById('statsModal').style.display = 'flex';
+    }
+    
+    function sendEmailToUsers(type, specificEmail = null, specificName = null) {
+        if (specificEmail) {
+            const subject = type === 'approved' ? 'Acesso Aprovado - Fhellip' : (type === 'rejected' ? 'Acesso Pendente - Fhellip' : 'Novo Conteúdo - Fhellip');
+            const body = type === 'approved' 
+                ? `Olá ${specificName || ''}! Seu acesso foi aprovado! Agora você pode visualizar todo o conteúdo exclusivo em nossa plataforma.`
+                : (type === 'rejected' 
+                    ? `Olá ${specificName || ''}! Infelizmente seu acesso ainda não foi aprovado. Aguarde novas atualizações.`
+                    : `Olá ${specificName || ''}! Fhellip adicionou um novo conteúdo exclusivo! Acesse nossa plataforma para conferir.`);
+            window.location.href = `mailto:${specificEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            showToast(`Abrindo email para ${specificEmail}...`);
+            return;
+        }
+        
+        database.ref('users').once('value', (snapshot) => {
+            const users = snapshot.val();
+            if (!users) { showToast('Nenhum usuário encontrado'); return; }
+            
+            let emails = [];
+            if (type === 'approved') {
+                for (const [key, user] of Object.entries(users)) {
+                    if (user.hasAccess === true && user.isBanned !== true) {
+                        emails.push(user.email);
+                    }
+                }
+            } else if (type === 'rejected') {
+                for (const [key, user] of Object.entries(users)) {
+                    if (user.hasAccess !== true && user.isBanned !== true) {
+                        emails.push(user.email);
+                    }
+                }
+            }
+            
+            if (emails.length > 0) {
+                const subject = type === 'approved' ? 'Acesso Aprovado - Fhellip' : 'Acesso Pendente - Fhellip';
+                const body = type === 'approved' 
+                    ? `Olá! Seu acesso foi aprovado! Agora você pode visualizar todo o conteúdo exclusivo em nossa plataforma.`
+                    : `Olá! Infelizmente seu acesso ainda não foi aprovado. Aguarde novas atualizações.`;
+                window.location.href = `mailto:${emails.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                showToast(`Abrindo cliente de email para ${emails.length} destinatários...`);
+            } else {
+                showToast(`Nenhum usuário ${type === 'approved' ? 'aprovado' : 'pendente'} encontrado`);
+            }
+        });
+    }
+    
+    async function addPhotoCardFromModal() {
+        const title = document.getElementById('photoCardTitle').value;
+        const link = document.getElementById('photoCardLink').value;
+        const file = document.getElementById('photoCardUpload').files[0];
+        if (!title || !link || !file) { showToast('Preencha todos os campos e selecione uma imagem!'); return; }
+        const imgUrl = await uploadToImgBB(file);
+        if (!imgUrl) return;
+        photoCards.push({ id: Date.now().toString(), title, link, icon: selectedPhotoIcon, img: imgUrl, clicks: 0 });
+        saveCards(); renderCards();
+        document.getElementById('addPhotoCardModal').style.display = 'none';
+        document.getElementById('photoCardTitle').value = '';
+        document.getElementById('photoCardLink').value = '';
+        document.getElementById('photoCardUpload').value = '';
+        showToast('Card adicionado!');
+    }
+    
+    async function addIconCardFromModal() {
+        const title = document.getElementById('iconCardTitle').value;
+        const link = document.getElementById('iconCardLink').value;
+        if (!title || !link) { showToast('Preencha todos os campos!'); return; }
+        iconCards.push({ id: Date.now().toString(), title, link, icon: selectedIconCardIcon, clicks: 0 });
+        saveCards(); renderCards();
+        document.getElementById('addIconCardModal').style.display = 'none';
+        document.getElementById('iconCardTitle').value = '';
+        document.getElementById('iconCardLink').value = '';
+        showToast('Card adicionado!');
+    }
+    
+    async function addGalleryFromModal() {
+        const file = document.getElementById('galleryUpload').files[0];
+        if (!file) { showToast('Selecione uma imagem!'); return; }
+        const imgUrl = await uploadToImgBB(file);
+        if (!imgUrl) return;
+        galleryItems.push({ id: Date.now().toString(), url: imgUrl, clicks: 0 });
+        saveGallery(); renderGalleryTab(); renderTabs();
+        document.getElementById('addGalleryModal').style.display = 'none';
+        document.getElementById('galleryUpload').value = '';
+        showToast('Imagem adicionada!');
+    }
+    
+    async function addShopFromModal() {
+        const title = document.getElementById('productTitle').value;
+        const price = document.getElementById('productPrice').value;
+        const file = document.getElementById('productUpload').files[0];
+        const link = document.getElementById('productLink').value;
+        if (!title || !file) { showToast('Preencha o nome e selecione uma imagem!'); return; }
+        const imgUrl = await uploadToImgBB(file);
+        if (!imgUrl) return;
+        shopItems.push({ id: Date.now().toString(), title, price: price || "R$ 0,00", img: imgUrl, link: link || "#", clicks: 0 });
+        saveShop(); renderShopTab(); renderTabs();
+        document.getElementById('addShopModal').style.display = 'none';
+        document.getElementById('productTitle').value = '';
+        document.getElementById('productPrice').value = '';
+        document.getElementById('productLink').value = '';
+        document.getElementById('productUpload').value = '';
+        showToast('Produto adicionado!');
+    }
+    
+    async function adminLogin(email, password) {
+        try {
+            if (email !== 'fhellip@gmail.com') { document.getElementById('adminError').innerText = 'Apenas fhellip@gmail.com'; return false; }
+            await auth.signInWithEmailAndPassword(email, password);
+            currentAdmin = email; isEditMode = true;
+            document.getElementById('editModeBar').style.display = 'flex';
+            document.getElementById('menuUsersBtn').style.display = 'flex';
+            document.getElementById('menuPaymentRequestsBtn').style.display = 'flex';
+            document.getElementById('menuPixBtn').style.display = 'flex';
+            document.getElementById('menuProfileEditBtn').style.display = 'flex';
+            document.getElementById('menuLogoBtn').style.display = 'flex';
+            document.getElementById('menuDivider').style.display = 'block';
+            document.getElementById('menuLoginBtn').style.display = 'none';
+            document.getElementById('menuLogoutBtn').style.display = 'none';
+            document.getElementById('editBannerIcon').style.display = 'flex';
+            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
+            document.getElementById('adminLoginModal').style.display = 'none';
+            showToast('Modo edição ativado!');
+            return true;
+        } catch (error) {
+            if (error.code === 'auth/user-not-found') {
+                await auth.createUserWithEmailAndPassword(email, password);
+                currentAdmin = email; isEditMode = true;
+                document.getElementById('editModeBar').style.display = 'flex';
+                document.getElementById('menuUsersBtn').style.display = 'flex';
+                document.getElementById('menuPaymentRequestsBtn').style.display = 'flex';
+                document.getElementById('menuPixBtn').style.display = 'flex';
+                document.getElementById('menuProfileEditBtn').style.display = 'flex';
+                document.getElementById('menuLogoBtn').style.display = 'flex';
+                document.getElementById('menuDivider').style.display = 'block';
+                document.getElementById('menuLoginBtn').style.display = 'none';
+                document.getElementById('menuLogoutBtn').style.display = 'none';
+                document.getElementById('editBannerIcon').style.display = 'flex';
+                renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
+                document.getElementById('adminLoginModal').style.display = 'none';
+                showToast('Modo edição ativado!');
+                return true;
+            }
+            document.getElementById('adminError').innerText = 'Erro: ' + error.message;
+            return false;
+        }
+    }
+    
+    function exitEditMode() {
+        isEditMode = false; currentAdmin = null;
+        document.getElementById('editModeBar').style.display = 'none';
+        document.getElementById('menuUsersBtn').style.display = 'none';
+        document.getElementById('menuPaymentRequestsBtn').style.display = 'none';
+        document.getElementById('menuPixBtn').style.display = 'none';
+        document.getElementById('menuProfileEditBtn').style.display = 'none';
+        document.getElementById('menuLogoBtn').style.display = 'none';
+        document.getElementById('menuDivider').style.display = 'none';
+        document.getElementById('menuLoginBtn').style.display = 'flex';
+        document.getElementById('menuLogoutBtn').style.display = currentUser ? 'flex' : 'none';
+        document.getElementById('editBannerIcon').style.display = 'none';
+        renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
+        showToast('Modo edição desativado');
+    }
+    
+    function showUsersModal() {
+        const container = document.getElementById('usersListContainer');
+        container.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i></div>';
+        document.getElementById('usersModal').style.display = 'flex';
+        database.ref('users').once('value', (snapshot) => {
+            const users = snapshot.val();
+            if (!users || Object.keys(users).length === 0) { container.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Nenhum usuário</div>'; return; }
+            let html = '';
+            for (const [emailKey, userData] of Object.entries(users)) {
+                const email = userData.email || emailKey.replace(/,/g, '.');
+                const isBanned = userData.isBanned || false;
+                const hasAccess = userData.hasAccess || false;
+                const statusClass = isBanned ? 'banned-true' : (hasAccess ? 'access-true' : 'access-false');
+                const statusText = isBanned ? '🔴 Banido' : (hasAccess ? '✅ Liberado' : '⏳ Pendente');
+                html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-circle"></i> <strong>${userData.name || email.split('@')[0]}</strong></div><div class="user-email"><i class="fas fa-envelope"></i> ${email}</div><div class="user-status ${statusClass}">${statusText}</div></div><div class="user-actions"><button class="paid" data-email="${email}" data-access="${!hasAccess}" title="${hasAccess ? 'Bloquear' : 'Liberar'}"><i class="fas ${hasAccess ? 'fa-lock' : 'fa-unlock-alt'}"></i></button><button class="block" data-email="${email}" data-ban="${!isBanned}" title="${isBanned ? 'Desbanir' : 'Banir'}"><i class="fas ${isBanned ? 'fa-user-check' : 'fa-ban'}"></i></button><button class="delete" data-email="${email}" title="Excluir"><i class="fas fa-trash-alt"></i></button><button class="email-user" data-email="${email}" data-name="${userData.name || email.split('@')[0]}" data-status="${hasAccess ? 'approved' : 'pending'}" title="Enviar Email"><i class="fas fa-envelope"></i></button></div></div>`;
+            }
+            container.innerHTML = html;
+            
+            document.querySelectorAll('.paid').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const newAccess = btn.getAttribute('data-access') === 'true'; database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: newAccess }); if (newAccess) localStorage.setItem(`media_unlocked_${email}`, 'true'); else localStorage.removeItem(`media_unlocked_${email}`); showToast(newAccess ? 'Liberado!' : 'Bloqueado!'); showUsersModal(); }; });
+            document.querySelectorAll('.block').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const newBan = btn.getAttribute('data-ban') === 'true'; database.ref(`users/${email.replace(/\./g, ',')}`).update({ isBanned: newBan }); if (newBan) localStorage.removeItem(`media_unlocked_${email}`); showToast(newBan ? 'Banido!' : 'Desbanido!'); showUsersModal(); }; });
+            document.querySelectorAll('.delete').forEach(btn => { btn.onclick = () => { if (confirm('Excluir usuário?')) { const email = btn.getAttribute('data-email'); database.ref(`users/${email.replace(/\./g, ',')}`).remove(); showToast('Usuário excluído!'); showUsersModal(); } }; });
+            document.querySelectorAll('.email-user').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const name = btn.getAttribute('data-name'); const status = btn.getAttribute('data-status'); const emailType = status === 'approved' ? 'approved' : 'rejected'; sendEmailToUsers(emailType, email, name); }; });
+        });
+    }
+    
+    function showPaymentRequestsModal() {
+        const container = document.getElementById('paymentRequestsList');
+        container.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i></div>';
+        document.getElementById('paymentRequestsModal').style.display = 'flex';
+        hasNewPayment = false;
+        updatePaymentButtonBadge();
+        
+        database.ref('paymentRequests').once('value', (snapshot) => {
+            const requests = snapshot.val();
+            if (!requests || Object.keys(requests).length === 0) { container.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Nenhuma solicitação de pagamento</div>'; return; }
+            let html = '';
+            for (const [id, req] of Object.entries(requests)) {
+                html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-circle"></i> <strong>${req.userName}</strong></div><div class="user-email"><i class="fas fa-envelope"></i> ${req.userEmail}</div><div class="user-status pending"><i class="fas fa-clock"></i> Aguardando liberação</div><div style="font-size: 0.6rem; color: #888;"><i class="fas fa-calendar"></i> ${new Date(req.timestamp).toLocaleString('pt-BR')}</div></div><div class="user-actions"><button class="approve-payment" data-id="${id}" data-email="${req.userEmail}" data-name="${req.userName}"><i class="fas fa-check-circle"></i> Aprovar</button></div></div>`;
+            }
+            container.innerHTML = html;
+            document.querySelectorAll('.approve-payment').forEach(btn => { btn.onclick = () => { const id = btn.getAttribute('data-id'); const email = btn.getAttribute('data-email'); const name = btn.getAttribute('data-name'); database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: true }); localStorage.setItem(`media_unlocked_${email}`, 'true'); database.ref(`paymentRequests/${id}`).remove(); sendEmailToUsers('approved', email, name); showToast(`Mídia liberada para ${name}!`); showPaymentRequestsModal(); showUsersModal(); }; });
+        });
+    }
+    
+    async function requestPayment() {
+        if (!currentUser) { showToast('Faça login primeiro!'); return; }
+        await database.ref(`paymentRequests/${Date.now()}`).set({
+            userName: currentUser.name,
+            userEmail: currentUser.email,
+            timestamp: new Date().toISOString()
+        });
+        showToast('Solicitação enviada! Aguarde a aprovação.');
+        document.getElementById('paymentModal').style.display = 'none';
+    }
+    
+    function showPaymentModal() {
+        if (!currentUser) { openAuthModal(); return; }
+        refreshQRCode();
+        document.getElementById('paymentModal').style.display = 'flex';
+    }
+    
+    function refreshQRCode() {
+        const container = document.getElementById('qrcode');
+        if (!container) return;
+        container.innerHTML = "";
+        if (pixConfig.key && pixConfig.key !== "") {
+            new QRCode(container, { text: `PIX:${pixConfig.key}|Valor:${pixConfig.value}`, width: 120, height: 120 });
+        } else {
+            container.innerHTML = '<div style="color:#888; font-size:0.7rem;">Configure a chave PIX</div>';
+        }
+    }
+    
+    function refreshQRCodeConfig() {
+        const container = document.getElementById('qrcodeConfig');
+        if (!container) return;
+        container.innerHTML = "";
+        const key = document.getElementById('pixKeyConfig').value;
+        const value = document.getElementById('pixValueConfig').value;
+        if (key && key !== "") {
+            new QRCode(container, { text: `PIX:${key}|Valor:${value}`, width: 120, height: 120 });
+        }
+    }
+    
+    async function registerUser(name, email, password, confirm) {
+        if (!name || !email || !password) return "Preencha todos os campos.";
+        if (password !== confirm) return "Senhas não coincidem.";
+        const userSnapshot = await database.ref(`users/${email.replace(/\./g, ',')}`).once('value');
+        if (userSnapshot.val()?.isBanned) return "Sua conta foi banida";
+        try {
+            await auth.createUserWithEmailAndPassword(email, password);
+            await database.ref(`users/${email.replace(/\./g, ',')}`).set({ email, name, hasAccess: false, isBanned: false, createdAt: new Date().toISOString() });
+            currentUser = { name, email };
+            localStorage.setItem('fhellip_current_user', JSON.stringify(currentUser));
+            return "success";
+        } catch (error) { return error.message; }
+    }
+    
+    async function loginUser(email, password) {
+        try {
+            const userSnapshot = await database.ref(`users/${email.replace(/\./g, ',')}`).once('value');
+            const userData = userSnapshot.val();
+            if (userData?.isBanned) return "Sua conta foi banida";
+            await auth.signInWithEmailAndPassword(email, password);
+            if (!userData) await database.ref(`users/${email.replace(/\./g, ',')}`).set({ email, name: email.split('@')[0], hasAccess: false, isBanned: false, createdAt: new Date().toISOString() });
+            currentUser = { name: userData?.name || email.split('@')[0], email };
+            localStorage.setItem('fhellip_current_user', JSON.stringify(currentUser));
+            if (userData?.hasAccess) localStorage.setItem(`media_unlocked_${email}`, 'true');
+            else localStorage.removeItem(`media_unlocked_${email}`);
+            renderMediaTab();
+            return "success";
+        } catch (error) { return error.message; }
+    }
+    
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem('fhellip_current_user');
+        if (!isEditMode) renderMediaTab();
+        updateProfileUI();
+        updateMenuUI();
+        showToast('Logout realizado!');
+    }
+    
+    function updateMenuUI() {
+        if (currentUser && !isEditMode) {
+            document.getElementById('menuLoginBtn').style.display = 'none';
+            document.getElementById('menuLogoutBtn').style.display = 'flex';
+        } else if (!isEditMode) {
+            document.getElementById('menuLoginBtn').style.display = 'flex';
+            document.getElementById('menuLogoutBtn').style.display = 'none';
+        }
+    }
+    
+    function openProfileEditModal() {
+        if (!currentUser) { showToast('Faça login para editar seu perfil!'); openAuthModal(); return; }
+        document.getElementById('profileNameInput').value = currentUser.name;
+        document.getElementById('profileEditModal').style.display = 'flex';
+    }
+    
+    async function saveProfile() {
+        const newName = document.getElementById('profileNameInput').value;
+        const file = document.getElementById('profileUpload').files[0];
+        if (newName) userProfile.name = newName;
+        if (file) { const avatarUrl = await uploadToImgBB(file); if (avatarUrl) userProfile.avatar = avatarUrl; }
+        database.ref('userProfile').set(userProfile);
+        if (currentUser) {
+            currentUser.name = userProfile.name;
+            localStorage.setItem('fhellip_current_user', JSON.stringify(currentUser));
+            await database.ref(`users/${currentUser.email.replace(/\./g, ',')}`).update({ name: userProfile.name });
+        }
+        updateProfileUI();
+        document.getElementById('profileEditModal').style.display = 'none';
+        document.getElementById('profileUpload').value = '';
+        showToast('Perfil atualizado!');
+    }
+    
+    function openAdminProfileEditModal() {
+        document.getElementById('adminProfileNameInput').value = adminProfile.name;
+        document.getElementById('adminProfileEditModal').style.display = 'flex';
+    }
+    
+    async function saveAdminProfile() {
+        const newName = document.getElementById('adminProfileNameInput').value;
+        const file = document.getElementById('adminProfileUpload').files[0];
+        if (newName) adminProfile.name = newName;
+        if (file) { const avatarUrl = await uploadToImgBB(file); if (avatarUrl) adminProfile.avatar = avatarUrl; }
+        database.ref('adminProfile').set(adminProfile);
+        updateHeroBanner();
+        renderMediaTab();
+        document.getElementById('adminProfileEditModal').style.display = 'none';
+        document.getElementById('adminProfileUpload').value = '';
+        showToast('Perfil do dono atualizado!');
+    }
+    
+    async function saveLogo() {
+        const text = document.getElementById('logoTextInput').value;
+        const file = document.getElementById('logoUpload').files[0];
+        const url = document.getElementById('logoUrlInput').value;
+        
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) {
+                logoConfig = { type: "image", imageUrl: imgUrl, text: text || "Fhellip" };
+            }
+        } else if (url) {
+            logoConfig = { type: "image", imageUrl: url, text: text || "Fhellip" };
+        } else if (text) {
+            logoConfig = { type: "text", text: text, imageUrl: "" };
+        } else {
+            logoConfig = { type: "text", text: "Fhellip", imageUrl: "" };
+        }
+        
+        database.ref('logoConfig').set(logoConfig);
+        updateLogoDisplay();
+        updateIntroLogo();
+        document.getElementById('logoConfigModal').style.display = 'none';
+        showToast('Logo personalizado!');
+    }
+    
+    async function changeBannerImage() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const url = await uploadToImgBB(file);
+                if (url) {
+                    adminProfile.bannerImage = url;
+                    database.ref('adminProfile').set(adminProfile);
+                    updateHeroBanner();
+                    showToast('Banner atualizado!');
+                }
+            }
+        };
+        input.click();
+    }
+    
+    function openChangeBackgroundModal() {
+        document.getElementById('changeBackgroundModal').style.display = 'flex';
+    }
+    
+    async function saveBackground() {
+        const file = document.getElementById('backgroundUpload').files[0];
+        const url = document.getElementById('backgroundUrl').value;
+        const color = document.getElementById('backgroundColor').value;
+        
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) {
+                pageBackground = { type: "image", value: imgUrl };
+            }
+        } else if (url) {
+            pageBackground = { type: "image", value: url };
+        } else if (color) {
+            pageBackground = { type: "color", value: color };
+        }
+        
+        savePageBackground();
+        updatePageBackground();
+        document.getElementById('changeBackgroundModal').style.display = 'none';
+        showToast('Fundo da página atualizado!');
+    }
+    
+    function resetBackground() {
+        pageBackground = { type: "color", value: "#050505" };
+        savePageBackground();
+        updatePageBackground();
+        document.getElementById('changeBackgroundModal').style.display = 'none';
+        showToast('Fundo resetado para o padrão!');
+    }
+    
+    let authModal = document.getElementById('authModal'), isLoginMode = false;
+    function openAuthModal() { updateAuthForm(); authModal.style.display = 'flex'; }
+    function closeAuthModal() { authModal.style.display = 'none'; }
+    function updateAuthForm() {
+        let nameGroup = document.getElementById('nameGroup'), confirmGroup = document.getElementById('confirmGroup');
+        if (isLoginMode) {
+            document.getElementById('authTitle').innerText = "Entrar";
+            nameGroup.style.display = 'none'; confirmGroup.style.display = 'none';
+            document.getElementById('authSubmitBtn').innerText = "Entrar";
+            document.getElementById('authSwitch').innerHTML = 'Não tem conta? <span>Criar conta</span>';
+        } else {
+            document.getElementById('authTitle').innerText = "Criar Conta";
+            nameGroup.style.display = 'block'; confirmGroup.style.display = 'block';
+            document.getElementById('authSubmitBtn').innerText = "Criar Conta";
+            document.getElementById('authSwitch').innerHTML = 'Já tem conta? <span>Fazer login</span>';
+        }
+        document.getElementById('authError').innerText = '';
+    }
+    
+    async function init() {
+        loadAllData();
+        renderIconGrid('photoCardIconGrid', selectedPhotoIcon, (icon) => { selectedPhotoIcon = icon; });
+        renderIconGrid('iconCardIconGrid', selectedIconCardIcon, (icon) => { selectedIconCardIcon = icon; });
+        
+        document.getElementById('showAddPhotoCardModalBtn').onclick = () => document.getElementById('addPhotoCardModal').style.display = 'flex';
+        document.getElementById('showAddIconCardModalBtn').onclick = () => document.getElementById('addIconCardModal').style.display = 'flex';
+        document.getElementById('showAddMediaPostModalBtn').onclick = () => document.getElementById('addMediaPostModal').style.display = 'flex';
+        document.getElementById('showAddGalleryModalBtn').onclick = () => document.getElementById('addGalleryModal').style.display = 'flex';
+        document.getElementById('showAddShopModalBtn').onclick = () => document.getElementById('addShopModal').style.display = 'flex';
+        document.getElementById('showStatsBtn').onclick = () => showStats();
+        document.getElementById('resetStatsBtn').onclick = () => resetAllStats();
+        document.getElementById('resetClickLogsBtn').onclick = () => resetClickLogs();
+        document.getElementById('showPaymentRequestsBtn').onclick = () => { showPaymentRequestsModal(); hasNewPayment = false; updatePaymentButtonBadge(); };
+        document.getElementById('changeBackgroundBtn').onclick = () => openChangeBackgroundModal();
+        document.getElementById('exitEditModeBtn').onclick = exitEditMode;
+        
+        document.getElementById('closePhotoCardModal').onclick = () => document.getElementById('addPhotoCardModal').style.display = 'none';
+        document.getElementById('closeIconCardModal').onclick = () => document.getElementById('addIconCardModal').style.display = 'none';
+        document.getElementById('closeMediaPostModal').onclick = () => document.getElementById('addMediaPostModal').style.display = 'none';
+        document.getElementById('closeEditMediaModal').onclick = () => document.getElementById('editMediaPostModal').style.display = 'none';
+        document.getElementById('closeGalleryModal').onclick = () => document.getElementById('addGalleryModal').style.display = 'none';
+        document.getElementById('closeShopModal').onclick = () => document.getElementById('addShopModal').style.display = 'none';
+        document.getElementById('closeEditModal').onclick = () => document.getElementById('editItemModal').style.display = 'none';
+        document.getElementById('closeAuthModal').onclick = closeAuthModal;
+        document.getElementById('closePaymentModal').onclick = () => document.getElementById('paymentModal').style.display = 'none';
+        document.getElementById('closeUsersModal').onclick = () => document.getElementById('usersModal').style.display = 'none';
+        document.getElementById('closePaymentRequestsModal').onclick = () => document.getElementById('paymentRequestsModal').style.display = 'none';
+        document.getElementById('closePixModal').onclick = () => document.getElementById('pixConfigModal').style.display = 'none';
+        document.getElementById('closeProfileModal').onclick = () => document.getElementById('profileEditModal').style.display = 'none';
+        document.getElementById('closeAdminProfileModal').onclick = () => document.getElementById('adminProfileEditModal').style.display = 'none';
+        document.getElementById('closeLogoModal').onclick = () => document.getElementById('logoConfigModal').style.display = 'none';
+        document.getElementById('closeStatsModal').onclick = () => document.getElementById('statsModal').style.display = 'none';
+        document.getElementById('closeClickLogModal').onclick = () => document.getElementById('clickLogModal').style.display = 'none';
+        document.getElementById('closeAdminModal').onclick = () => document.getElementById('adminLoginModal').style.display = 'none';
+        document.getElementById('closeBackgroundModal').onclick = () => document.getElementById('changeBackgroundModal').style.display = 'none';
+        
+        document.getElementById('savePhotoCardBtn').onclick = addPhotoCardFromModal;
+        document.getElementById('saveIconCardBtn').onclick = addIconCardFromModal;
+        document.getElementById('saveMediaPostBtn').onclick = addMediaPost;
+        document.getElementById('updateMediaPostBtn').onclick = updateMediaPost;
+        document.getElementById('saveGalleryBtn').onclick = addGalleryFromModal;
+        document.getElementById('saveProductBtn').onclick = addShopFromModal;
+        document.getElementById('saveProfileBtn').onclick = saveProfile;
+        document.getElementById('saveAdminProfileBtn').onclick = saveAdminProfile;
+        document.getElementById('paymentCompletedBtn').onclick = requestPayment;
+        document.getElementById('saveLogoBtn').onclick = saveLogo;
+        document.getElementById('saveBackgroundBtn').onclick = saveBackground;
+        document.getElementById('resetBackgroundBtn').onclick = resetBackground;
+        document.getElementById('emailAllApprovedBtn').onclick = () => sendEmailToUsers('approved');
+        document.getElementById('emailAllRejectedBtn').onclick = () => sendEmailToUsers('rejected');
+        
+        document.getElementById('savePixConfigBtn').onclick = () => {
+            const newKey = document.getElementById('pixKeyConfig').value;
+            const newValue = document.getElementById('pixValueConfig').value;
+            if (newKey) pixConfig.key = newKey;
+            if (newValue) pixConfig.value = newValue;
+            database.ref('pixConfig').set(pixConfig);
+            document.getElementById('pixKeyDisplay').innerText = pixConfig.key || "Chave não configurada";
+            document.getElementById('pixValue').innerText = pixConfig.value;
+            refreshQRCode(); refreshQRCodeConfig();
+            document.getElementById('pixConfigModal').style.display = 'none';
+            showToast('Configuração PIX salva!');
+        };
+        
+        document.getElementById('profileIconBtn').onclick = () => { document.getElementById('sideMenu').classList.add('open'); document.getElementById('menuOverlay').style.display = 'block'; document.body.style.overflow = 'hidden'; };
+        document.getElementById('closeMenuBtn').onclick = () => { document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; document.body.style.overflow = ''; };
+        document.getElementById('menuOverlay').onclick = () => { document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; document.body.style.overflow = ''; };
+        document.getElementById('menuLoginBtn').onclick = () => { openAuthModal(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuLogoutBtn').onclick = () => { logout(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuUsersBtn').onclick = () => { showUsersModal(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuPaymentRequestsBtn').onclick = () => { showPaymentRequestsModal(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuPixBtn').onclick = () => { document.getElementById('pixKeyConfig').value = pixConfig.key || ""; document.getElementById('pixValueConfig').value = pixConfig.value; refreshQRCodeConfig(); document.getElementById('pixConfigModal').style.display = 'flex'; document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuProfileEditBtn').onclick = () => { openAdminProfileEditModal(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuLogoBtn').onclick = () => { document.getElementById('logoTextInput').value = logoConfig.text || "Fhellip"; document.getElementById('logoUrlInput').value = logoConfig.imageUrl || ""; document.getElementById('logoConfigModal').style.display = 'flex'; document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('editBannerIcon').onclick = () => changeBannerImage();
+        
+        document.getElementById('bannerNameClick').onclick = () => { if (!isEditMode) document.getElementById('adminLoginModal').style.display = 'flex'; else showToast('Você já está no modo edição!'); };
+        document.getElementById('stickyName').onclick = () => { if (!isEditMode) document.getElementById('adminLoginModal').style.display = 'flex'; else showToast('Você já está no modo edição!'); };
+        document.getElementById('adminLoginBtn').onclick = async () => { const email = document.getElementById('adminEmail').value; const password = document.getElementById('adminPassword').value; await adminLogin(email, password); };
+        
+        document.getElementById('authSwitch').onclick = () => { isLoginMode = !isLoginMode; updateAuthForm(); };
+        document.getElementById('authSubmitBtn').onclick = async () => {
+            let email = document.getElementById('authEmail').value, password = document.getElementById('authPassword').value;
+            if (isLoginMode) {
+                let result = await loginUser(email, password);
+                if (result === "success") { closeAuthModal(); updateProfileUI(); updateMenuUI(); renderMediaTab(); showToast('Login realizado!'); }
+                else document.getElementById('authError').innerText = result;
+            } else {
+                let name = document.getElementById('authName').value, confirm = document.getElementById('authConfirmPassword').value;
+                let result = await registerUser(name, email, password, confirm);
+                if (result === "success") { closeAuthModal(); updateProfileUI(); updateMenuUI(); showToast('Conta criada!'); }
+                else document.getElementById('authError').innerText = result;
+            }
+        };
+        
+        document.getElementById('copyPixBtn').onclick = () => { 
+            if (pixConfig.key && pixConfig.key !== "") {
+                navigator.clipboard.writeText(pixConfig.key); 
+                showToast('Chave PIX copiada!');
+            } else {
+                showToast('Configure a chave PIX primeiro!');
+            }
+        };
+        document.getElementById('editAvatarIconBtn').onclick = openProfileEditModal;
+        document.getElementById('editNameIconBtn').onclick = openProfileEditModal;
+        document.getElementById('stickyAvatar').onclick = () => { if (isEditMode) openAdminProfileEditModal(); else showToast('Apenas no modo edição'); };
+        
+        let stickyHeader = document.getElementById('stickyHeader');
+        window.addEventListener('scroll', () => { if (window.scrollY > 80) stickyHeader.classList.add('visible'); else stickyHeader.classList.remove('visible'); });
+        
+        const savedUser = localStorage.getItem('fhellip_current_user');
+        if (savedUser && !isEditMode) {
+            currentUser = JSON.parse(savedUser);
+            const userSnapshot = await database.ref(`users/${currentUser.email.replace(/\./g, ',')}`).once('value');
+            const userData = userSnapshot.val();
+            if (userData) {
+                currentUser.name = userData.name;
+                if (userData.hasAccess) localStorage.setItem(`media_unlocked_${currentUser.email}`, 'true');
+            }
+            updateProfileUI();
+            updateMenuUI();
+            renderMediaTab();
+        }
+        updateProfileUI();
+        updateMenuUI();
+        
+        const logBtn = document.createElement('button');
+        logBtn.id = 'showClickLogBtn';
+        logBtn.innerHTML = '<i class="fas fa-history"></i> <span>Log Cliques</span>';
+        logBtn.onclick = () => showClickLogModal();
+        document.getElementById('editModeBar').appendChild(logBtn);
+        
+        setTimeout(() => {
+            const intro = document.getElementById('introOverlay');
+            if (intro) intro.remove();
+        }, 3300);
+    }
+    
+    init();
+</script>
+</body>
+</html>
