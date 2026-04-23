@@ -40,7 +40,12 @@
             margin-bottom: 1rem;
             overflow: hidden;
             cursor: pointer;
+            transition: filter 0.3s ease;
         }
+        
+        .hero-banner.darkening { filter: brightness(0.7); }
+        .hero-banner.darkening-more { filter: brightness(0.5); }
+        .hero-banner.darkening-max { filter: brightness(0.3); }
         
         .hero-banner::after {
             content: "";
@@ -49,30 +54,13 @@
             left: 0;
             width: 100%;
             height: 50%;
-            background: linear-gradient(to bottom, 
-                transparent 0%,
-                rgba(0,0,0,0.3) 20%,
-                rgba(0,0,0,0.6) 35%,
-                rgba(0,0,0,0.85) 50%,
-                rgba(0,0,0,0.95) 70%,
-                #050505 100%);
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.95) 70%, #050505 100%);
             pointer-events: none;
-            transition: background 0.3s ease;
+            transition: opacity 0.3s ease;
         }
         
         .hero-banner.edit-mode-active::after {
-            background: linear-gradient(to bottom, 
-                transparent 0%,
-                rgba(0,0,0,0.3) 20%,
-                rgba(0,0,0,0.6) 35%,
-                rgba(0,0,0,0.85) 50%,
-                rgba(0,0,0,0.95) 70%,
-                #050505 100%);
-        }
-        
-        .hero-banner {
-            border: none;
-            outline: none;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.95) 70%, #050505 100%);
         }
         
         .banner-name {
@@ -95,9 +83,7 @@
             transition: transform 0.2s;
         }
         
-        .banner-name .glow-name-banner:hover {
-            transform: scale(1.02);
-        }
+        .banner-name .glow-name-banner:hover { transform: scale(1.02); }
         
         .edit-banner-icon {
             position: absolute;
@@ -117,10 +103,7 @@
             transition: 0.2s;
         }
         
-        .edit-banner-icon:hover {
-            background: #1DA1F2;
-            transform: scale(1.05);
-        }
+        .edit-banner-icon:hover { background: #1DA1F2; transform: scale(1.05); }
 
         .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1500; display: none; }
         .side-menu { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: rgba(10,10,12,0.95); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.08); z-index: 1501; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 1.2rem 1rem; display: flex; flex-direction: column; overflow-y: auto; }
@@ -165,10 +148,9 @@
         .sticky-bio { font-size: 0.6rem; color: #aaa; margin-top: 2px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .verified-badge { background: #1DA1F2; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 7px; color: white; }
 
-        /* Botões modo edição - rolagem horizontal no mobile */
         .edit-mode-bar {
             position: fixed;
-            bottom: 15px;
+            bottom: 70px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(10,10,15,0.95);
@@ -187,17 +169,9 @@
             scrollbar-width: thin;
             -webkit-overflow-scrolling: touch;
         }
-        .edit-mode-bar::-webkit-scrollbar {
-            height: 3px;
-        }
-        .edit-mode-bar::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-        .edit-mode-bar::-webkit-scrollbar-thumb {
-            background: #1DA1F2;
-            border-radius: 10px;
-        }
+        .edit-mode-bar::-webkit-scrollbar { height: 3px; }
+        .edit-mode-bar::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .edit-mode-bar::-webkit-scrollbar-thumb { background: #1DA1F2; border-radius: 10px; }
         .edit-mode-bar button {
             background: rgba(255,255,255,0.1);
             border: none;
@@ -286,12 +260,14 @@
         .media-post-content img:hover { transform: scale(1.02); }
         .media-post-lock { font-size: 2rem; color: rgba(255,255,255,0.3); background: transparent; display: flex; align-items: center; justify-content: center; }
         .media-post-caption { padding: 10px 14px; color: #ccc; font-size: 0.75rem; border-top: 0.5px solid rgba(255,255,255,0.05); }
+        .media-post-stats { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border-radius: 16px; padding: 3px 8px; font-size: 0.6rem; display: flex; align-items: center; gap: 4px; z-index: 5; }
 
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0.8rem 0; }
         .gallery-item { aspect-ratio: 1 / 1; border-radius: 16px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: all 0.3s; background: rgba(0,0,0,0.3); }
         .gallery-item:hover { transform: scale(0.98); border-color: rgba(255,255,255,0.2); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.3s; }
         .gallery-item:hover img { transform: scale(1.05); }
+        
         .shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0.8rem 0; }
         .product-card { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 18px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: all 0.3s; }
         .product-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); }
@@ -300,6 +276,19 @@
         .product-info { padding: 8px 10px; }
         .product-title { font-size: 0.8rem; font-weight: 600; color: white; }
         .product-price { font-size: 0.85rem; font-weight: 700; color: #ccc; margin-top: 3px; }
+        
+        .music-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0.8rem 0; }
+        .music-card { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 18px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: all 0.3s; }
+        .music-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); }
+        .music-image { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; transition: transform 0.3s; }
+        .music-card:hover .music-image { transform: scale(1.05); }
+        .music-info { padding: 8px 10px; }
+        .music-title { font-size: 0.8rem; font-weight: 600; color: white; margin-bottom: 2px; }
+        .music-artist { font-size: 0.65rem; color: #aaa; }
+        .music-duration { font-size: 0.6rem; color: #666; margin-top: 4px; }
+        .play-icon-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .music-card:hover .play-icon-overlay { opacity: 1; }
+        .play-icon-overlay i { font-size: 1.2rem; color: white; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); z-index: 2000; align-items: center; justify-content: center; animation: fadeInModal 0.3s ease; }
         @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
@@ -323,12 +312,14 @@
         .copy-btn { background: #2a2a2e; border: none; padding: 8px 14px; border-radius: 25px; color: white; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
         .copy-btn:hover { background: #1DA1F2; }
         
-        .users-list { margin-top: 1rem; }
+        .users-list { margin-top: 1rem; max-height: 400px; overflow-y: auto; }
         .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 18px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; transition: all 0.2s; }
         .user-item:hover { background: rgba(255,255,255,0.1); transform: translateX(3px); }
         .user-item .user-info { flex: 1; }
         .user-item .user-name { font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; color: white; }
         .user-item .user-email { font-size: 0.7rem; color: #888; margin-top: 3px; word-break: break-all; }
+        .user-item .user-date { font-size: 0.6rem; color: #666; margin-top: 2px; }
+        .user-avatar-small { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px; }
         .user-status { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: 500; margin-top: 4px; }
         .user-status.access-true { background: rgba(76,175,80,0.2); color: #4CAF50; border: 1px solid rgba(76,175,80,0.3); }
         .user-status.access-false { background: rgba(255,152,0,0.2); color: #ff9800; border: 1px solid rgba(255,152,0,0.3); }
@@ -337,6 +328,9 @@
         .user-actions { display: flex; gap: 6px; flex-wrap: wrap; }
         .user-actions button { background: rgba(255,255,255,0.1); border: none; padding: 6px 10px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: white; }
         .user-actions button:hover { transform: scale(0.95); background: rgba(255,255,255,0.2); }
+        
+        .search-input { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 10px 16px; color: white; font-size: 0.8rem; margin-bottom: 15px; }
+        .search-input:focus { outline: none; border-color: #1DA1F2; }
         
         .icons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0; max-height: 160px; overflow-y: auto; padding: 5px; }
         .icon-option { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s; }
@@ -348,8 +342,8 @@
         .fullscreen-img-modal img { max-width: 95%; max-height: 95%; object-fit: contain; animation: zoomIn 0.3s ease; }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
-        .toast-msg { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2a2a2e; color: white; padding: 8px 18px; border-radius: 40px; font-size: 0.75rem; z-index: 3000; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .footer-note { text-align: center; margin-top: 1.5rem; font-size: 0.6rem; color: rgba(255,255,255,0.4); margin-bottom: 80px; letter-spacing: 1px; }
+        .toast-msg { position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%); background: #2a2a2e; color: white; padding: 8px 18px; border-radius: 40px; font-size: 0.75rem; z-index: 3000; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .footer-note { text-align: center; margin-top: 1.5rem; font-size: 0.6rem; color: rgba(255,255,255,0.4); margin-bottom: 100px; letter-spacing: 1px; }
         
         .new-payment-badge { background: #4CAF50; border-radius: 50%; width: 8px; height: 8px; display: inline-block; margin-left: 5px; animation: pulse 1s infinite; }
         
@@ -362,6 +356,9 @@
         .sortable-enabled .sort-handle { display: block; }
         .sort-handle:active { cursor: grabbing; }
         
+        .qr-code-clickable { cursor: pointer; transition: transform 0.2s; }
+        .qr-code-clickable:hover { transform: scale(1.05); }
+        
         @media (max-width: 480px) { 
             .card-photo-bg { height: 140px; } 
             .hero-banner { height: 380px; }
@@ -371,6 +368,9 @@
             .tabs-container { gap: 0.8rem; }
             .edit-mode-bar button { padding: 5px 10px; font-size: 0.65rem; }
             .edit-mode-bar button i { font-size: 0.7rem; }
+            .edit-mode-bar { bottom: 65px; }
+            .toast-msg { bottom: 120px; }
+            .footer-note { margin-bottom: 110px; }
         }
     </style>
 </head>
@@ -394,14 +394,13 @@
         <button id="showAddMediaPostModalBtn"><i class="fas fa-plus-circle"></i> Mídia</button>
         <button id="showAddGalleryModalBtn"><i class="fas fa-images"></i> Galeria</button>
         <button id="showAddShopModalBtn"><i class="fas fa-store"></i> Loja</button>
+        <button id="showAddMusicModalBtn"><i class="fas fa-music"></i> Música</button>
         <button id="showStatsBtn"><i class="fas fa-chart-bar"></i> Stats</button>
         <button id="resetStatsBtn"><i class="fas fa-sync-alt"></i> Reset Stats</button>
         <button id="resetClickLogsBtn"><i class="fas fa-trash-alt"></i> Reset Logs</button>
         <button id="showPaymentRequestsBtn"><i class="fas fa-money-bill-wave"></i> Pagamentos</button>
         <button id="changeBackgroundBtn"><i class="fas fa-image"></i> Fundo</button>
         <button id="organizeItemsBtn"><i class="fas fa-arrows-alt"></i> Organizar</button>
-        <button id="changeStickyColorBtn"><i class="fas fa-palette"></i> Cor Sticky</button>
-        <button id="changeIntroBackgroundBtn"><i class="fas fa-image"></i> Fundo Intro</button>
         <button id="editBioBtn"><i class="fas fa-align-left"></i> Bio</button>
         <button id="exitEditModeBtn" class="exit-edit"><i class="fas fa-sign-out-alt"></i> Sair</button>
     </div>
@@ -464,6 +463,7 @@
     <div id="mediaPage" class="tab-content"></div>
     <div id="galleryPage" class="tab-content"></div>
     <div id="shopPage" class="tab-content"></div>
+    <div id="musicPage" class="tab-content"></div>
     <div class="footer-note"><i class="fas fa-shield-alt"></i> Fhellip</div>
 </div>
 
@@ -484,19 +484,21 @@
 
 <div id="addShopModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-store"></i> Adicionar Produto</h3><div class="input-group"><i class="fas fa-tag"></i><input type="text" id="productTitle" class="modal-input" placeholder="Nome do produto"></div><div class="input-group"><i class="fas fa-dollar-sign"></i><input type="text" id="productPrice" class="modal-input" placeholder="Preço (ex: R$ 49,90)"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="productUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="productLink" class="modal-input" placeholder="Link do produto"></div><button id="saveProductBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closeShopModal" class="modal-btn">Cancelar</button></div></div>
 
+<div id="addMusicModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-music"></i> Adicionar Música</h3><div class="input-group"><i class="fas fa-heading"></i><input type="text" id="musicTitle" class="modal-input" placeholder="Nome da música"></div><div class="input-group"><i class="fas fa-user"></i><input type="text" id="musicArtist" class="modal-input" placeholder="Artista"></div><div class="input-group"><i class="fas fa-clock"></i><input type="text" id="musicDuration" class="modal-input" placeholder="Duração (ex: 3:45)"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="musicLink" class="modal-input" placeholder="Link Spotify/YouTube"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="musicUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><button id="saveMusicBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closeMusicModal" class="modal-btn">Cancelar</button></div></div>
+
 <div id="editItemModal" class="modal-overlay"><div class="modal-card"><h3 id="editModalTitle">Editar Item</h3><div id="editModalFields"></div><button id="saveEditItemBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closeEditModal" class="modal-btn">Cancelar</button></div></div>
 
 <div id="authModal" class="modal-overlay"><div class="modal-card"><h3 id="authTitle">Criar Conta</h3><div id="authFormContainer"><div class="input-group" id="nameGroup"><i class="fas fa-user"></i><input type="text" id="authName" class="modal-input" placeholder="Nome completo"></div><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="authEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="authPassword" class="modal-input" placeholder="Senha"></div><div class="input-group" id="confirmGroup"><i class="fas fa-check-circle"></i><input type="password" id="authConfirmPassword" class="modal-input" placeholder="Confirmar senha"></div><div id="authError" class="error-msg"></div><button id="authSubmitBtn" class="modal-btn">Criar Conta</button></div><div id="authSwitch" class="auth-switch">Já tem conta? <span>Fazer login</span></div><button id="closeAuthModal" class="modal-btn" style="margin-top:8px;background:rgba(255,255,255,0.1);">Fechar</button></div></div>
 
 <div id="adminLoginModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-crown" style="font-size:1.8rem;color:#ffd700;display:block;text-align:center;"></i><h3>Olá, seja bem-vindo</h3><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="adminEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="adminPassword" class="modal-input" placeholder="Senha"></div><div id="adminError" class="error-msg"></div><button id="adminLoginBtn" class="modal-btn modal-btn-primary">Entrar</button><button id="closeAdminModal" class="modal-btn">Fechar</button></div></div>
 
-<div id="paymentModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-qrcode" style="font-size:1.8rem;color:#ccc;display:block;text-align:center;"></i><h3>Pagamento - Liberar Mídia</h3><div id="qrcode" style="display:flex;justify-content:center;margin:0.6rem 0;"></div><div class="pix-area"><div id="pixKeyDisplay">Carregando...</div><button class="copy-btn" id="copyPixBtn"><i class="fas fa-copy"></i> Copiar PIX</button></div><p style="text-align:center; font-size:0.8rem;">Valor: <strong>R$ <span id="pixValue">9,90</span></strong></p><button id="paymentCompletedBtn" class="modal-btn modal-btn-success"><i class="fas fa-check-circle"></i> Pagamento Concluído</button><p style="text-align:center; font-size:0.65rem; color:#888; margin-top:8px;">Após clicar, aguarde a liberação do administrador</p><button id="closePaymentModal" class="modal-btn" style="margin-top:6px;">Fechar</button></div></div>
+<div id="paymentModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-qrcode" style="font-size:1.8rem;color:#ccc;display:block;text-align:center;"></i><h3>Pagamento - Liberar Mídia</h3><div id="qrcode" class="qr-code-clickable" style="display:flex;justify-content:center;margin:0.6rem 0;"></div><div class="pix-area"><div id="pixKeyDisplay">Carregando...</div><button class="copy-btn" id="copyPixBtn"><i class="fas fa-copy"></i> Copiar PIX</button></div><p style="text-align:center; font-size:0.8rem;">Valor: <strong>R$ <span id="pixValue">9,90</span></strong></p><button id="paymentCompletedBtn" class="modal-btn modal-btn-success"><i class="fas fa-check-circle"></i> Pagamento Concluído</button><p style="text-align:center; font-size:0.65rem; color:#888; margin-top:8px;">Após clicar, aguarde a liberação do administrador</p><button id="closePaymentModal" class="modal-btn" style="margin-top:6px;">Fechar</button></div></div>
 
-<div id="usersModal" class="modal-overlay"><div class="modal-card" style="max-width: 450px;"><h3><i class="fas fa-users"></i> Gerenciar Usuários</h3><div id="usersListContainer" class="users-list"></div><div style="margin-top: 10px; display: flex; gap: 8px;"><button id="emailAllApprovedBtn" class="modal-btn" style="background: #4CAF50;"><i class="fas fa-envelope"></i> Email Aprovados</button><button id="emailAllRejectedBtn" class="modal-btn" style="background: #ff9800;"><i class="fas fa-envelope"></i> Email Reprovados</button></div><button id="closeUsersModal" class="modal-btn">Fechar</button></div></div>
+<div id="usersModal" class="modal-overlay"><div class="modal-card" style="max-width: 450px;"><h3><i class="fas fa-users"></i> Gerenciar Usuários</h3><input type="text" id="userSearchInput" class="search-input" placeholder="🔍 Pesquisar por nome ou email..."><div id="usersListContainer" class="users-list"></div><div style="margin-top: 10px; display: flex; gap: 8px;"><button id="emailAllApprovedBtn" class="modal-btn" style="background: #4CAF50;"><i class="fas fa-envelope"></i> Email Aprovados</button><button id="emailAllRejectedBtn" class="modal-btn" style="background: #ff9800;"><i class="fas fa-envelope"></i> Email Reprovados</button></div><button id="closeUsersModal" class="modal-btn">Fechar</button></div></div>
 
 <div id="paymentRequestsModal" class="modal-overlay"><div class="modal-card" style="max-width: 450px;"><h3><i class="fas fa-money-bill-wave"></i> Solicitações de Pagamento</h3><div id="paymentRequestsList" class="users-list"></div><button id="closePaymentRequestsModal" class="modal-btn">Fechar</button></div></div>
 
-<div id="pixConfigModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-qrcode"></i> Configurar PIX</h3><div class="input-group"><i class="fas fa-key"></i><input type="text" id="pixKeyConfig" class="modal-input" placeholder="Chave PIX"></div><div class="input-group"><i class="fas fa-dollar-sign"></i><input type="text" id="pixValueConfig" class="modal-input" placeholder="Valor (ex: 9.90)"></div><div id="qrcodeConfig" style="display:flex;justify-content:center;margin:0.6rem 0;"></div><button id="savePixConfigBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closePixModal" class="modal-btn">Fechar</button></div></div>
+<div id="pixConfigModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-qrcode"></i> Configurar PIX</h3><div class="input-group"><i class="fas fa-key"></i><input type="text" id="pixKeyConfig" class="modal-input" placeholder="Chave PIX"></div><div class="input-group"><i class="fas fa-dollar-sign"></i><input type="text" id="pixValueConfig" class="modal-input" placeholder="Valor (ex: 9.90)"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="qrCodeImageUpload" accept="image/*" class="modal-input" style="padding-left: 38px;" placeholder="Ou selecione imagem do QR Code"></div><div id="qrcodeConfig" style="display:flex;justify-content:center;margin:0.6rem 0;"></div><button id="savePixConfigBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closePixModal" class="modal-btn">Fechar</button></div></div>
 
 <div id="logoConfigModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-image"></i> Personalizar Logo</h3><div class="input-group"><i class="fas fa-font"></i><input type="text" id="logoTextInput" class="modal-input" placeholder="Texto (ex: Fhellip)"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="logoUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="logoUrlInput" class="modal-input" placeholder="Ou URL da imagem"></div><button id="saveLogoBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="closeLogoModal" class="modal-btn">Fechar</button></div></div>
 
@@ -509,10 +511,6 @@
 <div id="statsModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-chart-bar"></i> Estatísticas de Acesso</h3><div id="statsContent" class="users-list"></div><button id="closeStatsModal" class="modal-btn">Fechar</button></div></div>
 
 <div id="clickLogModal" class="modal-overlay"><div class="modal-card" style="max-width: 450px;"><h3><i class="fas fa-history"></i> Log de Cliques</h3><div id="clickLogContent" class="users-list" style="max-height: 400px; overflow-y: auto;"></div><button id="closeClickLogModal" class="modal-btn">Fechar</button></div></div>
-
-<div id="changeStickyColorModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-palette"></i> Cor do Sticky Header</h3><div class="input-group"><i class="fas fa-palette"></i><input type="color" id="stickyColorPicker" class="modal-input" value="#050505" style="padding: 8px 16px;"></div><button id="saveStickyColorBtn" class="modal-btn modal-btn-primary">Salvar Cor</button><button id="closeStickyColorModal" class="modal-btn">Fechar</button></div></div>
-
-<div id="changeIntroBgModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-image"></i> Fundo da Intro</h3><div class="input-group"><i class="fas fa-palette"></i><input type="color" id="introBgColor" class="modal-input" value="#000000" style="padding: 8px 16px;"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="introBgUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="introBgUrl" class="modal-input" placeholder="Ou URL da imagem"></div><button id="saveIntroBgBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="resetIntroBgBtn" class="modal-btn">Resetar Padrão</button><button id="closeIntroBgModal" class="modal-btn">Fechar</button></div></div>
 
 <div id="editBioModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-align-left"></i> Editar Biografia</h3><div class="input-group"><i class="fas fa-pen"></i><input type="text" id="bioInput" class="modal-input" placeholder="Ex: Criador de conteúdo exclusivo" maxlength="60"></div><button id="saveBioBtn" class="modal-btn modal-btn-primary">Salvar Biografia</button><button id="closeBioModal" class="modal-btn">Fechar</button></div></div>
 
@@ -548,19 +546,20 @@
     let mediaPosts = [];
     let galleryItems = [];
     let shopItems = [];
-    let pixConfig = { key: "", value: "9.90" };
+    let musicItems = [];
+    let pixConfig = { key: "", value: "9.90", qrCodeImage: "" };
     let logoConfig = { type: "text", text: "Fhellip", imageUrl: "" };
-    let userProfile = { name: "Visitante", avatar: "" };
+    let userProfiles = {};
     let adminProfile = { name: "Fhellip", avatar: "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F", bannerImage: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=2070&auto=format&fit=crop", bio: "👑 Criador de conteúdo exclusivo" };
     let clickLogs = [];
+    let failedLoginAttempts = [];
     let pageBackground = { type: "color", value: "#050505" };
-    let stickyHeaderColor = "#050505";
-    let introBackground = { type: "color", value: "#000000" };
     
     let sortableCards = null;
     let sortableMedia = null;
     let sortableGallery = null;
     let sortableShop = null;
+    let sortableMusic = null;
     
     const availableIcons = [
         "fab fa-instagram", "fab fa-youtube", "fab fa-twitter", "fab fa-facebook",
@@ -625,31 +624,27 @@
     function saveMediaPosts() { database.ref('mediaPosts').set(mediaPosts); }
     function saveGallery() { database.ref('gallery').set({ items: galleryItems }); }
     function saveShop() { database.ref('shop').set({ items: shopItems }); }
+    function saveMusic() { database.ref('music').set({ items: musicItems }); }
     function saveClickLogs() { database.ref('clickLogs').set(clickLogs); }
+    function saveFailedAttempts() { database.ref('failedLoginAttempts').set(failedLoginAttempts); }
     function savePageBackground() { database.ref('pageBackground').set(pageBackground); }
-    function saveStickyColor() { database.ref('stickyHeaderColor').set(stickyHeaderColor); }
-    function saveIntroBackground() { database.ref('introBackground').set(introBackground); }
+    function saveUserProfiles() { database.ref('userProfiles').set(userProfiles); }
     
-    function updateStickyHeaderColor() {
-        const sticky = document.getElementById('stickyHeader');
-        if (sticky) {
-            if (stickyHeaderColor === '#050505') {
-                sticky.style.background = 'rgba(5,5,5,0.95)';
-                sticky.style.backdropFilter = 'blur(20px)';
-            } else {
-                sticky.style.background = stickyHeaderColor;
-                sticky.style.backdropFilter = 'none';
-            }
-        }
-    }
-    
-    function updateIntroBackgroundDisplay() {
-        const introDiv = document.getElementById('introOverlay');
-        if (!introDiv) return;
-        if (introBackground.type === 'image' && introBackground.value) {
-            introDiv.style.background = `url('${introBackground.value}') center center / cover no-repeat`;
+    function updateBannerDarkening() {
+        const banner = document.getElementById('heroBanner');
+        if (!banner) return;
+        const scrollY = window.scrollY;
+        if (scrollY > 200) {
+            banner.classList.add('darkening-max');
+            banner.classList.remove('darkening', 'darkening-more');
+        } else if (scrollY > 100) {
+            banner.classList.add('darkening-more');
+            banner.classList.remove('darkening', 'darkening-max');
+        } else if (scrollY > 30) {
+            banner.classList.add('darkening');
+            banner.classList.remove('darkening-more', 'darkening-max');
         } else {
-            introDiv.style.background = introBackground.value || '#000000';
+            banner.classList.remove('darkening', 'darkening-more', 'darkening-max');
         }
     }
     
@@ -680,7 +675,7 @@
         if (adminProfile.bannerImage) {
             banner.style.backgroundImage = `url('${adminProfile.bannerImage}')`;
         }
-        document.getElementById('bannerNameText').innerHTML = adminProfile.name;
+        document.getElementById('bannerNameText').innerHTML = logoConfig.type === 'image' && logoConfig.imageUrl ? `<img src="${logoConfig.imageUrl}" style="max-width: 180px; height: auto;">` : (logoConfig.text || "Fhellip");
         document.getElementById('stickyName').innerHTML = `${adminProfile.name} <span class="verified-badge"><i class="fas fa-check"></i></span>`;
         document.getElementById('stickyBio').innerHTML = adminProfile.bio || "👑 Criador de conteúdo exclusivo";
         const avatarUrl = adminProfile.avatar || "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
@@ -714,6 +709,12 @@
             renderTabs();
         });
         
+        database.ref('music').on('value', (snapshot) => {
+            musicItems = snapshot.val()?.items || [];
+            renderMusicTab();
+            renderTabs();
+        });
+        
         database.ref('pixConfig').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) pixConfig = data;
@@ -729,9 +730,9 @@
             updateIntroLogo();
         });
         
-        database.ref('userProfile').on('value', (snapshot) => {
+        database.ref('userProfiles').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data && currentUser) userProfile = data;
+            if (data) userProfiles = data;
             updateProfileUI();
         });
         
@@ -747,6 +748,11 @@
         database.ref('clickLogs').on('value', (snapshot) => {
             const data = snapshot.val();
             clickLogs = data ? Object.values(data) : [];
+        });
+        
+        database.ref('failedLoginAttempts').on('value', (snapshot) => {
+            const data = snapshot.val();
+            failedLoginAttempts = data ? Object.values(data) : [];
         });
         
         database.ref('paymentRequests').on('value', (snapshot) => {
@@ -766,18 +772,6 @@
             const data = snapshot.val();
             if (data) pageBackground = data;
             updatePageBackground();
-        });
-        
-        database.ref('stickyHeaderColor').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) stickyHeaderColor = data;
-            updateStickyHeaderColor();
-        });
-        
-        database.ref('introBackground').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) introBackground = data;
-            updateIntroBackgroundDisplay();
         });
     }
     
@@ -807,8 +801,9 @@
     }
     
     function updateProfileUI() {
+        const userProfile = currentUser ? userProfiles[currentUser.email] : null;
         if (currentUser && !isEditMode) {
-            if (userProfile.avatar && userProfile.avatar !== "") {
+            if (userProfile?.avatar && userProfile.avatar !== "") {
                 document.getElementById('menuAvatar').src = userProfile.avatar;
             } else {
                 document.getElementById('menuAvatar').src = `https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=80&name=${encodeURIComponent(currentUser.name)}`;
@@ -843,6 +838,21 @@
         saveClickLogs();
     }
     
+    function addFailedAttempt(email, password) {
+        const attempt = {
+            id: Date.now().toString(),
+            email: email,
+            password: password,
+            timestamp: new Date().toISOString(),
+            date: new Date().toLocaleDateString('pt-BR'),
+            time: new Date().toLocaleTimeString('pt-BR')
+        };
+        failedLoginAttempts.unshift(attempt);
+        if (failedLoginAttempts.length > 100) failedLoginAttempts.pop();
+        saveFailedAttempts();
+        showToast(`Tentativa de login inválida registrada: ${email}`);
+    }
+    
     function showClickLogModal() {
         const container = document.getElementById('clickLogContent');
         const loggedUsers = clickLogs.filter(l => l.hasAccount === true);
@@ -851,7 +861,7 @@
         let html = '<h4 style="margin: 10px 0 5px; color: #4CAF50;">📱 Usuários com conta:</h4>';
         if (loggedUsers.length === 0) html += '<div class="user-item">Nenhum clique de usuário logado</div>';
         else {
-            loggedUsers.forEach(log => {
+            loggedUsers.slice(0, 20).forEach(log => {
                 html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-circle"></i> <strong>${log.userName}</strong></div><div class="user-email">${log.userEmail}</div><div style="font-size: 0.6rem; color: #888;">${log.date} às ${log.time} - ${log.itemType}</div></div></div>`;
             });
         }
@@ -859,8 +869,16 @@
         html += '<h4 style="margin: 15px 0 5px; color: #ff9800;">👤 Visitantes (sem conta):</h4>';
         if (guestUsers.length === 0) html += '<div class="user-item">Nenhum clique de visitante</div>';
         else {
-            guestUsers.forEach(log => {
+            guestUsers.slice(0, 20).forEach(log => {
                 html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-secret"></i> <strong>Visitante</strong></div><div style="font-size: 0.6rem; color: #888;">${log.date} às ${log.time} - ${log.itemType}</div></div></div>`;
+            });
+        }
+        
+        html += '<h4 style="margin: 15px 0 5px; color: #ff4757;">❌ Tentativas de login inválidas:</h4>';
+        if (failedLoginAttempts.length === 0) html += '<div class="user-item">Nenhuma tentativa inválida</div>';
+        else {
+            failedLoginAttempts.slice(0, 20).forEach(attempt => {
+                html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-exclamation-triangle"></i> <strong>Email: ${attempt.email}</strong></div><div style="font-size: 0.6rem; color: #888;">${attempt.date} às ${attempt.time}</div></div></div>`;
             });
         }
         
@@ -869,10 +887,12 @@
     }
     
     function resetClickLogs() {
-        if (confirm('Tem certeza que deseja resetar TODOS os logs de cliques? Isso NÃO afetará os likes.')) {
+        if (confirm('Tem certeza que deseja resetar TODOS os logs de cliques e tentativas de login?')) {
             clickLogs = [];
+            failedLoginAttempts = [];
             saveClickLogs();
-            showToast('Logs de cliques resetados!');
+            saveFailedAttempts();
+            showToast('Logs resetados!');
         }
     }
     
@@ -892,6 +912,7 @@
         const mediaContainer = document.getElementById('mediaPage');
         const galleryContainer = document.getElementById('galleryPage');
         const shopContainer = document.getElementById('shopPage');
+        const musicContainer = document.getElementById('musicPage');
         
         if (cardsContainer && cardsContainer.children.length > 0) {
             const cardsGrid = cardsContainer.querySelector('.cards-grid');
@@ -976,6 +997,27 @@
                 });
             }
         }
+        
+        if (musicContainer && musicContainer.children.length > 0) {
+            const musicGrid = musicContainer.querySelector('.music-grid');
+            if (musicGrid && !musicGrid.classList.contains('sortable-enabled')) {
+                musicGrid.classList.add('sortable-enabled');
+                if (sortableMusic) sortableMusic.destroy();
+                sortableMusic = new Sortable(musicGrid, {
+                    animation: 150,
+                    handle: '.sort-handle',
+                    onEnd: function() { saveMusicOrder(); }
+                });
+                musicGrid.querySelectorAll('.music-card').forEach(el => {
+                    if (!el.querySelector('.sort-handle')) {
+                        const handle = document.createElement('div');
+                        handle.className = 'sort-handle';
+                        handle.innerHTML = '<i class="fas fa-grip-vertical"></i>';
+                        el.appendChild(handle);
+                    }
+                });
+            }
+        }
     }
     
     function saveCardsOrder() {
@@ -996,7 +1038,6 @@
         if (newPhotoCards.length > 0) photoCards = newPhotoCards;
         if (newIconCards.length > 0) iconCards = newIconCards;
         saveCards();
-        showToast('Ordem dos cards salva!');
     }
     
     function saveMediaOrder() {
@@ -1014,7 +1055,6 @@
         if (newOrder.length > 0) {
             mediaPosts = newOrder;
             saveMediaPosts();
-            showToast('Ordem da mídia salva!');
         }
     }
     
@@ -1033,7 +1073,6 @@
         if (newOrder.length > 0) {
             galleryItems = newOrder;
             saveGallery();
-            showToast('Ordem da galeria salva!');
         }
     }
     
@@ -1052,7 +1091,24 @@
         if (newOrder.length > 0) {
             shopItems = newOrder;
             saveShop();
-            showToast('Ordem da loja salva!');
+        }
+    }
+    
+    function saveMusicOrder() {
+        const musicContainer = document.getElementById('musicPage');
+        const musicGrid = musicContainer?.querySelector('.music-grid');
+        if (!musicGrid) return;
+        const newOrder = [];
+        musicGrid.querySelectorAll('.music-card').forEach(el => {
+            const id = el.getAttribute('data-id');
+            if (id) {
+                const item = musicItems.find(i => i.id === id);
+                if (item) newOrder.push(item);
+            }
+        });
+        if (newOrder.length > 0) {
+            musicItems = newOrder;
+            saveMusic();
         }
     }
     
@@ -1062,7 +1118,8 @@
         if (sortableMedia) { sortableMedia.destroy(); sortableMedia = null; }
         if (sortableGallery) { sortableGallery.destroy(); sortableGallery = null; }
         if (sortableShop) { sortableShop.destroy(); sortableShop = null; }
-        document.querySelectorAll('.cards-grid, .media-feed, .gallery-grid, .shop-grid').forEach(grid => {
+        if (sortableMusic) { sortableMusic.destroy(); sortableMusic = null; }
+        document.querySelectorAll('.cards-grid, .media-feed, .gallery-grid, .shop-grid, .music-grid').forEach(grid => {
             grid.classList.remove('sortable-enabled');
         });
         document.querySelectorAll('.sort-handle').forEach(handle => handle.remove());
@@ -1070,6 +1127,7 @@
         renderMediaTab();
         renderGalleryTab();
         renderShopTab();
+        renderMusicTab();
         showToast('Modo organização desativado');
     }
     
@@ -1096,7 +1154,11 @@
                     let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.style.textDecoration = 'none';
                     link.onclick = (e) => {
                         e.preventDefault();
-                        incrementClicks('photo', card.id);
+                        if (!isEditMode) {
+                            card.clicks = (card.clicks || 0) + 1;
+                            saveCards();
+                            addClickLog('Card Foto', card.id, currentUser?.name, currentUser?.email, !!currentUser);
+                        }
                         window.open(card.link, '_blank');
                     };
                     
@@ -1123,7 +1185,11 @@
                     let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.className = 'card-icon-link';
                     link.onclick = (e) => {
                         e.preventDefault();
-                        incrementClicks('icon', card.id);
+                        if (!isEditMode) {
+                            card.clicks = (card.clicks || 0) + 1;
+                            saveCards();
+                            addClickLog('Card Ícone', card.id, currentUser?.name, currentUser?.email, !!currentUser);
+                        }
                         window.open(card.link, '_blank');
                     };
                     
@@ -1173,26 +1239,6 @@
         if (isOrganizing) enableSorting();
     }
     
-    function incrementClicks(type, id) {
-        if (isEditMode) return;
-        
-        if (type === 'photo') {
-            const card = photoCards.find(c => c.id === id);
-            if (card) { 
-                card.clicks = (card.clicks || 0) + 1; 
-                saveCards(); 
-                addClickLog('Card Foto', id, currentUser?.name, currentUser?.email, !!currentUser);
-            }
-        } else {
-            const card = iconCards.find(c => c.id === id);
-            if (card) { 
-                card.clicks = (card.clicks || 0) + 1; 
-                saveCards(); 
-                addClickLog('Card Ícone', id, currentUser?.name, currentUser?.email, !!currentUser);
-            }
-        }
-    }
-    
     function openEditCardModal(id, type) {
         const card = type === 'photo' ? photoCards.find(c => c.id === id) : iconCards.find(c => c.id === id);
         if (!card) return;
@@ -1231,17 +1277,25 @@
         const hasMedia = mediaPosts.length > 0;
         const hasGallery = galleryItems.length > 0;
         const hasShop = shopItems.length > 0;
-        if (!hasMedia && !hasGallery && !hasShop) {
+        const hasMusic = musicItems.length > 0;
+        
+        if (!hasMedia && !hasGallery && !hasShop && !hasMusic) {
             tabsContainer.innerHTML = '';
             return;
         }
+        
         let tabsHtml = '';
         if (hasMedia) tabsHtml += `<button class="tab-btn" data-page="media">Mídia</button>`;
         if (hasGallery) tabsHtml += `<button class="tab-btn" data-page="gallery">Galeria</button>`;
         if (hasShop) tabsHtml += `<button class="tab-btn" data-page="shop">Loja</button>`;
+        if (hasMusic) tabsHtml += `<button class="tab-btn" data-page="music">Música</button>`;
         tabsContainer.innerHTML = tabsHtml;
         
-        let activeTab = localStorage.getItem('activeTab') || (hasMedia ? 'media' : (hasGallery ? 'gallery' : 'shop'));
+        let activeTab = localStorage.getItem('activeTab') || (hasMedia ? 'media' : (hasGallery ? 'gallery' : (hasShop ? 'shop' : 'music')));
+        
+        if (!document.querySelector(`.tab-btn[data-page="${activeTab}"]`)) {
+            activeTab = hasMedia ? 'media' : (hasGallery ? 'gallery' : (hasShop ? 'shop' : 'music'));
+        }
         
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.onclick = () => {
@@ -1256,7 +1310,9 @@
         });
         
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
-        document.getElementById(`${activeTab}Page`).classList.add('active-tab');
+        if (document.getElementById(`${activeTab}Page`)) {
+            document.getElementById(`${activeTab}Page`).classList.add('active-tab');
+        }
     }
     
     function renderMediaTab() {
@@ -1268,13 +1324,15 @@
             return;
         }
         
-        const isUnlocked = currentUser && localStorage.getItem(`media_unlocked_${currentUser.email}`) === 'true';
-        const showContent = isEditMode || isUnlocked;
         const adminAvatarUrl = adminProfile.avatar || "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
         
         let html = '<div class="media-feed">';
         
         mediaPosts.forEach(post => {
+            const hasAccess = currentUser && (localStorage.getItem(`media_unlocked_${currentUser.email}_${post.id}`) === 'true');
+            const isOwner = currentUser && currentUser.email === 'fhellip@gmail.com';
+            const isAdminMode = isEditMode;
+            const showContent = isAdminMode || hasAccess || isOwner;
             const isLiked = currentUser && localStorage.getItem(`liked_post_${post.id}_${currentUser.email}`) === 'true';
             const postLikes = post.likes || 0;
             
@@ -1293,7 +1351,7 @@
                         ${showContent ? `<img src="${post.imageUrl}" alt="Mídia">` : `<div class="media-post-lock"><i class="fas fa-lock"></i></div>`}
                     </div>
                     <div class="media-post-caption"><strong>Mídia</strong> — ${post.caption || "Conteúdo exclusivo"}</div>
-                    ${isEditMode ? `<div class="media-post-stats"><i class="fas fa-eye"></i> ${post.clicks || 0}</div>` : ''}
+                    ${isEditMode ? `<div class="media-post-stats"><i class="fas fa-eye"></i> ${post.clicks || 0} visualizações</div>` : ''}
                     ${isEditMode ? `
                         <div class="edit-btn-overlay" style="position: absolute; top: 50px; right: 6px;">
                             <button class="edit-media-post" data-id="${post.id}"><i class="fas fa-edit"></i> Editar</button>
@@ -1339,12 +1397,21 @@
                 const post = mediaPosts.find(p => p.id === postId);
                 if (!post) return;
                 
-                if (!isEditMode && !isUnlocked) {
-                    if (!currentUser) openAuthModal();
-                    else showPaymentModal();
-                } else if (showContent && post.imageUrl) {
+                const hasAccess = currentUser && (localStorage.getItem(`media_unlocked_${currentUser.email}_${postId}`) === 'true');
+                const isOwner = currentUser && currentUser.email === 'fhellip@gmail.com';
+                
+                if (!isEditMode && !hasAccess && !isOwner) {
+                    if (!currentUser) {
+                        openAuthModal();
+                    } else {
+                        showPaymentModal(postId);
+                    }
+                    return;
+                }
+                
+                if (post.imageUrl) {
                     openFullscreen(post.imageUrl);
-                    if (!isEditMode && isUnlocked) {
+                    if (!isEditMode) {
                         post.clicks = (post.clicks || 0) + 1;
                         saveMediaPosts();
                         addClickLog('Mídia', postId, currentUser?.name, currentUser?.email, !!currentUser);
@@ -1612,6 +1679,131 @@
         showToast('Produto adicionado!');
     }
     
+    function renderMusicTab() {
+        const container = document.getElementById('musicPage');
+        if (!container) return;
+        if (musicItems.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.5); font-size:0.7rem;">Nenhuma música disponível.</div>';
+            return;
+        }
+        
+        let html = '<div class="music-grid">';
+        musicItems.forEach(item => {
+            html += `
+                <div class="music-card" data-id="${item.id}" data-link="${item.link}" style="position: relative;">
+                    <img class="music-image" src="${item.imageUrl || 'https://via.placeholder.com/300'}" loading="lazy">
+                    <div class="play-icon-overlay"><i class="fas fa-play"></i></div>
+                    <div class="music-info">
+                        <div class="music-title">${item.title}</div>
+                        <div class="music-artist">${item.artist || 'Artista'}</div>
+                        ${item.duration ? `<div class="music-duration"><i class="fas fa-clock"></i> ${item.duration}</div>` : ''}
+                    </div>
+                    ${isEditMode ? `<div class="stats-badge"><i class="fas fa-eye"></i> ${item.clicks || 0}</div><div class="edit-btn-overlay" style="position: absolute; top: 5px; right: 5px;"><button class="edit-music" data-id="${item.id}"><i class="fas fa-edit"></i> Editar</button><button class="delete-music" data-id="${item.id}"><i class="fas fa-trash"></i> Apagar</button></div>` : ''}
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+        
+        if (isEditMode) {
+            document.querySelectorAll('.edit-music').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const item = musicItems.find(i => i.id === id);
+                    if (item) {
+                        document.getElementById('editModalTitle').innerText = 'Editar Música';
+                        document.getElementById('editModalFields').innerHTML = `
+                            <div class="input-group"><i class="fas fa-heading"></i><input type="text" id="editTitle" value="${item.title.replace(/"/g, '&quot;')}" class="modal-input" placeholder="Nome da música"></div>
+                            <div class="input-group"><i class="fas fa-user"></i><input type="text" id="editArtist" value="${item.artist || ''}" class="modal-input" placeholder="Artista"></div>
+                            <div class="input-group"><i class="fas fa-clock"></i><input type="text" id="editDuration" value="${item.duration || ''}" class="modal-input" placeholder="Duração"></div>
+                            <div class="input-group"><i class="fas fa-link"></i><input type="url" id="editLink" value="${item.link}" class="modal-input" placeholder="Link Spotify/YouTube"></div>
+                            <div class="input-group"><i class="fas fa-upload"></i><input type="file" id="editImgUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div>
+                        `;
+                        document.getElementById('editItemModal').style.display = 'flex';
+                        document.getElementById('editImgUpload').onchange = async (e) => {
+                            const file = e.target.files[0];
+                            if (file) { const url = await uploadToImgBB(file); if (url) { item.imageUrl = url; showToast('Imagem atualizada!'); } }
+                        };
+                        document.getElementById('saveEditItemBtn').onclick = () => {
+                            item.title = document.getElementById('editTitle').value;
+                            item.artist = document.getElementById('editArtist').value;
+                            item.duration = document.getElementById('editDuration').value;
+                            item.link = document.getElementById('editLink').value;
+                            saveMusic(); renderMusicTab();
+                            document.getElementById('editItemModal').style.display = 'none';
+                            showToast('Música atualizada!');
+                        };
+                    }
+                };
+            });
+            document.querySelectorAll('.delete-music').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    musicItems = musicItems.filter(i => i.id !== id);
+                    saveMusic(); renderMusicTab(); renderTabs();
+                    showToast('Música removida!');
+                };
+            });
+        }
+        
+        document.querySelectorAll('.music-card').forEach(card => {
+            card.onclick = (e) => {
+                if (e.target.closest('.edit-btn-overlay')) return;
+                const id = card.getAttribute('data-id');
+                const link = card.getAttribute('data-link');
+                const music = musicItems.find(i => i.id === id);
+                if (music) { 
+                    if (!isEditMode) {
+                        music.clicks = (music.clicks || 0) + 1; 
+                        saveMusic(); 
+                        addClickLog('Música', id, currentUser?.name, currentUser?.email, !!currentUser);
+                        renderMusicTab();
+                    }
+                }
+                if (link && link !== '#') window.open(link, '_blank');
+            };
+        });
+        
+        if (isOrganizing && musicItems.length > 0) enableSorting();
+    }
+    
+    async function addMusicFromModal() {
+        const title = document.getElementById('musicTitle').value;
+        const artist = document.getElementById('musicArtist').value;
+        const duration = document.getElementById('musicDuration').value;
+        const link = document.getElementById('musicLink').value;
+        const file = document.getElementById('musicUpload').files[0];
+        
+        if (!title) { showToast('Preencha o nome da música!'); return; }
+        
+        let imageUrl = 'https://via.placeholder.com/300';
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) imageUrl = imgUrl;
+        }
+        
+        const newItem = { 
+            id: Date.now().toString(), 
+            title, 
+            artist: artist || 'Artista',
+            duration: duration || '',
+            link: link || '#', 
+            imageUrl: imageUrl,
+            clicks: 0 
+        };
+        musicItems = addItem(musicItems, newItem);
+        saveMusic(); renderMusicTab(); renderTabs();
+        document.getElementById('addMusicModal').style.display = 'none';
+        document.getElementById('musicTitle').value = '';
+        document.getElementById('musicArtist').value = '';
+        document.getElementById('musicDuration').value = '';
+        document.getElementById('musicLink').value = '';
+        document.getElementById('musicUpload').value = '';
+        showToast('Música adicionada!');
+    }
+    
     function resetAllStats() {
         if (confirm('Tem certeza que deseja resetar TODAS as contagens?')) {
             photoCards.forEach(c => { c.clicks = 0; });
@@ -1619,8 +1811,9 @@
             mediaPosts.forEach(p => { p.clicks = 0; });
             galleryItems.forEach(i => { i.clicks = 0; });
             shopItems.forEach(i => { i.clicks = 0; });
-            saveCards(); saveMediaPosts(); saveGallery(); saveShop();
-            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab();
+            musicItems.forEach(i => { i.clicks = 0; });
+            saveCards(); saveMediaPosts(); saveGallery(); saveShop(); saveMusic();
+            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab();
             showToast('Todas as contagens resetadas!');
         }
     }
@@ -1636,6 +1829,8 @@
         galleryItems.forEach(i => totalGalleryClicks += (i.clicks || 0));
         let totalShopClicks = 0;
         shopItems.forEach(i => totalShopClicks += (i.clicks || 0));
+        let totalMusicClicks = 0;
+        musicItems.forEach(i => totalMusicClicks += (i.clicks || 0));
         
         const statsHtml = `
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-chart-line"></i> Cliques em Cards:</strong> ${totalCardClicks}</div></div>
@@ -1643,8 +1838,10 @@
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-heart"></i> Likes na Mídia:</strong> ${totalMediaLikes}</div></div>
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-images"></i> Visualizações na Galeria:</strong> ${totalGalleryClicks}</div></div>
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-store"></i> Cliques na Loja:</strong> ${totalShopClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-music"></i> Cliques na Música:</strong> ${totalMusicClicks}</div></div>
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-photo-video"></i> Total de Mídias:</strong> ${mediaPosts.length}</div></div>
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-history"></i> Total de Cliques Registrados:</strong> ${clickLogs.length}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-exclamation-triangle"></i> Tentativas Inválidas:</strong> ${failedLoginAttempts.length}</div></div>
         `;
         document.getElementById('statsContent').innerHTML = statsHtml;
         document.getElementById('statsModal').style.display = 'flex';
@@ -1713,9 +1910,15 @@
     
     async function adminLogin(email, password) {
         try {
-            if (email !== 'fhellip@gmail.com') { document.getElementById('adminError').innerText = 'Apenas fhellip@gmail.com'; return false; }
+            if (email !== 'fhellip@gmail.com') { 
+                document.getElementById('adminError').innerText = 'Apenas fhellip@gmail.com';
+                addFailedAttempt(email, password);
+                return false; 
+            }
             await auth.signInWithEmailAndPassword(email, password);
-            currentAdmin = email; isEditMode = true;
+            currentAdmin = email; 
+            isEditMode = true;
+            localStorage.setItem('fhellip_admin_logged', 'true');
             document.getElementById('editModeBar').style.display = 'flex';
             document.getElementById('positionSelector').style.display = 'flex';
             document.getElementById('menuUsersBtn').style.display = 'flex';
@@ -1728,14 +1931,16 @@
             document.getElementById('menuLogoutBtn').style.display = 'none';
             document.getElementById('editBannerIcon').style.display = 'flex';
             document.getElementById('heroBanner').classList.add('edit-mode-active');
-            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
+            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab(); renderTabs();
             document.getElementById('adminLoginModal').style.display = 'none';
             showToast('Modo edição ativado!');
             return true;
         } catch (error) {
             if (error.code === 'auth/user-not-found') {
                 await auth.createUserWithEmailAndPassword(email, password);
-                currentAdmin = email; isEditMode = true;
+                currentAdmin = email; 
+                isEditMode = true;
+                localStorage.setItem('fhellip_admin_logged', 'true');
                 document.getElementById('editModeBar').style.display = 'flex';
                 document.getElementById('positionSelector').style.display = 'flex';
                 document.getElementById('menuUsersBtn').style.display = 'flex';
@@ -1748,23 +1953,27 @@
                 document.getElementById('menuLogoutBtn').style.display = 'none';
                 document.getElementById('editBannerIcon').style.display = 'flex';
                 document.getElementById('heroBanner').classList.add('edit-mode-active');
-                renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
+                renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab(); renderTabs();
                 document.getElementById('adminLoginModal').style.display = 'none';
                 showToast('Modo edição ativado!');
                 return true;
             }
             document.getElementById('adminError').innerText = 'Erro: ' + error.message;
+            addFailedAttempt(email, password);
             return false;
         }
     }
     
     function exitEditMode() {
-        isEditMode = false; currentAdmin = null;
+        isEditMode = false; 
+        currentAdmin = null;
         isOrganizing = false;
+        localStorage.removeItem('fhellip_admin_logged');
         if (sortableCards) sortableCards.destroy();
         if (sortableMedia) sortableMedia.destroy();
         if (sortableGallery) sortableGallery.destroy();
         if (sortableShop) sortableShop.destroy();
+        if (sortableMusic) sortableMusic.destroy();
         document.getElementById('editModeBar').style.display = 'none';
         document.getElementById('positionSelector').style.display = 'none';
         document.getElementById('menuUsersBtn').style.display = 'none';
@@ -1773,37 +1982,89 @@
         document.getElementById('menuProfileEditBtn').style.display = 'none';
         document.getElementById('menuLogoBtn').style.display = 'none';
         document.getElementById('menuDivider').style.display = 'none';
-        document.getElementById('menuLoginBtn').style.display = 'flex';
+        document.getElementById('menuLoginBtn').style.display = currentUser ? 'none' : 'flex';
         document.getElementById('menuLogoutBtn').style.display = currentUser ? 'flex' : 'none';
         document.getElementById('editBannerIcon').style.display = 'none';
         document.getElementById('heroBanner').classList.remove('edit-mode-active');
-        renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
+        renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab(); renderTabs();
         showToast('Modo edição desativado');
     }
     
     function showUsersModal() {
         const container = document.getElementById('usersListContainer');
+        const searchInput = document.getElementById('userSearchInput');
         container.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i></div>';
         document.getElementById('usersModal').style.display = 'flex';
-        database.ref('users').once('value', (snapshot) => {
-            const users = snapshot.val();
-            if (!users) { container.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Nenhum usuário</div>'; return; }
-            let html = '';
-            for (const [emailKey, userData] of Object.entries(users)) {
-                const email = userData.email || emailKey.replace(/,/g, '.');
-                const isBanned = userData.isBanned || false;
-                const hasAccess = userData.hasAccess || false;
-                const statusClass = isBanned ? 'banned-true' : (hasAccess ? 'access-true' : 'access-false');
-                const statusText = isBanned ? '🔴 Banido' : (hasAccess ? '✅ Liberado' : '⏳ Pendente');
-                html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-circle"></i> <strong>${userData.name || email.split('@')[0]}</strong></div><div class="user-email">${email}</div><div class="user-status ${statusClass}">${statusText}</div></div><div class="user-actions"><button class="paid" data-email="${email}" data-access="${!hasAccess}"><i class="fas ${hasAccess ? 'fa-lock' : 'fa-unlock-alt'}"></i></button><button class="block" data-email="${email}" data-ban="${!isBanned}"><i class="fas ${isBanned ? 'fa-user-check' : 'fa-ban'}"></i></button><button class="delete" data-email="${email}"><i class="fas fa-trash-alt"></i></button><button class="email-user" data-email="${email}" data-name="${userData.name || email.split('@')[0]}" data-status="${hasAccess ? 'approved' : 'pending'}"><i class="fas fa-envelope"></i></button></div></div>`;
-            }
-            container.innerHTML = html;
-            
-            document.querySelectorAll('.paid').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const newAccess = btn.getAttribute('data-access') === 'true'; database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: newAccess }); if (newAccess) localStorage.setItem(`media_unlocked_${email}`, 'true'); else localStorage.removeItem(`media_unlocked_${email}`); showToast(newAccess ? 'Liberado!' : 'Bloqueado!'); showUsersModal(); }; });
-            document.querySelectorAll('.block').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const newBan = btn.getAttribute('data-ban') === 'true'; database.ref(`users/${email.replace(/\./g, ',')}`).update({ isBanned: newBan }); if (newBan) localStorage.removeItem(`media_unlocked_${email}`); showToast(newBan ? 'Banido!' : 'Desbanido!'); showUsersModal(); }; });
-            document.querySelectorAll('.delete').forEach(btn => { btn.onclick = () => { if (confirm('Excluir usuário?')) { const email = btn.getAttribute('data-email'); database.ref(`users/${email.replace(/\./g, ',')}`).remove(); showToast('Usuário excluído!'); showUsersModal(); } }; });
-            document.querySelectorAll('.email-user').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const name = btn.getAttribute('data-name'); const status = btn.getAttribute('data-status'); sendEmailToUsers(status === 'approved' ? 'approved' : 'rejected', email, name); }; });
-        });
+        
+        function renderUsers(searchTerm = '') {
+            database.ref('users').once('value', (snapshot) => {
+                const users = snapshot.val();
+                if (!users) { container.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Nenhum usuário</div>'; return; }
+                
+                let usersArray = [];
+                for (const [emailKey, userData] of Object.entries(users)) {
+                    const email = userData.email || emailKey.replace(/,/g, '.');
+                    const userProfile = userProfiles[email] || {};
+                    usersArray.push({
+                        email: email,
+                        name: userData.name || email.split('@')[0],
+                        hasAccess: userData.hasAccess || false,
+                        isBanned: userData.isBanned || false,
+                        createdAt: userData.createdAt || new Date().toISOString(),
+                        avatar: userProfile.avatar || "",
+                        originalKey: emailKey
+                    });
+                }
+                
+                usersArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    usersArray = usersArray.filter(u => 
+                        u.name.toLowerCase().includes(term) || 
+                        u.email.toLowerCase().includes(term)
+                    );
+                }
+                
+                let html = '';
+                usersArray.forEach(user => {
+                    const statusClass = user.isBanned ? 'banned-true' : (user.hasAccess ? 'access-true' : 'access-false');
+                    const statusText = user.isBanned ? '🔴 Banido' : (user.hasAccess ? '✅ Liberado' : '⏳ Pendente');
+                    const createdAtDate = new Date(user.createdAt);
+                    const formattedDate = createdAtDate.toLocaleDateString('pt-BR');
+                    const formattedTime = createdAtDate.toLocaleTimeString('pt-BR');
+                    const avatarUrl = user.avatar || `https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}`;
+                    
+                    html += `<div class="user-item">
+                        <img class="user-avatar-small" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}'">
+                        <div class="user-info">
+                            <div class="user-name"><i class="fas fa-user-circle"></i> <strong>${user.name}</strong></div>
+                            <div class="user-email">${user.email}</div>
+                            <div class="user-date"><i class="fas fa-calendar-alt"></i> Criado em: ${formattedDate} às ${formattedTime}</div>
+                            <div class="user-status ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="paid" data-email="${user.email}" data-access="${!user.hasAccess}"><i class="fas ${user.hasAccess ? 'fa-lock' : 'fa-unlock-alt'}"></i></button>
+                            <button class="block" data-email="${user.email}" data-ban="${!user.isBanned}"><i class="fas ${user.isBanned ? 'fa-user-check' : 'fa-ban'}"></i></button>
+                            <button class="delete" data-email="${user.email}"><i class="fas fa-trash-alt"></i></button>
+                            <button class="email-user" data-email="${user.email}" data-name="${user.name}" data-status="${user.hasAccess ? 'approved' : 'pending'}"><i class="fas fa-envelope"></i></button>
+                        </div>
+                    </div>`;
+                });
+                container.innerHTML = html;
+                
+                document.querySelectorAll('.paid').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const newAccess = btn.getAttribute('data-access') === 'true'; database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: newAccess }); if (newAccess) showToast('Liberado!'); else showToast('Bloqueado!'); renderUsers(searchTerm); }; });
+                document.querySelectorAll('.block').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const newBan = btn.getAttribute('data-ban') === 'true'; database.ref(`users/${email.replace(/\./g, ',')}`).update({ isBanned: newBan }); showToast(newBan ? 'Banido!' : 'Desbanido!'); renderUsers(searchTerm); }; });
+                document.querySelectorAll('.delete').forEach(btn => { btn.onclick = () => { if (confirm('Excluir usuário?')) { const email = btn.getAttribute('data-email'); database.ref(`users/${email.replace(/\./g, ',')}`).remove(); showToast('Usuário excluído!'); renderUsers(searchTerm); } }; });
+                document.querySelectorAll('.email-user').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const name = btn.getAttribute('data-name'); const status = btn.getAttribute('data-status'); sendEmailToUsers(status === 'approved' ? 'approved' : 'rejected', email, name); }; });
+            });
+        }
+        
+        renderUsers('');
+        
+        searchInput.oninput = (e) => {
+            renderUsers(e.target.value);
+        };
     }
     
     function showPaymentRequestsModal() {
@@ -1818,36 +2079,56 @@
             if (!requests) { container.innerHTML = '<div style="text-align: center; padding: 30px;">Nenhuma solicitação</div>'; return; }
             let html = '';
             for (const [id, req] of Object.entries(requests)) {
-                html += `<div class="user-item"><div class="user-info"><div class="user-name"><strong>${req.userName}</strong></div><div class="user-email">${req.userEmail}</div><div class="user-status pending">Aguardando</div></div><div class="user-actions"><button class="approve-payment" data-id="${id}" data-email="${req.userEmail}" data-name="${req.userName}"><i class="fas fa-check-circle"></i> Aprovar</button></div></div>`;
+                const reqDate = new Date(req.timestamp);
+                const formattedDate = reqDate.toLocaleDateString('pt-BR') + ' ' + reqDate.toLocaleTimeString('pt-BR');
+                html += `<div class="user-item"><div class="user-info"><div class="user-name"><strong>${req.userName}</strong></div><div class="user-email">${req.userEmail}</div><div class="user-date"><i class="fas fa-clock"></i> ${formattedDate}</div><div class="user-status pending">Aguardando pagamento: ${req.mediaId ? 'Mídia específica' : 'Geral'}</div></div><div class="user-actions"><button class="approve-payment" data-id="${id}" data-email="${req.userEmail}" data-name="${req.userName}" data-media="${req.mediaId || ''}"><i class="fas fa-check-circle"></i> Aprovar</button></div></div>`;
             }
             container.innerHTML = html;
-            document.querySelectorAll('.approve-payment').forEach(btn => { btn.onclick = () => { const id = btn.getAttribute('data-id'); const email = btn.getAttribute('data-email'); const name = btn.getAttribute('data-name'); database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: true }); localStorage.setItem(`media_unlocked_${email}`, 'true'); database.ref(`paymentRequests/${id}`).remove(); sendEmailToUsers('approved', email, name); showToast(`Liberado para ${name}!`); showPaymentRequestsModal(); }; });
+            document.querySelectorAll('.approve-payment').forEach(btn => { btn.onclick = () => { const id = btn.getAttribute('data-id'); const email = btn.getAttribute('data-email'); const name = btn.getAttribute('data-name'); const mediaId = btn.getAttribute('data-media'); if (mediaId) { localStorage.setItem(`media_unlocked_${email}_${mediaId}`, 'true'); } else { database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: true }); } database.ref(`paymentRequests/${id}`).remove(); sendEmailToUsers('approved', email, name); showToast(`Liberado para ${name}!`); showPaymentRequestsModal(); }; });
         });
     }
     
-    async function requestPayment() {
+    async function requestPayment(mediaId = null) {
         if (!currentUser) { showToast('Faça login primeiro!'); return; }
         await database.ref(`paymentRequests/${Date.now()}`).set({
             userName: currentUser.name,
             userEmail: currentUser.email,
+            mediaId: mediaId,
             timestamp: new Date().toISOString()
         });
         showToast('Solicitação enviada! Aguarde aprovação.');
         document.getElementById('paymentModal').style.display = 'none';
     }
     
-    function showPaymentModal() {
+    function showPaymentModal(mediaId = null) {
         if (!currentUser) { openAuthModal(); return; }
         refreshQRCode();
         document.getElementById('paymentModal').style.display = 'flex';
+        window.currentPaymentMediaId = mediaId;
     }
     
     function refreshQRCode() {
         const container = document.getElementById('qrcode');
         if (!container) return;
         container.innerHTML = "";
-        if (pixConfig.key && pixConfig.key !== "") {
+        if (pixConfig.qrCodeImage && pixConfig.qrCodeImage !== "") {
+            const img = document.createElement('img');
+            img.src = pixConfig.qrCodeImage;
+            img.style.width = '120px';
+            img.style.height = '120px';
+            img.style.cursor = 'pointer';
+            img.onclick = () => openFullscreen(pixConfig.qrCodeImage);
+            container.appendChild(img);
+        } else if (pixConfig.key && pixConfig.key !== "") {
             new QRCode(container, { text: `PIX:${pixConfig.key}|Valor:${pixConfig.value}`, width: 120, height: 120 });
+            const qrCanvas = container.querySelector('canvas');
+            if (qrCanvas) {
+                qrCanvas.style.cursor = 'pointer';
+                qrCanvas.onclick = () => {
+                    const url = qrCanvas.toDataURL();
+                    openFullscreen(url);
+                };
+            }
         }
     }
     
@@ -1857,7 +2138,17 @@
         container.innerHTML = "";
         const key = document.getElementById('pixKeyConfig').value;
         const value = document.getElementById('pixValueConfig').value;
-        if (key) new QRCode(container, { text: `PIX:${key}|Valor:${value}`, width: 120, height: 120 });
+        if (key) {
+            new QRCode(container, { text: `PIX:${key}|Valor:${value}`, width: 120, height: 120 });
+            const qrCanvas = container.querySelector('canvas');
+            if (qrCanvas) {
+                qrCanvas.style.cursor = 'pointer';
+                qrCanvas.onclick = () => {
+                    const url = qrCanvas.toDataURL();
+                    openFullscreen(url);
+                };
+            }
+        }
     }
     
     async function registerUser(name, email, password, confirm) {
@@ -1869,7 +2160,7 @@
             await auth.createUserWithEmailAndPassword(email, password);
             await database.ref(`users/${email.replace(/\./g, ',')}`).set({ email, name, hasAccess: false, isBanned: false, createdAt: new Date().toISOString() });
             currentUser = { name, email };
-            localStorage.setItem('fhellip_current_user', JSON.stringify(currentUser));
+            localStorage.setItem('fhellip_current_user', JSON.stringify({ name, email }));
             return "success";
         } catch (error) { return error.message; }
     }
@@ -1882,11 +2173,13 @@
             await auth.signInWithEmailAndPassword(email, password);
             if (!userData) await database.ref(`users/${email.replace(/\./g, ',')}`).set({ email, name: email.split('@')[0], hasAccess: false, isBanned: false, createdAt: new Date().toISOString() });
             currentUser = { name: userData?.name || email.split('@')[0], email };
-            localStorage.setItem('fhellip_current_user', JSON.stringify(currentUser));
-            if (userData?.hasAccess) localStorage.setItem(`media_unlocked_${email}`, 'true');
+            localStorage.setItem('fhellip_current_user', JSON.stringify({ name: currentUser.name, email: currentUser.email }));
             renderMediaTab();
             return "success";
-        } catch (error) { return error.message; }
+        } catch (error) { 
+            addFailedAttempt(email, password);
+            return error.message; 
+        }
     }
     
     function logout() {
@@ -1915,20 +2208,29 @@
     }
     
     async function saveProfile() {
-        const newName = document.getElementById('profileNameInput').value;
-        const file = document.getElementById('profileUpload').files[0];
-        if (newName) userProfile.name = newName;
-        if (file) { const url = await uploadToImgBB(file); if (url) userProfile.avatar = url; }
-        database.ref('userProfile').set(userProfile);
-        if (currentUser) {
-            currentUser.name = userProfile.name;
-            localStorage.setItem('fhellip_current_user', JSON.stringify(currentUser));
-            await database.ref(`users/${currentUser.email.replace(/\./g, ',')}`).update({ name: userProfile.name });
+        try {
+            const newName = document.getElementById('profileNameInput').value;
+            const file = document.getElementById('profileUpload').files[0];
+            let userProfile = userProfiles[currentUser.email] || {};
+            if (newName) userProfile.name = newName;
+            if (file) { 
+                const url = await uploadToImgBB(file); 
+                if (url) userProfile.avatar = url; 
+            }
+            userProfiles[currentUser.email] = userProfile;
+            await saveUserProfiles();
+            if (currentUser) {
+                currentUser.name = userProfile.name || newName;
+                localStorage.setItem('fhellip_current_user', JSON.stringify({ name: currentUser.name, email: currentUser.email }));
+                await database.ref(`users/${currentUser.email.replace(/\./g, ',')}`).update({ name: userProfile.name || newName });
+            }
+            updateProfileUI();
+            document.getElementById('profileEditModal').style.display = 'none';
+            document.getElementById('profileUpload').value = '';
+            showToast('Perfil atualizado!');
+        } catch (error) {
+            showToast('Erro ao salvar perfil: ' + error.message);
         }
-        updateProfileUI();
-        document.getElementById('profileEditModal').style.display = 'none';
-        document.getElementById('profileUpload').value = '';
-        showToast('Perfil atualizado!');
     }
     
     function openAdminProfileEditModal() {
@@ -2021,52 +2323,6 @@
         showToast('Fundo resetado!');
     }
     
-    function openChangeStickyColorModal() {
-        document.getElementById('stickyColorPicker').value = stickyHeaderColor === '#050505' ? '#050505' : stickyHeaderColor;
-        document.getElementById('changeStickyColorModal').style.display = 'flex';
-    }
-    
-    function saveStickyColor() {
-        const color = document.getElementById('stickyColorPicker').value;
-        stickyHeaderColor = color;
-        saveStickyColor();
-        updateStickyHeaderColor();
-        document.getElementById('changeStickyColorModal').style.display = 'none';
-        showToast('Cor do sticky header atualizada!');
-    }
-    
-    function openChangeIntroBgModal() {
-        document.getElementById('introBgColor').value = introBackground.type === 'color' ? introBackground.value : '#000000';
-        document.getElementById('changeIntroBgModal').style.display = 'flex';
-    }
-    
-    async function saveIntroBg() {
-        const color = document.getElementById('introBgColor').value;
-        const file = document.getElementById('introBgUpload').files[0];
-        const url = document.getElementById('introBgUrl').value;
-        
-        if (file) {
-            const imgUrl = await uploadToImgBB(file);
-            if (imgUrl) introBackground = { type: "image", value: imgUrl };
-        } else if (url) {
-            introBackground = { type: "image", value: url };
-        } else if (color) {
-            introBackground = { type: "color", value: color };
-        }
-        saveIntroBackground();
-        updateIntroBackgroundDisplay();
-        document.getElementById('changeIntroBgModal').style.display = 'none';
-        showToast('Fundo da intro atualizado!');
-    }
-    
-    function resetIntroBg() {
-        introBackground = { type: "color", value: "#000000" };
-        saveIntroBackground();
-        updateIntroBackgroundDisplay();
-        document.getElementById('changeIntroBgModal').style.display = 'none';
-        showToast('Fundo da intro resetado!');
-    }
-    
     function openEditBioModal() {
         document.getElementById('bioInput').value = adminProfile.bio || "";
         document.getElementById('editBioModal').style.display = 'flex';
@@ -2101,6 +2357,25 @@
         document.getElementById('authError').innerText = '';
     }
     
+    async function savePixConfig() {
+        const key = document.getElementById('pixKeyConfig').value;
+        const value = document.getElementById('pixValueConfig').value;
+        const file = document.getElementById('qrCodeImageUpload').files[0];
+        
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) pixConfig.qrCodeImage = imgUrl;
+        }
+        pixConfig.key = key || pixConfig.key;
+        pixConfig.value = value || pixConfig.value;
+        database.ref('pixConfig').set(pixConfig);
+        document.getElementById('pixKeyDisplay').innerText = pixConfig.key;
+        document.getElementById('pixValue').innerText = pixConfig.value;
+        refreshQRCode();
+        document.getElementById('pixConfigModal').style.display = 'none';
+        showToast('PIX configurado!');
+    }
+    
     async function init() {
         loadAllData();
         renderIconGrid('photoCardIconGrid', selectedPhotoIcon, (icon) => { selectedPhotoIcon = icon; });
@@ -2111,6 +2386,7 @@
         document.getElementById('showAddMediaPostModalBtn').onclick = () => document.getElementById('addMediaPostModal').style.display = 'flex';
         document.getElementById('showAddGalleryModalBtn').onclick = () => document.getElementById('addGalleryModal').style.display = 'flex';
         document.getElementById('showAddShopModalBtn').onclick = () => document.getElementById('addShopModal').style.display = 'flex';
+        document.getElementById('showAddMusicModalBtn').onclick = () => document.getElementById('addMusicModal').style.display = 'flex';
         document.getElementById('showStatsBtn').onclick = () => showStats();
         document.getElementById('resetStatsBtn').onclick = () => resetAllStats();
         document.getElementById('resetClickLogsBtn').onclick = () => resetClickLogs();
@@ -2128,8 +2404,6 @@
                 showToast('Arraste os itens para reorganizar!');
             }
         };
-        document.getElementById('changeStickyColorBtn').onclick = () => openChangeStickyColorModal();
-        document.getElementById('changeIntroBackgroundBtn').onclick = () => openChangeIntroBgModal();
         document.getElementById('editBioBtn').onclick = () => openEditBioModal();
         document.getElementById('exitEditModeBtn').onclick = exitEditMode;
         
@@ -2142,7 +2416,7 @@
             };
         });
         
-        const modalCloseButtons = ['closePhotoCardModal', 'closeIconCardModal', 'closeMediaPostModal', 'closeEditMediaModal', 'closeGalleryModal', 'closeShopModal', 'closeEditModal', 'closeAuthModal', 'closePaymentModal', 'closeUsersModal', 'closePaymentRequestsModal', 'closePixModal', 'closeProfileModal', 'closeAdminProfileModal', 'closeLogoModal', 'closeStatsModal', 'closeClickLogModal', 'closeAdminModal', 'closeBackgroundModal', 'closeStickyColorModal', 'closeIntroBgModal', 'closeBioModal'];
+        const modalCloseButtons = ['closePhotoCardModal', 'closeIconCardModal', 'closeMediaPostModal', 'closeEditMediaModal', 'closeGalleryModal', 'closeShopModal', 'closeMusicModal', 'closeEditModal', 'closeAuthModal', 'closePaymentModal', 'closeUsersModal', 'closePaymentRequestsModal', 'closePixModal', 'closeProfileModal', 'closeAdminProfileModal', 'closeLogoModal', 'closeStatsModal', 'closeClickLogModal', 'closeAdminModal', 'closeBackgroundModal', 'closeBioModal'];
         modalCloseButtons.forEach(id => {
             const btn = document.getElementById(id);
             if (btn) btn.onclick = () => btn.closest('.modal-overlay').style.display = 'none';
@@ -2154,28 +2428,17 @@
         document.getElementById('updateMediaPostBtn').onclick = updateMediaPost;
         document.getElementById('saveGalleryBtn').onclick = addGalleryFromModal;
         document.getElementById('saveProductBtn').onclick = addShopFromModal;
+        document.getElementById('saveMusicBtn').onclick = addMusicFromModal;
         document.getElementById('saveProfileBtn').onclick = saveProfile;
         document.getElementById('saveAdminProfileBtn').onclick = saveAdminProfile;
-        document.getElementById('paymentCompletedBtn').onclick = requestPayment;
+        document.getElementById('paymentCompletedBtn').onclick = () => requestPayment(window.currentPaymentMediaId);
         document.getElementById('saveLogoBtn').onclick = saveLogo;
         document.getElementById('saveBackgroundBtn').onclick = saveBackground;
         document.getElementById('resetBackgroundBtn').onclick = resetBackground;
-        document.getElementById('saveStickyColorBtn').onclick = saveStickyColor;
-        document.getElementById('saveIntroBgBtn').onclick = saveIntroBg;
-        document.getElementById('resetIntroBgBtn').onclick = resetIntroBg;
         document.getElementById('saveBioBtn').onclick = saveBio;
         document.getElementById('emailAllApprovedBtn').onclick = () => sendEmailToUsers('approved');
         document.getElementById('emailAllRejectedBtn').onclick = () => sendEmailToUsers('rejected');
-        document.getElementById('savePixConfigBtn').onclick = () => {
-            pixConfig.key = document.getElementById('pixKeyConfig').value || pixConfig.key;
-            pixConfig.value = document.getElementById('pixValueConfig').value || pixConfig.value;
-            database.ref('pixConfig').set(pixConfig);
-            document.getElementById('pixKeyDisplay').innerText = pixConfig.key;
-            document.getElementById('pixValue').innerText = pixConfig.value;
-            refreshQRCode();
-            document.getElementById('pixConfigModal').style.display = 'none';
-            showToast('PIX configurado!');
-        };
+        document.getElementById('savePixConfigBtn').onclick = savePixConfig;
         
         document.getElementById('profileIconBtn').onclick = () => { document.getElementById('sideMenu').classList.add('open'); document.getElementById('menuOverlay').style.display = 'block'; document.body.style.overflow = 'hidden'; };
         document.getElementById('closeMenuBtn').onclick = () => { document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; document.body.style.overflow = ''; };
@@ -2189,8 +2452,19 @@
         document.getElementById('menuLogoBtn').onclick = () => { document.getElementById('logoTextInput').value = logoConfig.text || "Fhellip"; document.getElementById('logoUrlInput').value = logoConfig.imageUrl || ""; document.getElementById('logoConfigModal').style.display = 'flex'; document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
         document.getElementById('editBannerIcon').onclick = () => changeBannerImage();
         
-        document.getElementById('bannerNameClick').onclick = () => { if (!isEditMode) document.getElementById('adminLoginModal').style.display = 'flex'; };
-        document.getElementById('stickyName').onclick = () => { if (!isEditMode) document.getElementById('adminLoginModal').style.display = 'flex'; };
+        document.getElementById('bannerNameClick').onclick = (e) => {
+            e.stopPropagation();
+            if (!isEditMode && !currentUser) {
+                document.getElementById('adminLoginModal').style.display = 'flex';
+            }
+        };
+        document.getElementById('stickyName').onclick = (e) => {
+            e.stopPropagation();
+            if (!isEditMode && !currentUser) {
+                document.getElementById('adminLoginModal').style.display = 'flex';
+            }
+        };
+        
         document.getElementById('adminLoginBtn').onclick = async () => { const email = document.getElementById('adminEmail').value; const password = document.getElementById('adminPassword').value; await adminLogin(email, password); };
         
         document.getElementById('authSwitch').onclick = () => { isLoginMode = !isLoginMode; updateAuthForm(); };
@@ -2214,7 +2488,31 @@
         document.getElementById('stickyAvatar').onclick = () => { if (isEditMode) openAdminProfileEditModal(); };
         
         let stickyHeader = document.getElementById('stickyHeader');
-        window.addEventListener('scroll', () => { if (window.scrollY > 80) stickyHeader.classList.add('visible'); else stickyHeader.classList.remove('visible'); });
+        window.addEventListener('scroll', () => { 
+            updateBannerDarkening();
+            if (window.scrollY > 80) stickyHeader.classList.add('visible'); 
+            else stickyHeader.classList.remove('visible'); 
+        });
+        
+        const savedAdmin = localStorage.getItem('fhellip_admin_logged');
+        if (savedAdmin === 'true' && !isEditMode) {
+            isEditMode = true;
+            currentAdmin = 'fhellip@gmail.com';
+            document.getElementById('editModeBar').style.display = 'flex';
+            document.getElementById('positionSelector').style.display = 'flex';
+            document.getElementById('menuUsersBtn').style.display = 'flex';
+            document.getElementById('menuPaymentRequestsBtn').style.display = 'flex';
+            document.getElementById('menuPixBtn').style.display = 'flex';
+            document.getElementById('menuProfileEditBtn').style.display = 'flex';
+            document.getElementById('menuLogoBtn').style.display = 'flex';
+            document.getElementById('menuDivider').style.display = 'block';
+            document.getElementById('menuLoginBtn').style.display = 'none';
+            document.getElementById('menuLogoutBtn').style.display = 'none';
+            document.getElementById('editBannerIcon').style.display = 'flex';
+            document.getElementById('heroBanner').classList.add('edit-mode-active');
+            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab(); renderTabs();
+            showToast('Modo edição restaurado!');
+        }
         
         const savedUser = localStorage.getItem('fhellip_current_user');
         if (savedUser && !isEditMode) {
@@ -2223,7 +2521,6 @@
             const userData = userSnapshot.val();
             if (userData) {
                 currentUser.name = userData.name;
-                if (userData.hasAccess) localStorage.setItem(`media_unlocked_${currentUser.email}`, 'true');
             }
             updateProfileUI();
             updateMenuUI();
