@@ -14,7 +14,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #050505; font-family: 'Inter', sans-serif; color: #ffffff; line-height: 1.4; min-height: 100vh; overflow-x: hidden; }
-        
+
         .page-background {
             position: fixed;
             top: 0;
@@ -27,7 +27,7 @@
             background-position: center;
             transition: background-image 0.3s ease;
         }
-        
+
         .container { max-width: 450px; width: 100%; margin: 0 auto; position: relative; z-index: 2; padding: 0.8rem 0.8rem 1.5rem 0.8rem; }
 
         .hero-banner {
@@ -42,11 +42,11 @@
             cursor: pointer;
             transition: filter 0.3s ease;
         }
-        
+
         .hero-banner.darkening { filter: brightness(0.7); }
         .hero-banner.darkening-more { filter: brightness(0.5); }
         .hero-banner.darkening-max { filter: brightness(0.3); }
-        
+
         .hero-banner::after {
             content: "";
             position: absolute;
@@ -58,11 +58,11 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
-        
+
         .hero-banner.edit-mode-active::after {
             background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.95) 70%, #050505 100%);
         }
-        
+
         .banner-name {
             position: absolute;
             bottom: 40px;
@@ -72,7 +72,7 @@
             z-index: 15;
             cursor: pointer;
         }
-        
+
         .banner-name .glow-name-banner {
             font-size: 2.8rem;
             font-weight: 800;
@@ -82,9 +82,9 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-        
+
         .banner-name .glow-name-banner:hover { transform: scale(1.02); }
-        
+
         .edit-banner-icon {
             position: absolute;
             top: 15px;
@@ -102,7 +102,7 @@
             color: white;
             transition: 0.2s;
         }
-        
+
         .edit-banner-icon:hover { background: #1DA1F2; transform: scale(1.05); }
 
         .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1500; display: none; }
@@ -236,7 +236,7 @@
         .social-icon-big i, .card-icon-corner i { color: white; }
         .card-icon-only:hover .social-icon-big { transform: scale(1.1); }
         .card-info h4 { font-size: 0.85rem; font-weight: 500; }
-        
+
         .edit-btn-overlay { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); border-radius: 25px; padding: 4px 8px; display: flex; gap: 6px; z-index: 10; }
         .edit-btn-overlay button { background: rgba(255,255,255,0.2); border: none; color: white; padding: 3px 6px; border-radius: 18px; cursor: pointer; font-size: 0.6rem; transition: 0.2s; }
         .edit-btn-overlay button.delete-btn:hover { background: #ff4757; }
@@ -267,7 +267,7 @@
         .gallery-item:hover { transform: scale(0.98); border-color: rgba(255,255,255,0.2); }
         .gallery-item img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.3s; }
         .gallery-item:hover img { transform: scale(1.05); }
-        
+
         .shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0.8rem 0; }
         .product-card { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 18px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: all 0.3s; }
         .product-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); }
@@ -276,7 +276,7 @@
         .product-info { padding: 8px 10px; }
         .product-title { font-size: 0.8rem; font-weight: 600; color: white; }
         .product-price { font-size: 0.85rem; font-weight: 700; color: #ccc; margin-top: 3px; }
-        
+
         .music-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0.8rem 0; }
         .music-card { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 18px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); position: relative; transition: all 0.3s; }
         .music-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); }
@@ -311,7 +311,7 @@
         .pix-area { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 12px; margin: 12px 0; text-align: center; }
         .copy-btn { background: #2a2a2e; border: none; padding: 8px 14px; border-radius: 25px; color: white; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
         .copy-btn:hover { background: #1DA1F2; }
-        
+
         .users-list { margin-top: 1rem; max-height: 400px; overflow-y: auto; }
         .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 18px; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; transition: all 0.2s; }
         .user-item:hover { background: rgba(255,255,255,0.1); transform: translateX(3px); }
@@ -328,37 +328,37 @@
         .user-actions { display: flex; gap: 6px; flex-wrap: wrap; }
         .user-actions button { background: rgba(255,255,255,0.1); border: none; padding: 6px 10px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: white; }
         .user-actions button:hover { transform: scale(0.95); background: rgba(255,255,255,0.2); }
-        
+
         .search-input { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 10px 16px; color: white; font-size: 0.8rem; margin-bottom: 15px; }
         .search-input:focus { outline: none; border-color: #1DA1F2; }
-        
+
         .icons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0; max-height: 160px; overflow-y: auto; padding: 5px; }
         .icon-option { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s; }
         .icon-option:hover { background: #1DA1F2; transform: scale(1.05); }
         .icon-option i { font-size: 1.3rem; color: white; }
         .icon-option.selected { background: #1DA1F2; border: 2px solid white; }
-        
+
         .fullscreen-img-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 3000; display: none; align-items: center; justify-content: center; cursor: pointer; }
         .fullscreen-img-modal img { max-width: 95%; max-height: 95%; object-fit: contain; animation: zoomIn 0.3s ease; }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
+
         .toast-msg { position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%); background: #2a2a2e; color: white; padding: 8px 18px; border-radius: 40px; font-size: 0.75rem; z-index: 3000; opacity: 0; transition: opacity 0.3s; pointer-events: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .footer-note { text-align: center; margin-top: 1.5rem; font-size: 0.6rem; color: rgba(255,255,255,0.4); margin-bottom: 100px; letter-spacing: 1px; }
-        
+
         .new-payment-badge { background: #4CAF50; border-radius: 50%; width: 8px; height: 8px; display: inline-block; margin-left: 5px; animation: pulse 1s infinite; }
-        
+
         .position-options { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; }
         .pos-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 25px; cursor: pointer; color: white; font-size: 0.75rem; transition: 0.2s; }
         .pos-btn.active { background: #1DA1F2; border-color: #1DA1F2; }
         .pos-btn:hover { background: rgba(255,255,255,0.2); }
-        
+
         .sort-handle { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); cursor: grab; color: rgba(255,255,255,0.5); font-size: 1rem; z-index: 15; display: none; }
         .sortable-enabled .sort-handle { display: block; }
         .sort-handle:active { cursor: grabbing; }
-        
+
         .qr-code-clickable { cursor: pointer; transition: transform 0.2s; }
         .qr-code-clickable:hover { transform: scale(1.05); }
-        
+
         @media (max-width: 480px) { 
             .card-photo-bg { height: 140px; } 
             .hero-banner { height: 380px; }
@@ -385,7 +385,7 @@
 </div>
 
 <div class="container">
-    
+
     <div class="profile-icon-btn" id="profileIconBtn"><i class="fas fa-user-circle"></i></div>
 
     <div id="editModeBar" class="edit-mode-bar" style="display: none;">
@@ -526,13 +526,13 @@
         messagingSenderId: "1068256130878",
         appId: "1:1068256130878:web:c883dbff354a742ff0de6f"
     };
-    
+
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
-    
+
     const IMGBB_API_KEY = "39d6fa29c5d1a99652d6dcb6bd611757";
-    
+
     let isEditMode = false;
     let currentAdmin = null;
     let currentUser = null;
@@ -540,7 +540,7 @@
     let hasNewPayment = false;
     let isOrganizing = false;
     let addPosition = "bottom";
-    
+
     let photoCards = [];
     let iconCards = [];
     let mediaPosts = [];
@@ -554,13 +554,14 @@
     let clickLogs = [];
     let failedLoginAttempts = [];
     let pageBackground = { type: "color", value: "#050505" };
-    
+    let userUnlockedMedia = {};
+
     let sortableCards = null;
     let sortableMedia = null;
     let sortableGallery = null;
     let sortableShop = null;
     let sortableMusic = null;
-    
+
     const availableIcons = [
         "fab fa-instagram", "fab fa-youtube", "fab fa-twitter", "fab fa-facebook",
         "fab fa-tiktok", "fab fa-spotify", "fab fa-github", "fab fa-linkedin",
@@ -568,10 +569,10 @@
         "fas fa-heart", "fas fa-star", "fas fa-music", "fas fa-video",
         "fas fa-camera", "fas fa-gamepad", "fas fa-shopping-cart", "fas fa-bolt"
     ];
-    
+
     let selectedPhotoIcon = "fab fa-instagram";
     let selectedIconCardIcon = "fab fa-link";
-    
+
     function renderIconGrid(containerId, selectedIcon, onSelect) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -588,7 +589,7 @@
             container.appendChild(div);
         });
     }
-    
+
     async function uploadToImgBB(file) {
         const formData = new FormData();
         formData.append('image', file);
@@ -601,25 +602,25 @@
         showToast("Erro no upload: " + (data.error?.message || "Desconhecido"));
         return null;
     }
-    
+
     function showToast(msg) { 
         let toast = document.getElementById('toastMessage'); 
         toast.innerText = msg; 
         toast.style.opacity = '1'; 
         setTimeout(() => toast.style.opacity = '0', 2500); 
     }
-    
+
     function openFullscreen(imageUrl) {
         const modal = document.getElementById('fullscreenModal');
         const img = document.getElementById('fullscreenImage');
         img.src = imageUrl;
         modal.style.display = 'flex';
     }
-    
+
     function closeFullscreen() {
         document.getElementById('fullscreenModal').style.display = 'none';
     }
-    
+
     function saveCards() { database.ref('cards').set({ photoCards, iconCards }); }
     function saveMediaPosts() { database.ref('mediaPosts').set(mediaPosts); }
     function saveGallery() { database.ref('gallery').set({ items: galleryItems }); }
@@ -629,7 +630,8 @@
     function saveFailedAttempts() { database.ref('failedLoginAttempts').set(failedLoginAttempts); }
     function savePageBackground() { database.ref('pageBackground').set(pageBackground); }
     function saveUserProfiles() { database.ref('userProfiles').set(userProfiles); }
-    
+    function saveUserUnlockedMedia() { database.ref('userUnlockedMedia').set(userUnlockedMedia); }
+
     function updateBannerDarkening() {
         const banner = document.getElementById('heroBanner');
         if (!banner) return;
@@ -647,7 +649,7 @@
             banner.classList.remove('darkening', 'darkening-more', 'darkening-max');
         }
     }
-    
+
     function updateIntroLogo() {
         const introLogo = document.getElementById('introLogoText');
         if (introLogo) {
@@ -658,7 +660,7 @@
             }
         }
     }
-    
+
     function updatePageBackground() {
         const bgDiv = document.getElementById('pageBackground');
         if (pageBackground.type === 'image' && pageBackground.value) {
@@ -669,7 +671,7 @@
             bgDiv.style.backgroundColor = pageBackground.value || '#050505';
         }
     }
-    
+
     function updateHeroBanner() {
         const banner = document.getElementById('heroBanner');
         if (adminProfile.bannerImage) {
@@ -681,7 +683,7 @@
         const avatarUrl = adminProfile.avatar || "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
         document.getElementById('stickyAvatar').src = avatarUrl;
     }
-    
+
     function loadAllData() {
         database.ref('cards').on('value', (snapshot) => {
             const data = snapshot.val();
@@ -689,32 +691,32 @@
             iconCards = data?.iconCards || [];
             renderCards();
         });
-        
+
         database.ref('mediaPosts').on('value', (snapshot) => {
             const data = snapshot.val();
             mediaPosts = data ? Object.values(data) : [];
             renderMediaTab();
             renderTabs();
         });
-        
+
         database.ref('gallery').on('value', (snapshot) => {
             galleryItems = snapshot.val()?.items || [];
             renderGalleryTab();
             renderTabs();
         });
-        
+
         database.ref('shop').on('value', (snapshot) => {
             shopItems = snapshot.val()?.items || [];
             renderShopTab();
             renderTabs();
         });
-        
+
         database.ref('music').on('value', (snapshot) => {
             musicItems = snapshot.val()?.items || [];
             renderMusicTab();
             renderTabs();
         });
-        
+
         database.ref('pixConfig').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) pixConfig = data;
@@ -722,20 +724,20 @@
             document.getElementById('pixValue').innerText = pixConfig.value;
             refreshQRCode();
         });
-        
+
         database.ref('logoConfig').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) logoConfig = data;
             updateLogoDisplay();
             updateIntroLogo();
         });
-        
+
         database.ref('userProfiles').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) userProfiles = data;
             updateProfileUI();
         });
-        
+
         database.ref('adminProfile').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -744,17 +746,17 @@
                 renderMediaTab();
             }
         });
-        
+
         database.ref('clickLogs').on('value', (snapshot) => {
             const data = snapshot.val();
             clickLogs = data ? Object.values(data) : [];
         });
-        
+
         database.ref('failedLoginAttempts').on('value', (snapshot) => {
             const data = snapshot.val();
             failedLoginAttempts = data ? Object.values(data) : [];
         });
-        
+
         database.ref('paymentRequests').on('value', (snapshot) => {
             const requests = snapshot.val();
             if (requests && Object.keys(requests).length > 0) {
@@ -767,14 +769,42 @@
                 updatePaymentButtonBadge();
             }
         });
-        
+
         database.ref('pageBackground').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) pageBackground = data;
             updatePageBackground();
         });
+
+        // Carregar mídias desbloqueadas do usuário
+        database.ref('userUnlockedMedia').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) userUnlockedMedia = data;
+            renderMediaTab();
+        });
     }
-    
+
+    // Verificar se o usuário tem acesso a uma mídia específica
+    function hasMediaAccess(mediaId) {
+        if (!currentUser) return false;
+        if (currentUser.email === 'fhellip@gmail.com') return true;
+        const userUnlocked = userUnlockedMedia[currentUser.email];
+        return userUnlocked && userUnlocked[mediaId] === true;
+    }
+
+    // Liberar mídia para o usuário (salvar no Firebase)
+    async function unlockMediaForUser(mediaId) {
+        if (!currentUser) return false;
+        if (!userUnlockedMedia[currentUser.email]) {
+            userUnlockedMedia[currentUser.email] = {};
+        }
+        userUnlockedMedia[currentUser.email][mediaId] = true;
+        await saveUserUnlockedMedia();
+        showToast('Mídia liberada!');
+        renderMediaTab();
+        return true;
+    }
+
     function updatePaymentButtonBadge() {
         const btn = document.getElementById('showPaymentRequestsBtn');
         if (btn && hasNewPayment) {
@@ -784,7 +814,7 @@
             btn.innerHTML = '<i class="fas fa-money-bill-wave"></i> Pagamentos';
         }
     }
-    
+
     function updateLogoDisplay() {
         const heroDiv = document.getElementById('bannerNameText');
         if (logoConfig.type === 'image' && logoConfig.imageUrl) {
@@ -799,7 +829,7 @@
             heroDiv.style.animation = "none";
         }
     }
-    
+
     function updateProfileUI() {
         const userProfile = currentUser ? userProfiles[currentUser.email] : null;
         if (currentUser && !isEditMode) {
@@ -820,7 +850,7 @@
             document.getElementById('editNameIconBtn').style.display = 'none';
         }
     }
-    
+
     function addClickLog(itemType, itemId, userName, userEmail, hasAccount) {
         const log = {
             id: Date.now().toString(),
@@ -837,7 +867,7 @@
         if (clickLogs.length > 500) clickLogs.pop();
         saveClickLogs();
     }
-    
+
     function addFailedAttempt(email, password) {
         const attempt = {
             id: Date.now().toString(),
@@ -852,12 +882,12 @@
         saveFailedAttempts();
         showToast(`Tentativa de login inválida registrada: ${email}`);
     }
-    
+
     function showClickLogModal() {
         const container = document.getElementById('clickLogContent');
         const loggedUsers = clickLogs.filter(l => l.hasAccount === true);
         const guestUsers = clickLogs.filter(l => l.hasAccount === false);
-        
+
         let html = '<h4 style="margin: 10px 0 5px; color: #4CAF50;">📱 Usuários com conta:</h4>';
         if (loggedUsers.length === 0) html += '<div class="user-item">Nenhum clique de usuário logado</div>';
         else {
@@ -865,7 +895,7 @@
                 html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-circle"></i> <strong>${log.userName}</strong></div><div class="user-email">${log.userEmail}</div><div style="font-size: 0.6rem; color: #888;">${log.date} às ${log.time} - ${log.itemType}</div></div></div>`;
             });
         }
-        
+
         html += '<h4 style="margin: 15px 0 5px; color: #ff9800;">👤 Visitantes (sem conta):</h4>';
         if (guestUsers.length === 0) html += '<div class="user-item">Nenhum clique de visitante</div>';
         else {
@@ -873,7 +903,7 @@
                 html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-user-secret"></i> <strong>Visitante</strong></div><div style="font-size: 0.6rem; color: #888;">${log.date} às ${log.time} - ${log.itemType}</div></div></div>`;
             });
         }
-        
+
         html += '<h4 style="margin: 15px 0 5px; color: #ff4757;">❌ Tentativas de login inválidas:</h4>';
         if (failedLoginAttempts.length === 0) html += '<div class="user-item">Nenhuma tentativa inválida</div>';
         else {
@@ -881,11 +911,11 @@
                 html += `<div class="user-item"><div class="user-info"><div class="user-name"><i class="fas fa-exclamation-triangle"></i> <strong>Email: ${attempt.email}</strong></div><div style="font-size: 0.6rem; color: #888;">${attempt.date} às ${attempt.time}</div></div></div>`;
             });
         }
-        
+
         container.innerHTML = html;
         document.getElementById('clickLogModal').style.display = 'flex';
     }
-    
+
     function resetClickLogs() {
         if (confirm('Tem certeza que deseja resetar TODOS os logs de cliques e tentativas de login?')) {
             clickLogs = [];
@@ -895,7 +925,7 @@
             showToast('Logs resetados!');
         }
     }
-    
+
     function addItem(array, item) {
         if (addPosition === 'top') {
             array.unshift(item);
@@ -904,16 +934,16 @@
         }
         return array;
     }
-    
+
     function enableSorting() {
         if (!isOrganizing) return;
-        
+
         const cardsContainer = document.getElementById('dynamic-cards');
         const mediaContainer = document.getElementById('mediaPage');
         const galleryContainer = document.getElementById('galleryPage');
         const shopContainer = document.getElementById('shopPage');
         const musicContainer = document.getElementById('musicPage');
-        
+
         if (cardsContainer && cardsContainer.children.length > 0) {
             const cardsGrid = cardsContainer.querySelector('.cards-grid');
             if (cardsGrid && !cardsGrid.classList.contains('sortable-enabled')) {
@@ -934,7 +964,7 @@
                 });
             }
         }
-        
+
         if (mediaContainer && mediaContainer.children.length > 0) {
             const mediaFeed = mediaContainer.querySelector('.media-feed');
             if (mediaFeed && !mediaFeed.classList.contains('sortable-enabled')) {
@@ -955,7 +985,7 @@
                 });
             }
         }
-        
+
         if (galleryContainer && galleryContainer.children.length > 0) {
             const galleryGrid = galleryContainer.querySelector('.gallery-grid');
             if (galleryGrid && !galleryGrid.classList.contains('sortable-enabled')) {
@@ -976,7 +1006,7 @@
                 });
             }
         }
-        
+
         if (shopContainer && shopContainer.children.length > 0) {
             const shopGrid = shopContainer.querySelector('.shop-grid');
             if (shopGrid && !shopGrid.classList.contains('sortable-enabled')) {
@@ -997,7 +1027,7 @@
                 });
             }
         }
-        
+
         if (musicContainer && musicContainer.children.length > 0) {
             const musicGrid = musicContainer.querySelector('.music-grid');
             if (musicGrid && !musicGrid.classList.contains('sortable-enabled')) {
@@ -1019,7 +1049,7 @@
             }
         }
     }
-    
+
     function saveCardsOrder() {
         const cardsContainer = document.getElementById('dynamic-cards');
         const cardsGrid = cardsContainer?.querySelector('.cards-grid');
@@ -1039,7 +1069,7 @@
         if (newIconCards.length > 0) iconCards = newIconCards;
         saveCards();
     }
-    
+
     function saveMediaOrder() {
         const mediaContainer = document.getElementById('mediaPage');
         const mediaFeed = mediaContainer?.querySelector('.media-feed');
@@ -1057,7 +1087,7 @@
             saveMediaPosts();
         }
     }
-    
+
     function saveGalleryOrder() {
         const galleryContainer = document.getElementById('galleryPage');
         const galleryGrid = galleryContainer?.querySelector('.gallery-grid');
@@ -1075,7 +1105,7 @@
             saveGallery();
         }
     }
-    
+
     function saveShopOrder() {
         const shopContainer = document.getElementById('shopPage');
         const shopGrid = shopContainer?.querySelector('.shop-grid');
@@ -1093,7 +1123,7 @@
             saveShop();
         }
     }
-    
+
     function saveMusicOrder() {
         const musicContainer = document.getElementById('musicPage');
         const musicGrid = musicContainer?.querySelector('.music-grid');
@@ -1111,7 +1141,7 @@
             saveMusic();
         }
     }
-    
+
     function disableSorting() {
         isOrganizing = false;
         if (sortableCards) { sortableCards.destroy(); sortableCards = null; }
@@ -1130,27 +1160,27 @@
         renderMusicTab();
         showToast('Modo organização desativado');
     }
-    
+
     function renderCards() {
         let container = document.getElementById('dynamic-cards');
         if (!container) return;
         container.innerHTML = '';
-        
+
         if (photoCards.length === 0 && iconCards.length === 0) {
             if (!isEditMode) return;
             container.innerHTML = '<div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.5);"><i class="fas fa-plus-circle" style="font-size: 1.5rem;"></i><p style="font-size:0.7rem;">Clique nos botões abaixo</p></div>';
             return;
         }
-        
+
         let allCards = [...photoCards.map(c => ({ ...c, type: 'photo' })), ...iconCards.map(c => ({ ...c, type: 'icon' }))];
-        
+
         if (photoCards.length > 0 || iconCards.length > 0) {
             let cardsGroup = document.createElement('div'); cardsGroup.className = 'cards-grid';
             allCards.forEach(card => {
                 if (card.type === 'photo') {
                     let cardDiv = document.createElement('div'); cardDiv.className = 'card-photo';
                     cardDiv.style.position = 'relative';
-                    
+
                     let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.style.textDecoration = 'none';
                     link.onclick = (e) => {
                         e.preventDefault();
@@ -1161,14 +1191,14 @@
                         }
                         window.open(card.link, '_blank');
                     };
-                    
+
                     let bg = document.createElement('div'); bg.className = 'card-photo-bg'; bg.style.backgroundImage = `url('${card.img}')`;
                     let iconCorner = document.createElement('div'); iconCorner.className = 'card-icon-corner';
                     let icon = document.createElement('i'); icon.className = card.icon; iconCorner.appendChild(icon);
                     let bottom = document.createElement('div'); bottom.className = 'card-title-bottom';
                     let title = document.createElement('h3'); title.innerText = card.title; bottom.appendChild(title);
                     bg.appendChild(iconCorner); bg.appendChild(bottom); link.appendChild(bg); cardDiv.appendChild(link);
-                    
+
                     if (isEditMode) {
                         let statsBadge = document.createElement('div'); statsBadge.className = 'stats-badge';
                         statsBadge.innerHTML = `<i class="fas fa-eye"></i> ${card.clicks || 0}`;
@@ -1181,7 +1211,7 @@
                 } else {
                     let cardDiv = document.createElement('div'); cardDiv.className = 'card-icon-only';
                     cardDiv.style.position = 'relative';
-                    
+
                     let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.className = 'card-icon-link';
                     link.onclick = (e) => {
                         e.preventDefault();
@@ -1192,13 +1222,13 @@
                         }
                         window.open(card.link, '_blank');
                     };
-                    
+
                     let iconWrap = document.createElement('div'); iconWrap.className = 'social-icon-big';
                     let icon = document.createElement('i'); icon.className = card.icon; iconWrap.appendChild(icon);
                     let info = document.createElement('div'); info.className = 'card-info';
                     let title = document.createElement('h4'); title.innerText = card.title; info.appendChild(title);
                     link.appendChild(iconWrap); link.appendChild(info); cardDiv.appendChild(link);
-                    
+
                     if (isEditMode) {
                         let statsBadge = document.createElement('div'); statsBadge.className = 'stats-badge';
                         statsBadge.innerHTML = `<i class="fas fa-eye"></i> ${card.clicks || 0}`;
@@ -1212,7 +1242,7 @@
             });
             container.appendChild(cardsGroup);
         }
-        
+
         if (isEditMode) {
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.onclick = (e) => {
@@ -1235,10 +1265,10 @@
                 };
             });
         }
-        
+
         if (isOrganizing) enableSorting();
     }
-    
+
     function openEditCardModal(id, type) {
         const card = type === 'photo' ? photoCards.find(c => c.id === id) : iconCards.find(c => c.id === id);
         if (!card) return;
@@ -1271,32 +1301,32 @@
             showToast('Card atualizado!');
         };
     }
-    
+
     function renderTabs() {
         const tabsContainer = document.getElementById('tabsContainer');
         const hasMedia = mediaPosts.length > 0;
         const hasGallery = galleryItems.length > 0;
         const hasShop = shopItems.length > 0;
         const hasMusic = musicItems.length > 0;
-        
+
         if (!hasMedia && !hasGallery && !hasShop && !hasMusic) {
             tabsContainer.innerHTML = '';
             return;
         }
-        
+
         let tabsHtml = '';
         if (hasMedia) tabsHtml += `<button class="tab-btn" data-page="media">Mídia</button>`;
         if (hasGallery) tabsHtml += `<button class="tab-btn" data-page="gallery">Galeria</button>`;
         if (hasShop) tabsHtml += `<button class="tab-btn" data-page="shop">Loja</button>`;
         if (hasMusic) tabsHtml += `<button class="tab-btn" data-page="music">Música</button>`;
         tabsContainer.innerHTML = tabsHtml;
-        
+
         let activeTab = localStorage.getItem('activeTab') || (hasMedia ? 'media' : (hasGallery ? 'gallery' : (hasShop ? 'shop' : 'music')));
-        
+
         if (!document.querySelector(`.tab-btn[data-page="${activeTab}"]`)) {
             activeTab = hasMedia ? 'media' : (hasGallery ? 'gallery' : (hasShop ? 'shop' : 'music'));
         }
-        
+
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.onclick = () => {
                 const page = btn.getAttribute('data-page');
@@ -1308,34 +1338,34 @@
             };
             if (btn.getAttribute('data-page') === activeTab) btn.classList.add('active');
         });
-        
+
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
         if (document.getElementById(`${activeTab}Page`)) {
             document.getElementById(`${activeTab}Page`).classList.add('active-tab');
         }
     }
-    
+
     function renderMediaTab() {
         const container = document.getElementById('mediaPage');
         if (!container) return;
-        
+
         if (mediaPosts.length === 0) {
             container.innerHTML = '<div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.5); font-size:0.7rem;">Nenhuma mídia disponível.</div>';
             return;
         }
-        
+
         const adminAvatarUrl = adminProfile.avatar || "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
-        
+
         let html = '<div class="media-feed">';
-        
+
         mediaPosts.forEach(post => {
-            const hasAccess = currentUser && (localStorage.getItem(`media_unlocked_${currentUser.email}_${post.id}`) === 'true');
+            const hasAccess = hasMediaAccess(post.id);
             const isOwner = currentUser && currentUser.email === 'fhellip@gmail.com';
             const isAdminMode = isEditMode;
             const showContent = isAdminMode || hasAccess || isOwner;
             const isLiked = currentUser && localStorage.getItem(`liked_post_${post.id}_${currentUser.email}`) === 'true';
             const postLikes = post.likes || 0;
-            
+
             html += `
                 <div class="media-post" data-id="${post.id}" style="position: relative;">
                     <div class="media-post-header">
@@ -1348,7 +1378,7 @@
                         </button>
                     </div>
                     <div class="media-post-content" data-id="${post.id}">
-                        ${showContent ? `<img src="${post.imageUrl}" alt="Mídia">` : `<div class="media-post-lock"><i class="fas fa-lock"></i></div>`}
+                        ${showContent ? `<img src="${post.imageUrl}" alt="Mídia">` : `<div class="media-post-lock"><i class="fas fa-lock"></i><p style="font-size:0.7rem; margin-top:8px;">Pague para desbloquear</p></div>`}
                     </div>
                     <div class="media-post-caption"><strong>Mídia</strong> — ${post.caption || "Conteúdo exclusivo"}</div>
                     ${isEditMode ? `<div class="media-post-stats"><i class="fas fa-eye"></i> ${post.clicks || 0} visualizações</div>` : ''}
@@ -1361,10 +1391,10 @@
                 </div>
             `;
         });
-        
+
         html += '</div>';
         container.innerHTML = html;
-        
+
         document.querySelectorAll('.media-post-like').forEach(btn => {
             btn.onclick = async (e) => {
                 e.stopPropagation();
@@ -1372,7 +1402,7 @@
                 const postId = btn.getAttribute('data-id');
                 const post = mediaPosts.find(p => p.id === postId);
                 if (!post) return;
-                
+
                 const isLikedNow = localStorage.getItem(`liked_post_${postId}_${currentUser.email}`) === 'true';
                 if (isLikedNow) {
                     localStorage.removeItem(`liked_post_${postId}_${currentUser.email}`);
@@ -1389,17 +1419,17 @@
                 renderMediaTab();
             };
         });
-        
+
         document.querySelectorAll('.media-post-content').forEach(content => {
-            content.onclick = (e) => {
+            content.onclick = async (e) => {
                 if (e.target.closest('.edit-btn-overlay')) return;
                 const postId = content.getAttribute('data-id');
                 const post = mediaPosts.find(p => p.id === postId);
                 if (!post) return;
-                
-                const hasAccess = currentUser && (localStorage.getItem(`media_unlocked_${currentUser.email}_${postId}`) === 'true');
+
+                const hasAccess = hasMediaAccess(postId);
                 const isOwner = currentUser && currentUser.email === 'fhellip@gmail.com';
-                
+
                 if (!isEditMode && !hasAccess && !isOwner) {
                     if (!currentUser) {
                         openAuthModal();
@@ -1408,7 +1438,7 @@
                     }
                     return;
                 }
-                
+
                 if (post.imageUrl) {
                     openFullscreen(post.imageUrl);
                     if (!isEditMode) {
@@ -1420,7 +1450,7 @@
                 }
             };
         });
-        
+
         if (isEditMode) {
             document.querySelectorAll('.edit-media-post').forEach(btn => {
                 btn.onclick = (e) => {
@@ -1443,10 +1473,10 @@
                 };
             });
         }
-        
+
         if (isOrganizing && mediaPosts.length > 0) enableSorting();
     }
-    
+
     function openEditMediaPostModal(postId) {
         const post = mediaPosts.find(p => p.id === postId);
         if (!post) return;
@@ -1456,37 +1486,37 @@
         document.getElementById('editMediaUpload').value = '';
         document.getElementById('editMediaPostModal').style.display = 'flex';
     }
-    
+
     async function updateMediaPost() {
         const post = mediaPosts.find(p => p.id === editingPostId);
         if (!post) return;
-        
+
         const file = document.getElementById('editMediaUpload').files[0];
         const caption = document.getElementById('editMediaCaption').value;
         const likes = parseInt(document.getElementById('editMediaLikes').value) || 0;
-        
+
         if (file) {
             const imgUrl = await uploadToImgBB(file);
             if (imgUrl) post.imageUrl = imgUrl;
         }
         post.caption = caption || post.caption;
         post.likes = likes;
-        
+
         saveMediaPosts();
         renderMediaTab();
         document.getElementById('editMediaPostModal').style.display = 'none';
         showToast('Mídia atualizada!');
     }
-    
+
     async function addMediaPost() {
         const file = document.getElementById('mediaPostUpload').files[0];
         const caption = document.getElementById('mediaPostCaption').value;
         const likes = parseInt(document.getElementById('mediaPostLikes').value) || 0;
-        
+
         if (!file) { showToast('Selecione uma imagem!'); return; }
         const imgUrl = await uploadToImgBB(file);
         if (!imgUrl) return;
-        
+
         const newPost = {
             id: Date.now().toString(),
             imageUrl: imgUrl,
@@ -1504,7 +1534,7 @@
         document.getElementById('mediaPostLikes').value = '0';
         showToast('Mídia adicionada!');
     }
-    
+
     function renderGalleryTab() {
         const container = document.getElementById('galleryPage');
         if (!container) return;
@@ -1518,7 +1548,7 @@
         });
         html += '</div>';
         container.innerHTML = html;
-        
+
         if (isEditMode) {
             document.querySelectorAll('.edit-gallery').forEach(btn => {
                 btn.onclick = (e) => {
@@ -1551,7 +1581,7 @@
                 };
             });
         }
-        
+
         document.querySelectorAll('.gallery-item').forEach(item => {
             item.onclick = (e) => {
                 if (e.target.closest('.edit-btn-overlay')) return;
@@ -1568,10 +1598,10 @@
                 }
             };
         });
-        
+
         if (isOrganizing && galleryItems.length > 0) enableSorting();
     }
-    
+
     async function addGalleryFromModal() {
         const file = document.getElementById('galleryUpload').files[0];
         if (!file) { showToast('Selecione uma imagem!'); return; }
@@ -1584,7 +1614,7 @@
         document.getElementById('galleryUpload').value = '';
         showToast('Imagem adicionada!');
     }
-    
+
     function renderShopTab() {
         const container = document.getElementById('shopPage');
         if (!container) return;
@@ -1598,7 +1628,7 @@
         });
         html += '</div>';
         container.innerHTML = html;
-        
+
         if (isEditMode) {
             document.querySelectorAll('.edit-shop').forEach(btn => {
                 btn.onclick = (e) => {
@@ -1639,7 +1669,7 @@
                 };
             });
         }
-        
+
         document.querySelectorAll('.product-card').forEach(card => {
             card.onclick = (e) => {
                 if (e.target.closest('.edit-btn-overlay')) return;
@@ -1656,10 +1686,10 @@
                 if (link && link !== '#') window.open(link, '_blank');
             };
         });
-        
+
         if (isOrganizing && shopItems.length > 0) enableSorting();
     }
-    
+
     async function addShopFromModal() {
         const title = document.getElementById('productTitle').value;
         const price = document.getElementById('productPrice').value;
@@ -1678,7 +1708,7 @@
         document.getElementById('productUpload').value = '';
         showToast('Produto adicionado!');
     }
-    
+
     function renderMusicTab() {
         const container = document.getElementById('musicPage');
         if (!container) return;
@@ -1686,7 +1716,7 @@
             container.innerHTML = '<div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.5); font-size:0.7rem;">Nenhuma música disponível.</div>';
             return;
         }
-        
+
         let html = '<div class="music-grid">';
         musicItems.forEach(item => {
             html += `
@@ -1704,7 +1734,7 @@
         });
         html += '</div>';
         container.innerHTML = html;
-        
+
         if (isEditMode) {
             document.querySelectorAll('.edit-music').forEach(btn => {
                 btn.onclick = (e) => {
@@ -1747,7 +1777,7 @@
                 };
             });
         }
-        
+
         document.querySelectorAll('.music-card').forEach(card => {
             card.onclick = (e) => {
                 if (e.target.closest('.edit-btn-overlay')) return;
@@ -1765,25 +1795,25 @@
                 if (link && link !== '#') window.open(link, '_blank');
             };
         });
-        
+
         if (isOrganizing && musicItems.length > 0) enableSorting();
     }
-    
+
     async function addMusicFromModal() {
         const title = document.getElementById('musicTitle').value;
         const artist = document.getElementById('musicArtist').value;
         const duration = document.getElementById('musicDuration').value;
         const link = document.getElementById('musicLink').value;
         const file = document.getElementById('musicUpload').files[0];
-        
+
         if (!title) { showToast('Preencha o nome da música!'); return; }
-        
+
         let imageUrl = 'https://via.placeholder.com/300';
         if (file) {
             const imgUrl = await uploadToImgBB(file);
             if (imgUrl) imageUrl = imgUrl;
         }
-        
+
         const newItem = { 
             id: Date.now().toString(), 
             title, 
@@ -1803,7 +1833,7 @@
         document.getElementById('musicUpload').value = '';
         showToast('Música adicionada!');
     }
-    
+
     function resetAllStats() {
         if (confirm('Tem certeza que deseja resetar TODAS as contagens?')) {
             photoCards.forEach(c => { c.clicks = 0; });
@@ -1817,7 +1847,7 @@
             showToast('Todas as contagens resetadas!');
         }
     }
-    
+
     function showStats() {
         let totalCardClicks = 0;
         photoCards.forEach(c => totalCardClicks += (c.clicks || 0));
@@ -1831,7 +1861,7 @@
         shopItems.forEach(i => totalShopClicks += (i.clicks || 0));
         let totalMusicClicks = 0;
         musicItems.forEach(i => totalMusicClicks += (i.clicks || 0));
-        
+
         const statsHtml = `
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-chart-line"></i> Cliques em Cards:</strong> ${totalCardClicks}</div></div>
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-eye"></i> Visualizações na Mídia:</strong> ${totalMediaClicks}</div></div>
@@ -1846,7 +1876,7 @@
         document.getElementById('statsContent').innerHTML = statsHtml;
         document.getElementById('statsModal').style.display = 'flex';
     }
-    
+
     function sendEmailToUsers(type, specificEmail = null, specificName = null) {
         if (specificEmail) {
             const subject = type === 'approved' ? 'Acesso Aprovado - Fhellip' : 'Acesso Pendente - Fhellip';
@@ -1857,7 +1887,7 @@
             showToast(`Abrindo email...`);
             return;
         }
-        
+
         database.ref('users').once('value', (snapshot) => {
             const users = snapshot.val();
             if (!users) { showToast('Nenhum usuário encontrado'); return; }
@@ -1877,7 +1907,7 @@
             }
         });
     }
-    
+
     async function addPhotoCardFromModal() {
         const title = document.getElementById('photoCardTitle').value;
         const link = document.getElementById('photoCardLink').value;
@@ -1894,7 +1924,7 @@
         document.getElementById('photoCardUpload').value = '';
         showToast('Card adicionado!');
     }
-    
+
     async function addIconCardFromModal() {
         const title = document.getElementById('iconCardTitle').value;
         const link = document.getElementById('iconCardLink').value;
@@ -1907,7 +1937,7 @@
         document.getElementById('iconCardLink').value = '';
         showToast('Card adicionado!');
     }
-    
+
     async function adminLogin(email, password) {
         try {
             if (email !== 'fhellip@gmail.com') { 
@@ -1963,7 +1993,7 @@
             return false;
         }
     }
-    
+
     function exitEditMode() {
         isEditMode = false; 
         currentAdmin = null;
@@ -1989,18 +2019,18 @@
         renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab(); renderTabs();
         showToast('Modo edição desativado');
     }
-    
+
     function showUsersModal() {
         const container = document.getElementById('usersListContainer');
         const searchInput = document.getElementById('userSearchInput');
         container.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i></div>';
         document.getElementById('usersModal').style.display = 'flex';
-        
+
         function renderUsers(searchTerm = '') {
             database.ref('users').once('value', (snapshot) => {
                 const users = snapshot.val();
                 if (!users) { container.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Nenhum usuário</div>'; return; }
-                
+
                 let usersArray = [];
                 for (const [emailKey, userData] of Object.entries(users)) {
                     const email = userData.email || emailKey.replace(/,/g, '.');
@@ -2015,9 +2045,9 @@
                         originalKey: emailKey
                     });
                 }
-                
+
                 usersArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                
+
                 if (searchTerm) {
                     const term = searchTerm.toLowerCase();
                     usersArray = usersArray.filter(u => 
@@ -2025,7 +2055,7 @@
                         u.email.toLowerCase().includes(term)
                     );
                 }
-                
+
                 let html = '';
                 usersArray.forEach(user => {
                     const statusClass = user.isBanned ? 'banned-true' : (user.hasAccess ? 'access-true' : 'access-false');
@@ -2034,7 +2064,7 @@
                     const formattedDate = createdAtDate.toLocaleDateString('pt-BR');
                     const formattedTime = createdAtDate.toLocaleTimeString('pt-BR');
                     const avatarUrl = user.avatar || `https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}`;
-                    
+
                     html += `<div class="user-item">
                         <img class="user-avatar-small" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}'">
                         <div class="user-info">
@@ -2052,28 +2082,28 @@
                     </div>`;
                 });
                 container.innerHTML = html;
-                
+
                 document.querySelectorAll('.paid').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const newAccess = btn.getAttribute('data-access') === 'true'; database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: newAccess }); if (newAccess) showToast('Liberado!'); else showToast('Bloqueado!'); renderUsers(searchTerm); }; });
                 document.querySelectorAll('.block').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const newBan = btn.getAttribute('data-ban') === 'true'; database.ref(`users/${email.replace(/\./g, ',')}`).update({ isBanned: newBan }); showToast(newBan ? 'Banido!' : 'Desbanido!'); renderUsers(searchTerm); }; });
                 document.querySelectorAll('.delete').forEach(btn => { btn.onclick = () => { if (confirm('Excluir usuário?')) { const email = btn.getAttribute('data-email'); database.ref(`users/${email.replace(/\./g, ',')}`).remove(); showToast('Usuário excluído!'); renderUsers(searchTerm); } }; });
                 document.querySelectorAll('.email-user').forEach(btn => { btn.onclick = () => { const email = btn.getAttribute('data-email'); const name = btn.getAttribute('data-name'); const status = btn.getAttribute('data-status'); sendEmailToUsers(status === 'approved' ? 'approved' : 'rejected', email, name); }; });
             });
         }
-        
+
         renderUsers('');
-        
+
         searchInput.oninput = (e) => {
             renderUsers(e.target.value);
         };
     }
-    
+
     function showPaymentRequestsModal() {
         const container = document.getElementById('paymentRequestsList');
         container.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i></div>';
         document.getElementById('paymentRequestsModal').style.display = 'flex';
         hasNewPayment = false;
         updatePaymentButtonBadge();
-        
+
         database.ref('paymentRequests').once('value', (snapshot) => {
             const requests = snapshot.val();
             if (!requests) { container.innerHTML = '<div style="text-align: center; padding: 30px;">Nenhuma solicitação</div>'; return; }
@@ -2084,10 +2114,26 @@
                 html += `<div class="user-item"><div class="user-info"><div class="user-name"><strong>${req.userName}</strong></div><div class="user-email">${req.userEmail}</div><div class="user-date"><i class="fas fa-clock"></i> ${formattedDate}</div><div class="user-status pending">Aguardando pagamento: ${req.mediaId ? 'Mídia específica' : 'Geral'}</div></div><div class="user-actions"><button class="approve-payment" data-id="${id}" data-email="${req.userEmail}" data-name="${req.userName}" data-media="${req.mediaId || ''}"><i class="fas fa-check-circle"></i> Aprovar</button></div></div>`;
             }
             container.innerHTML = html;
-            document.querySelectorAll('.approve-payment').forEach(btn => { btn.onclick = () => { const id = btn.getAttribute('data-id'); const email = btn.getAttribute('data-email'); const name = btn.getAttribute('data-name'); const mediaId = btn.getAttribute('data-media'); if (mediaId) { localStorage.setItem(`media_unlocked_${email}_${mediaId}`, 'true'); } else { database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: true }); } database.ref(`paymentRequests/${id}`).remove(); sendEmailToUsers('approved', email, name); showToast(`Liberado para ${name}!`); showPaymentRequestsModal(); }; });
+            document.querySelectorAll('.approve-payment').forEach(btn => { btn.onclick = async () => { 
+                const id = btn.getAttribute('data-id'); 
+                const email = btn.getAttribute('data-email'); 
+                const name = btn.getAttribute('data-name'); 
+                const mediaId = btn.getAttribute('data-media'); 
+                if (mediaId) {
+                    // Liberar mídia específica no Firebase
+                    await unlockMediaForUser(mediaId);
+                } else { 
+                    // Liberar acesso geral
+                    database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: true }); 
+                } 
+                database.ref(`paymentRequests/${id}`).remove(); 
+                sendEmailToUsers('approved', email, name); 
+                showToast(`Liberado para ${name}!`); 
+                showPaymentRequestsModal(); 
+            }; });
         });
     }
-    
+
     async function requestPayment(mediaId = null) {
         if (!currentUser) { showToast('Faça login primeiro!'); return; }
         await database.ref(`paymentRequests/${Date.now()}`).set({
@@ -2099,14 +2145,14 @@
         showToast('Solicitação enviada! Aguarde aprovação.');
         document.getElementById('paymentModal').style.display = 'none';
     }
-    
+
     function showPaymentModal(mediaId = null) {
         if (!currentUser) { openAuthModal(); return; }
         refreshQRCode();
         document.getElementById('paymentModal').style.display = 'flex';
         window.currentPaymentMediaId = mediaId;
     }
-    
+
     function refreshQRCode() {
         const container = document.getElementById('qrcode');
         if (!container) return;
@@ -2131,7 +2177,7 @@
             }
         }
     }
-    
+
     function refreshQRCodeConfig() {
         const container = document.getElementById('qrcodeConfig');
         if (!container) return;
@@ -2150,7 +2196,7 @@
             }
         }
     }
-    
+
     async function registerUser(name, email, password, confirm) {
         if (!name || !email || !password) return "Preencha todos os campos.";
         if (password !== confirm) return "Senhas não coincidem.";
@@ -2164,7 +2210,7 @@
             return "success";
         } catch (error) { return error.message; }
     }
-    
+
     async function loginUser(email, password) {
         try {
             const userSnapshot = await database.ref(`users/${email.replace(/\./g, ',')}`).once('value');
@@ -2181,7 +2227,7 @@
             return error.message; 
         }
     }
-    
+
     function logout() {
         currentUser = null;
         localStorage.removeItem('fhellip_current_user');
@@ -2190,7 +2236,7 @@
         updateMenuUI();
         showToast('Logout realizado!');
     }
-    
+
     function updateMenuUI() {
         if (currentUser && !isEditMode) {
             document.getElementById('menuLoginBtn').style.display = 'none';
@@ -2200,13 +2246,13 @@
             document.getElementById('menuLogoutBtn').style.display = 'none';
         }
     }
-    
+
     function openProfileEditModal() {
         if (!currentUser) { showToast('Faça login!'); openAuthModal(); return; }
         document.getElementById('profileNameInput').value = currentUser.name;
         document.getElementById('profileEditModal').style.display = 'flex';
     }
-    
+
     async function saveProfile() {
         try {
             const newName = document.getElementById('profileNameInput').value;
@@ -2232,12 +2278,12 @@
             showToast('Erro ao salvar perfil: ' + error.message);
         }
     }
-    
+
     function openAdminProfileEditModal() {
         document.getElementById('adminProfileNameInput').value = adminProfile.name;
         document.getElementById('adminProfileEditModal').style.display = 'flex';
     }
-    
+
     async function saveAdminProfile() {
         const newName = document.getElementById('adminProfileNameInput').value;
         const file = document.getElementById('adminProfileUpload').files[0];
@@ -2250,12 +2296,12 @@
         document.getElementById('adminProfileUpload').value = '';
         showToast('Perfil do dono atualizado!');
     }
-    
+
     async function saveLogo() {
         const text = document.getElementById('logoTextInput').value;
         const file = document.getElementById('logoUpload').files[0];
         const url = document.getElementById('logoUrlInput').value;
-        
+
         if (file) {
             const imgUrl = await uploadToImgBB(file);
             if (imgUrl) logoConfig = { type: "image", imageUrl: imgUrl, text: text || "Fhellip" };
@@ -2272,7 +2318,7 @@
         document.getElementById('logoConfigModal').style.display = 'none';
         showToast('Logo personalizado!');
     }
-    
+
     async function changeBannerImage() {
         const input = document.createElement('input');
         input.type = 'file';
@@ -2291,16 +2337,16 @@
         };
         input.click();
     }
-    
+
     function openChangeBackgroundModal() {
         document.getElementById('changeBackgroundModal').style.display = 'flex';
     }
-    
+
     async function saveBackground() {
         const file = document.getElementById('backgroundUpload').files[0];
         const url = document.getElementById('backgroundUrl').value;
         const color = document.getElementById('backgroundColor').value;
-        
+
         if (file) {
             const imgUrl = await uploadToImgBB(file);
             if (imgUrl) pageBackground = { type: "image", value: imgUrl };
@@ -2314,7 +2360,7 @@
         document.getElementById('changeBackgroundModal').style.display = 'none';
         showToast('Fundo atualizado!');
     }
-    
+
     function resetBackground() {
         pageBackground = { type: "color", value: "#050505" };
         savePageBackground();
@@ -2322,12 +2368,12 @@
         document.getElementById('changeBackgroundModal').style.display = 'none';
         showToast('Fundo resetado!');
     }
-    
+
     function openEditBioModal() {
         document.getElementById('bioInput').value = adminProfile.bio || "";
         document.getElementById('editBioModal').style.display = 'flex';
     }
-    
+
     async function saveBio() {
         const bio = document.getElementById('bioInput').value;
         adminProfile.bio = bio || "👑 Criador de conteúdo exclusivo";
@@ -2336,7 +2382,7 @@
         document.getElementById('editBioModal').style.display = 'none';
         showToast('Biografia atualizada!');
     }
-    
+
     let authModal = document.getElementById('authModal'), isLoginMode = false;
     function openAuthModal() { updateAuthForm(); authModal.style.display = 'flex'; }
     function closeAuthModal() { authModal.style.display = 'none'; }
@@ -2356,12 +2402,12 @@
         }
         document.getElementById('authError').innerText = '';
     }
-    
+
     async function savePixConfig() {
         const key = document.getElementById('pixKeyConfig').value;
         const value = document.getElementById('pixValueConfig').value;
         const file = document.getElementById('qrCodeImageUpload').files[0];
-        
+
         if (file) {
             const imgUrl = await uploadToImgBB(file);
             if (imgUrl) pixConfig.qrCodeImage = imgUrl;
@@ -2375,12 +2421,12 @@
         document.getElementById('pixConfigModal').style.display = 'none';
         showToast('PIX configurado!');
     }
-    
+
     async function init() {
         loadAllData();
         renderIconGrid('photoCardIconGrid', selectedPhotoIcon, (icon) => { selectedPhotoIcon = icon; });
         renderIconGrid('iconCardIconGrid', selectedIconCardIcon, (icon) => { selectedIconCardIcon = icon; });
-        
+
         document.getElementById('showAddPhotoCardModalBtn').onclick = () => document.getElementById('addPhotoCardModal').style.display = 'flex';
         document.getElementById('showAddIconCardModalBtn').onclick = () => document.getElementById('addIconCardModal').style.display = 'flex';
         document.getElementById('showAddMediaPostModalBtn').onclick = () => document.getElementById('addMediaPostModal').style.display = 'flex';
@@ -2406,7 +2452,7 @@
         };
         document.getElementById('editBioBtn').onclick = () => openEditBioModal();
         document.getElementById('exitEditModeBtn').onclick = exitEditMode;
-        
+
         document.querySelectorAll('.pos-btn').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
@@ -2415,13 +2461,13 @@
                 showToast(`Novos itens no ${addPosition === 'top' ? 'TOPO' : 'ÚLTIMO'}`);
             };
         });
-        
+
         const modalCloseButtons = ['closePhotoCardModal', 'closeIconCardModal', 'closeMediaPostModal', 'closeEditMediaModal', 'closeGalleryModal', 'closeShopModal', 'closeMusicModal', 'closeEditModal', 'closeAuthModal', 'closePaymentModal', 'closeUsersModal', 'closePaymentRequestsModal', 'closePixModal', 'closeProfileModal', 'closeAdminProfileModal', 'closeLogoModal', 'closeStatsModal', 'closeClickLogModal', 'closeAdminModal', 'closeBackgroundModal', 'closeBioModal'];
         modalCloseButtons.forEach(id => {
             const btn = document.getElementById(id);
             if (btn) btn.onclick = () => btn.closest('.modal-overlay').style.display = 'none';
         });
-        
+
         document.getElementById('savePhotoCardBtn').onclick = addPhotoCardFromModal;
         document.getElementById('saveIconCardBtn').onclick = addIconCardFromModal;
         document.getElementById('saveMediaPostBtn').onclick = addMediaPost;
@@ -2439,7 +2485,7 @@
         document.getElementById('emailAllApprovedBtn').onclick = () => sendEmailToUsers('approved');
         document.getElementById('emailAllRejectedBtn').onclick = () => sendEmailToUsers('rejected');
         document.getElementById('savePixConfigBtn').onclick = savePixConfig;
-        
+
         document.getElementById('profileIconBtn').onclick = () => { document.getElementById('sideMenu').classList.add('open'); document.getElementById('menuOverlay').style.display = 'block'; document.body.style.overflow = 'hidden'; };
         document.getElementById('closeMenuBtn').onclick = () => { document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; document.body.style.overflow = ''; };
         document.getElementById('menuOverlay').onclick = () => { document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; document.body.style.overflow = ''; };
@@ -2451,7 +2497,7 @@
         document.getElementById('menuProfileEditBtn').onclick = () => { openAdminProfileEditModal(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
         document.getElementById('menuLogoBtn').onclick = () => { document.getElementById('logoTextInput').value = logoConfig.text || "Fhellip"; document.getElementById('logoUrlInput').value = logoConfig.imageUrl || ""; document.getElementById('logoConfigModal').style.display = 'flex'; document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
         document.getElementById('editBannerIcon').onclick = () => changeBannerImage();
-        
+
         document.getElementById('bannerNameClick').onclick = (e) => {
             e.stopPropagation();
             if (!isEditMode && !currentUser) {
@@ -2464,9 +2510,9 @@
                 document.getElementById('adminLoginModal').style.display = 'flex';
             }
         };
-        
+
         document.getElementById('adminLoginBtn').onclick = async () => { const email = document.getElementById('adminEmail').value; const password = document.getElementById('adminPassword').value; await adminLogin(email, password); };
-        
+
         document.getElementById('authSwitch').onclick = () => { isLoginMode = !isLoginMode; updateAuthForm(); };
         document.getElementById('authSubmitBtn').onclick = async () => {
             let email = document.getElementById('authEmail').value, password = document.getElementById('authPassword').value;
@@ -2481,19 +2527,19 @@
                 else document.getElementById('authError').innerText = result;
             }
         };
-        
+
         document.getElementById('copyPixBtn').onclick = () => { if (pixConfig.key) { navigator.clipboard.writeText(pixConfig.key); showToast('Chave PIX copiada!'); } };
         document.getElementById('editAvatarIconBtn').onclick = openProfileEditModal;
         document.getElementById('editNameIconBtn').onclick = openProfileEditModal;
         document.getElementById('stickyAvatar').onclick = () => { if (isEditMode) openAdminProfileEditModal(); };
-        
+
         let stickyHeader = document.getElementById('stickyHeader');
         window.addEventListener('scroll', () => { 
             updateBannerDarkening();
             if (window.scrollY > 80) stickyHeader.classList.add('visible'); 
             else stickyHeader.classList.remove('visible'); 
         });
-        
+
         const savedAdmin = localStorage.getItem('fhellip_admin_logged');
         if (savedAdmin === 'true' && !isEditMode) {
             isEditMode = true;
@@ -2513,7 +2559,7 @@
             renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab(); renderTabs();
             showToast('Modo edição restaurado!');
         }
-        
+
         const savedUser = localStorage.getItem('fhellip_current_user');
         if (savedUser && !isEditMode) {
             currentUser = JSON.parse(savedUser);
@@ -2528,19 +2574,19 @@
         }
         updateProfileUI();
         updateMenuUI();
-        
+
         const logBtn = document.createElement('button');
         logBtn.id = 'showClickLogBtn';
         logBtn.innerHTML = '<i class="fas fa-history"></i> Log Cliques';
         logBtn.onclick = () => showClickLogModal();
         document.getElementById('editModeBar').appendChild(logBtn);
-        
+
         setTimeout(() => {
             const intro = document.getElementById('introOverlay');
             if (intro) intro.remove();
         }, 3300);
     }
-    
+
     init();
 </script>
 </body>
