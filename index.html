@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #050505; font-family: 'Inter', sans-serif; color: #ffffff; line-height: 1.4; min-height: 100vh; overflow-x: hidden; }
@@ -41,6 +42,7 @@
             cursor: pointer;
         }
         
+        /* Sombra que pode mudar de cor */
         .hero-banner::after {
             content: "";
             position: absolute;
@@ -56,6 +58,24 @@
                 rgba(0,0,0,0.95) 70%,
                 #050505 100%);
             pointer-events: none;
+            transition: background 0.3s ease;
+        }
+        
+        /* Remove as linhas do banner no modo edição */
+        .hero-banner.edit-mode-active::after {
+            background: linear-gradient(to bottom, 
+                transparent 0%,
+                rgba(0,0,0,0.3) 20%,
+                rgba(0,0,0,0.6) 35%,
+                rgba(0,0,0,0.85) 50%,
+                rgba(0,0,0,0.95) 70%,
+                #050505 100%);
+        }
+        
+        /* Remove bordas/linhas dos cantos */
+        .hero-banner {
+            border: none;
+            outline: none;
         }
         
         .banner-name {
@@ -135,7 +155,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.08);
             padding: 0.5rem 1rem;
             transform: translateY(-100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
             z-index: 1000;
         }
         .sticky-header.visible { transform: translateY(0); }
@@ -145,16 +165,30 @@
         .sticky-info { flex: 1; }
         .sticky-name { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; }
         .sticky-role { font-size: 0.65rem; color: #888; margin-top: 2px; }
+        .sticky-bio { font-size: 0.6rem; color: #aaa; margin-top: 2px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .verified-badge { background: #1DA1F2; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 7px; color: white; }
 
-        .edit-mode-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(10,10,15,0.95); backdrop-filter: blur(20px); border-radius: 30px; padding: 6px 12px; display: flex; gap: 6px; z-index: 1000; border: 0.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.4); flex-wrap: nowrap; overflow-x: auto; max-width: 95%; scrollbar-width: none; }
+        .edit-mode-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(10,10,15,0.95); backdrop-filter: blur(20px); border-radius: 30px; padding: 6px 12px; display: flex; gap: 6px; z-index: 1000; border: 0.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.4); flex-wrap: wrap; overflow-x: auto; max-width: 95%; scrollbar-width: none; justify-content: center; }
         .edit-mode-bar::-webkit-scrollbar { display: none; }
         .edit-mode-bar button { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 10px; border-radius: 25px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease; font-size: 0.65rem; white-space: nowrap; }
         .edit-mode-bar button i { font-size: 0.7rem; }
         .edit-mode-bar button:hover { background: rgba(255,255,255,0.2); transform: scale(0.96); }
         .edit-mode-bar .exit-edit { background: #ff4757; }
 
-        .intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000000; z-index: 10000; display: flex; align-items: center; justify-content: center; animation: fadeOutIntro 0.8s ease 2.5s forwards; }
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeOutIntro 0.8s ease 2.5s forwards;
+            transition: background 0.3s ease;
+        }
         @keyframes fadeOutIntro { from { opacity: 1; visibility: visible; } to { opacity: 0; visibility: hidden; } }
         .intro-content { text-align: center; animation: bounceInIntro 0.8s ease; }
         @keyframes bounceInIntro { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 70% { transform: scale(0.95); } 100% { transform: scale(1); opacity: 1; } }
@@ -169,6 +203,23 @@
         .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active-tab { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Sortable lists */
+        .cards-grid.sortable-enabled .card-photo, .cards-grid.sortable-enabled .card-icon-only,
+        .media-feed.sortable-enabled .media-post,
+        .gallery-grid.sortable-enabled .gallery-item,
+        .shop-grid.sortable-enabled .product-card {
+            cursor: grab;
+        }
+        .cards-grid.sortable-enabled .card-photo:active, .cards-grid.sortable-enabled .card-icon-only:active,
+        .media-feed.sortable-enabled .media-post:active,
+        .gallery-grid.sortable-enabled .gallery-item:active,
+        .shop-grid.sortable-enabled .product-card:active {
+            cursor: grabbing;
+        }
+        .sortable-drag {
+            opacity: 0.5;
+        }
 
         .cards-grid { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 0.8rem; }
         .card-photo { position: relative; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
@@ -276,6 +327,15 @@
         
         .new-payment-badge { background: #4CAF50; border-radius: 50%; width: 8px; height: 8px; display: inline-block; margin-left: 5px; animation: pulse 1s infinite; }
         
+        .position-options { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; }
+        .pos-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 25px; cursor: pointer; color: white; font-size: 0.75rem; transition: 0.2s; }
+        .pos-btn.active { background: #1DA1F2; border-color: #1DA1F2; }
+        .pos-btn:hover { background: rgba(255,255,255,0.2); }
+        
+        .sort-handle { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); cursor: grab; color: rgba(255,255,255,0.5); font-size: 1rem; z-index: 15; display: none; }
+        .sortable-enabled .sort-handle { display: block; }
+        .sort-handle:active { cursor: grabbing; }
+        
         @media (max-width: 480px) { 
             .card-photo-bg { height: 140px; } 
             .hero-banner { height: 380px; }
@@ -311,6 +371,10 @@
         <button id="resetClickLogsBtn"><i class="fas fa-trash-alt"></i> <span>Reset Logs</span></button>
         <button id="showPaymentRequestsBtn"><i class="fas fa-money-bill-wave"></i> <span>Pagamentos</span></button>
         <button id="changeBackgroundBtn"><i class="fas fa-image"></i> <span>Mudar Fundo</span></button>
+        <button id="organizeItemsBtn"><i class="fas fa-arrows-alt"></i> <span>Organizar</span></button>
+        <button id="changeStickyColorBtn"><i class="fas fa-palette"></i> <span>Cor Sticky</span></button>
+        <button id="changeIntroBackgroundBtn"><i class="fas fa-image"></i> <span>Fundo Intro</span></button>
+        <button id="editBioBtn"><i class="fas fa-align-left"></i> <span>Editar Bio</span></button>
         <button id="exitEditModeBtn" class="exit-edit"><i class="fas fa-sign-out-alt"></i> <span>Sair</span></button>
     </div>
 
@@ -347,7 +411,8 @@
             <img class="sticky-avatar" id="stickyAvatar" src="https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F">
             <div class="sticky-info">
                 <div class="sticky-name" id="stickyName">Fhellip <span class="verified-badge"><i class="fas fa-check"></i></span></div>
-                <div class="sticky-role">Poused scenario</div>
+                <div class="sticky-role">Criador</div>
+                <div class="sticky-bio" id="stickyBio">👑 Criador de conteúdo exclusivo</div>
             </div>
         </div>
     </div>
@@ -359,6 +424,12 @@
         </div>
     </div>
 
+    <!-- Posição dos itens (Topo/Último) -->
+    <div id="positionSelector" class="position-options" style="display: none; margin-bottom: 15px;">
+        <button class="pos-btn" data-pos="top">📌 Adicionar no TOPO</button>
+        <button class="pos-btn active" data-pos="bottom">➕ Adicionar no ÚLTIMO</button>
+    </div>
+
     <div id="dynamic-cards"></div>
 
     <div class="tabs-container" id="tabsContainer"></div>
@@ -366,13 +437,14 @@
     <div id="mediaPage" class="tab-content"></div>
     <div id="galleryPage" class="tab-content"></div>
     <div id="shopPage" class="tab-content"></div>
-    <div class="footer-note"><i class="fas fa-shield-alt"></i>Fhellip</div>
+    <div class="footer-note"><i class="fas fa-shield-alt"></i> exclusividade</div>
 </div>
 
 <div id="fullscreenModal" class="fullscreen-img-modal" onclick="closeFullscreen()">
     <img id="fullscreenImage" src="">
 </div>
 
+<!-- MODAIS -->
 <div id="addPhotoCardModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-image"></i> Adicionar Card com Foto</h3><div class="input-group"><i class="fas fa-heading"></i><input type="text" id="photoCardTitle" class="modal-input" placeholder="Título"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="photoCardLink" class="modal-input" placeholder="Link"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="photoCardUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div id="photoCardIconGrid" class="icons-grid"></div><button id="savePhotoCardBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closePhotoCardModal" class="modal-btn">Cancelar</button></div></div>
 
 <div id="addIconCardModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-icons"></i> Adicionar Card sem Foto</h3><div class="input-group"><i class="fas fa-heading"></i><input type="text" id="iconCardTitle" class="modal-input" placeholder="Título"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="iconCardLink" class="modal-input" placeholder="Link"></div><div id="iconCardIconGrid" class="icons-grid"></div><button id="saveIconCardBtn" class="modal-btn modal-btn-primary">Adicionar</button><button id="closeIconCardModal" class="modal-btn">Cancelar</button></div></div>
@@ -389,7 +461,7 @@
 
 <div id="authModal" class="modal-overlay"><div class="modal-card"><h3 id="authTitle">Criar Conta</h3><div id="authFormContainer"><div class="input-group" id="nameGroup"><i class="fas fa-user"></i><input type="text" id="authName" class="modal-input" placeholder="Nome completo"></div><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="authEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="authPassword" class="modal-input" placeholder="Senha"></div><div class="input-group" id="confirmGroup"><i class="fas fa-check-circle"></i><input type="password" id="authConfirmPassword" class="modal-input" placeholder="Confirmar senha"></div><div id="authError" class="error-msg"></div><button id="authSubmitBtn" class="modal-btn">Criar Conta</button></div><div id="authSwitch" class="auth-switch">Já tem conta? <span>Fazer login</span></div><button id="closeAuthModal" class="modal-btn" style="margin-top:8px;background:rgba(255,255,255,0.1);">Fechar</button></div></div>
 
-<div id="adminLoginModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-crown" style="font-size:1.8rem;color:#ffd700;display:block;text-align:center;"></i><h3>Seja bem-vindo</h3><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="adminEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="adminPassword" class="modal-input" placeholder="Senha"></div><div id="adminError" class="error-msg"></div><button id="adminLoginBtn" class="modal-btn modal-btn-primary">Entrar</button><button id="closeAdminModal" class="modal-btn">Fechar</button></div></div>
+<div id="adminLoginModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-crown" style="font-size:1.8rem;color:#ffd700;display:block;text-align:center;"></i><h3>Login Admin - Modo Edição</h3><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="adminEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="adminPassword" class="modal-input" placeholder="Senha"></div><div id="adminError" class="error-msg"></div><button id="adminLoginBtn" class="modal-btn modal-btn-primary">Entrar no Modo Edição</button><button id="closeAdminModal" class="modal-btn">Fechar</button></div></div>
 
 <div id="paymentModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-qrcode" style="font-size:1.8rem;color:#ccc;display:block;text-align:center;"></i><h3>Pagamento - Liberar Mídia</h3><div id="qrcode" style="display:flex;justify-content:center;margin:0.6rem 0;"></div><div class="pix-area"><div id="pixKeyDisplay">Carregando...</div><button class="copy-btn" id="copyPixBtn"><i class="fas fa-copy"></i> Copiar PIX</button></div><p style="text-align:center; font-size:0.8rem;">Valor: <strong>R$ <span id="pixValue">9,90</span></strong></p><button id="paymentCompletedBtn" class="modal-btn modal-btn-success"><i class="fas fa-check-circle"></i> Pagamento Concluído</button><p style="text-align:center; font-size:0.65rem; color:#888; margin-top:8px;">Após clicar, aguarde a liberação do administrador</p><button id="closePaymentModal" class="modal-btn" style="margin-top:6px;">Fechar</button></div></div>
 
@@ -410,6 +482,12 @@
 <div id="statsModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-chart-bar"></i> Estatísticas de Acesso</h3><div id="statsContent" class="users-list"></div><button id="closeStatsModal" class="modal-btn">Fechar</button></div></div>
 
 <div id="clickLogModal" class="modal-overlay"><div class="modal-card" style="max-width: 450px;"><h3><i class="fas fa-history"></i> Log de Cliques</h3><div id="clickLogContent" class="users-list" style="max-height: 400px; overflow-y: auto;"></div><button id="closeClickLogModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="changeStickyColorModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-palette"></i> Cor do Sticky Header</h3><div class="input-group"><i class="fas fa-palette"></i><input type="color" id="stickyColorPicker" class="modal-input" value="#050505" style="padding: 8px 16px;"></div><button id="saveStickyColorBtn" class="modal-btn modal-btn-primary">Salvar Cor</button><button id="closeStickyColorModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="changeIntroBgModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-image"></i> Fundo da Intro</h3><div class="input-group"><i class="fas fa-palette"></i><input type="color" id="introBgColor" class="modal-input" value="#000000" style="padding: 8px 16px;"></div><div class="input-group"><i class="fas fa-upload"></i><input type="file" id="introBgUpload" accept="image/*" class="modal-input" style="padding-left: 38px;"></div><div class="input-group"><i class="fas fa-link"></i><input type="url" id="introBgUrl" class="modal-input" placeholder="Ou URL da imagem"></div><button id="saveIntroBgBtn" class="modal-btn modal-btn-primary">Salvar</button><button id="resetIntroBgBtn" class="modal-btn">Resetar Padrão</button><button id="closeIntroBgModal" class="modal-btn">Fechar</button></div></div>
+
+<div id="editBioModal" class="modal-overlay"><div class="modal-card"><h3><i class="fas fa-align-left"></i> Editar Biografia</h3><div class="input-group"><i class="fas fa-pen"></i><input type="text" id="bioInput" class="modal-input" placeholder="Ex: Criador de conteúdo exclusivo" maxlength="60"></div><button id="saveBioBtn" class="modal-btn modal-btn-primary">Salvar Biografia</button><button id="closeBioModal" class="modal-btn">Fechar</button></div></div>
 
 <div id="toastMessage" class="toast-msg"></div>
 
@@ -435,6 +513,8 @@
     let currentUser = null;
     let editingPostId = null;
     let hasNewPayment = false;
+    let isOrganizing = false;
+    let addPosition = "bottom"; // "top" ou "bottom"
     
     let photoCards = [];
     let iconCards = [];
@@ -444,9 +524,11 @@
     let pixConfig = { key: "", value: "9.90" };
     let logoConfig = { type: "text", text: "Fhellip", imageUrl: "" };
     let userProfile = { name: "Visitante", avatar: "" };
-    let adminProfile = { name: "Fhellip", avatar: "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F", bannerImage: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=2070&auto=format&fit=crop" };
+    let adminProfile = { name: "Fhellip", avatar: "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F", bannerImage: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=2070&auto=format&fit=crop", bio: "👑 Criador de conteúdo exclusivo" };
     let clickLogs = [];
     let pageBackground = { type: "color", value: "#050505" };
+    let stickyHeaderColor = "#050505";
+    let introBackground = { type: "color", value: "#000000" };
     
     const availableIcons = [
         "fab fa-instagram", "fab fa-youtube", "fab fa-twitter", "fab fa-facebook",
@@ -458,6 +540,11 @@
     
     let selectedPhotoIcon = "fab fa-instagram";
     let selectedIconCardIcon = "fab fa-link";
+    
+    let sortableCards = null;
+    let sortableMedia = null;
+    let sortableGallery = null;
+    let sortableShop = null;
     
     function renderIconGrid(containerId, selectedIcon, onSelect) {
         const container = document.getElementById(containerId);
@@ -513,6 +600,57 @@
     function saveShop() { database.ref('shop').set({ items: shopItems }); }
     function saveClickLogs() { database.ref('clickLogs').set(clickLogs); }
     function savePageBackground() { database.ref('pageBackground').set(pageBackground); }
+    function saveStickyColor() { database.ref('stickyHeaderColor').set(stickyHeaderColor); }
+    function saveIntroBackground() { database.ref('introBackground').set(introBackground); }
+    
+    function updateBannerShadow() {
+        const banner = document.getElementById('heroBanner');
+        const shadowDiv = banner.querySelector('::after');
+        if (pageBackground.type === 'color' && pageBackground.value !== '#050505') {
+            const color = pageBackground.value;
+            banner.style.setProperty('--shadow-color', color);
+            const style = document.createElement('style');
+            style.textContent = `
+                .hero-banner::after {
+                    background: linear-gradient(to bottom, 
+                        transparent 0%,
+                        rgba(0,0,0,0.3) 20%,
+                        rgba(0,0,0,0.6) 35%,
+                        ${color}cc 50%,
+                        ${color}e6 70%,
+                        ${color} 100%) !important;
+                }
+            `;
+            document.head.appendChild(style);
+        } else {
+            const styles = document.querySelectorAll('style');
+            styles.forEach(style => {
+                if (style.textContent.includes('--shadow-color')) style.remove();
+            });
+        }
+    }
+    
+    function updateIntroBackgroundDisplay() {
+        const introDiv = document.getElementById('introOverlay');
+        if (!introDiv) return;
+        if (introBackground.type === 'image' && introBackground.value) {
+            introDiv.style.background = `url('${introBackground.value}') center center / cover no-repeat`;
+        } else {
+            introDiv.style.background = introBackground.value || '#000000';
+        }
+    }
+    
+    function updateStickyHeaderColor() {
+        const sticky = document.getElementById('stickyHeader');
+        if (sticky) {
+            sticky.style.background = stickyHeaderColor === '#050505' ? 'rgba(5,5,5,0.95)' : stickyHeaderColor;
+            if (stickyHeaderColor !== '#050505') {
+                sticky.style.backdropFilter = 'none';
+            } else {
+                sticky.style.backdropFilter = 'blur(20px)';
+            }
+        }
+    }
     
     function updateIntroLogo() {
         const introLogo = document.getElementById('introLogoText');
@@ -530,9 +668,11 @@
         if (pageBackground.type === 'image' && pageBackground.value) {
             bgDiv.style.backgroundImage = `url('${pageBackground.value}')`;
             bgDiv.style.backgroundColor = 'transparent';
+            updateBannerShadow();
         } else {
             bgDiv.style.backgroundImage = 'none';
             bgDiv.style.backgroundColor = pageBackground.value || '#050505';
+            updateBannerShadow();
         }
     }
     
@@ -543,6 +683,7 @@
         }
         document.getElementById('bannerNameText').innerHTML = adminProfile.name;
         document.getElementById('stickyName').innerHTML = `${adminProfile.name} <span class="verified-badge"><i class="fas fa-check"></i></span>`;
+        document.getElementById('stickyBio').innerHTML = adminProfile.bio || "👑 Criador de conteúdo exclusivo";
         const avatarUrl = adminProfile.avatar || "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
         document.getElementById('stickyAvatar').src = avatarUrl;
     }
@@ -553,6 +694,7 @@
             photoCards = data?.photoCards || [];
             iconCards = data?.iconCards || [];
             renderCards();
+            if (isOrganizing) enableSorting();
         });
         
         database.ref('mediaPosts').on('value', (snapshot) => {
@@ -560,18 +702,21 @@
             mediaPosts = data ? Object.values(data) : [];
             renderMediaTab();
             renderTabs();
+            if (isOrganizing) enableSorting();
         });
         
         database.ref('gallery').on('value', (snapshot) => {
             galleryItems = snapshot.val()?.items || [];
             renderGalleryTab();
             renderTabs();
+            if (isOrganizing) enableSorting();
         });
         
         database.ref('shop').on('value', (snapshot) => {
             shopItems = snapshot.val()?.items || [];
             renderShopTab();
             renderTabs();
+            if (isOrganizing) enableSorting();
         });
         
         database.ref('pixConfig').on('value', (snapshot) => {
@@ -626,6 +771,18 @@
             const data = snapshot.val();
             if (data) pageBackground = data;
             updatePageBackground();
+        });
+        
+        database.ref('stickyHeaderColor').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) stickyHeaderColor = data;
+            updateStickyHeaderColor();
+        });
+        
+        database.ref('introBackground').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) introBackground = data;
+            updateIntroBackgroundDisplay();
         });
     }
     
@@ -725,6 +882,192 @@
         }
     }
     
+    function enableSorting() {
+        if (!isOrganizing) return;
+        
+        const cardsContainer = document.getElementById('dynamic-cards');
+        const mediaContainer = document.getElementById('mediaPage');
+        const galleryContainer = document.getElementById('galleryPage');
+        const shopContainer = document.getElementById('shopPage');
+        
+        if (cardsContainer && cardsContainer.children.length > 0) {
+            const cardsGrid = cardsContainer.querySelector('.cards-grid');
+            if (cardsGrid && !cardsGrid.classList.contains('sortable-enabled')) {
+                cardsGrid.classList.add('sortable-enabled');
+                if (sortableCards) sortableCards.destroy();
+                sortableCards = new Sortable(cardsGrid, {
+                    animation: 150,
+                    handle: '.sort-handle',
+                    onEnd: function() {
+                        saveCardsOrder();
+                    }
+                });
+                addSortHandles(cardsGrid, '.card-photo, .card-icon-only');
+            }
+        }
+        
+        if (mediaContainer && mediaContainer.children.length > 0) {
+            const mediaFeed = mediaContainer.querySelector('.media-feed');
+            if (mediaFeed && !mediaFeed.classList.contains('sortable-enabled')) {
+                mediaFeed.classList.add('sortable-enabled');
+                if (sortableMedia) sortableMedia.destroy();
+                sortableMedia = new Sortable(mediaFeed, {
+                    animation: 150,
+                    handle: '.sort-handle',
+                    onEnd: function() {
+                        saveMediaOrder();
+                    }
+                });
+                addSortHandles(mediaFeed, '.media-post');
+            }
+        }
+        
+        if (galleryContainer && galleryContainer.children.length > 0) {
+            const galleryGrid = galleryContainer.querySelector('.gallery-grid');
+            if (galleryGrid && !galleryGrid.classList.contains('sortable-enabled')) {
+                galleryGrid.classList.add('sortable-enabled');
+                if (sortableGallery) sortableGallery.destroy();
+                sortableGallery = new Sortable(galleryGrid, {
+                    animation: 150,
+                    handle: '.sort-handle',
+                    onEnd: function() {
+                        saveGalleryOrder();
+                    }
+                });
+                addSortHandles(galleryGrid, '.gallery-item');
+            }
+        }
+        
+        if (shopContainer && shopContainer.children.length > 0) {
+            const shopGrid = shopContainer.querySelector('.shop-grid');
+            if (shopGrid && !shopGrid.classList.contains('sortable-enabled')) {
+                shopGrid.classList.add('sortable-enabled');
+                if (sortableShop) sortableShop.destroy();
+                sortableShop = new Sortable(shopGrid, {
+                    animation: 150,
+                    handle: '.sort-handle',
+                    onEnd: function() {
+                        saveShopOrder();
+                    }
+                });
+                addSortHandles(shopGrid, '.product-card');
+            }
+        }
+    }
+    
+    function addSortHandles(container, selector) {
+        container.querySelectorAll(selector).forEach(el => {
+            if (!el.querySelector('.sort-handle')) {
+                const handle = document.createElement('div');
+                handle.className = 'sort-handle';
+                handle.innerHTML = '<i class="fas fa-grip-vertical"></i>';
+                handle.style.position = 'absolute';
+                handle.style.top = '10px';
+                handle.style.right = '10px';
+                handle.style.cursor = 'grab';
+                handle.style.zIndex = '20';
+                el.style.position = 'relative';
+                el.appendChild(handle);
+            }
+        });
+    }
+    
+    function saveCardsOrder() {
+        const cardsContainer = document.getElementById('dynamic-cards');
+        const cardsGrid = cardsContainer?.querySelector('.cards-grid');
+        if (!cardsGrid) return;
+        
+        const newPhotoCards = [];
+        const newIconCards = [];
+        cardsGrid.querySelectorAll('.card-photo, .card-icon-only').forEach(el => {
+            const id = el.querySelector('.edit-btn')?.getAttribute('data-id');
+            if (id) {
+                const photoCard = photoCards.find(c => c.id === id);
+                if (photoCard) newPhotoCards.push(photoCard);
+                const iconCard = iconCards.find(c => c.id === id);
+                if (iconCard) newIconCards.push(iconCard);
+            }
+        });
+        if (newPhotoCards.length > 0) photoCards = newPhotoCards;
+        if (newIconCards.length > 0) iconCards = newIconCards;
+        saveCards();
+        showToast('Ordem dos cards salva!');
+    }
+    
+    function saveMediaOrder() {
+        const mediaContainer = document.getElementById('mediaPage');
+        const mediaFeed = mediaContainer?.querySelector('.media-feed');
+        if (!mediaFeed) return;
+        const newOrder = [];
+        mediaFeed.querySelectorAll('.media-post').forEach(el => {
+            const id = el.getAttribute('data-id');
+            if (id) {
+                const post = mediaPosts.find(p => p.id === id);
+                if (post) newOrder.push(post);
+            }
+        });
+        if (newOrder.length > 0) {
+            mediaPosts = newOrder;
+            saveMediaPosts();
+            showToast('Ordem da mídia salva!');
+        }
+    }
+    
+    function saveGalleryOrder() {
+        const galleryContainer = document.getElementById('galleryPage');
+        const galleryGrid = galleryContainer?.querySelector('.gallery-grid');
+        if (!galleryGrid) return;
+        const newOrder = [];
+        galleryGrid.querySelectorAll('.gallery-item').forEach(el => {
+            const id = el.getAttribute('data-id');
+            if (id) {
+                const item = galleryItems.find(i => i.id === id);
+                if (item) newOrder.push(item);
+            }
+        });
+        if (newOrder.length > 0) {
+            galleryItems = newOrder;
+            saveGallery();
+            showToast('Ordem da galeria salva!');
+        }
+    }
+    
+    function saveShopOrder() {
+        const shopContainer = document.getElementById('shopPage');
+        const shopGrid = shopContainer?.querySelector('.shop-grid');
+        if (!shopGrid) return;
+        const newOrder = [];
+        shopGrid.querySelectorAll('.product-card').forEach(el => {
+            const id = el.getAttribute('data-id');
+            if (id) {
+                const item = shopItems.find(i => i.id === id);
+                if (item) newOrder.push(item);
+            }
+        });
+        if (newOrder.length > 0) {
+            shopItems = newOrder;
+            saveShop();
+            showToast('Ordem da loja salva!');
+        }
+    }
+    
+    function disableSorting() {
+        isOrganizing = false;
+        if (sortableCards) { sortableCards.destroy(); sortableCards = null; }
+        if (sortableMedia) { sortableMedia.destroy(); sortableMedia = null; }
+        if (sortableGallery) { sortableGallery.destroy(); sortableGallery = null; }
+        if (sortableShop) { sortableShop.destroy(); sortableShop = null; }
+        document.querySelectorAll('.cards-grid, .media-feed, .gallery-grid, .shop-grid').forEach(grid => {
+            grid.classList.remove('sortable-enabled');
+        });
+        document.querySelectorAll('.sort-handle').forEach(handle => handle.remove());
+        renderCards();
+        renderMediaTab();
+        renderGalleryTab();
+        renderShopTab();
+        showToast('Modo organização desativado');
+    }
+    
     function renderCards() {
         let container = document.getElementById('dynamic-cards');
         if (!container) return;
@@ -736,69 +1079,67 @@
             return;
         }
         
-        if (photoCards.length > 0) {
-            let photoGroup = document.createElement('div'); photoGroup.className = 'cards-grid';
-            photoCards.forEach(card => {
-                let cardDiv = document.createElement('div'); cardDiv.className = 'card-photo';
-                cardDiv.style.position = 'relative';
-                
-                let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.style.textDecoration = 'none';
-                link.onclick = (e) => {
-                    e.preventDefault();
-                    incrementClicks('photo', card.id);
-                    window.open(card.link, '_blank');
-                };
-                
-                let bg = document.createElement('div'); bg.className = 'card-photo-bg'; bg.style.backgroundImage = `url('${card.img}')`;
-                let iconCorner = document.createElement('div'); iconCorner.className = 'card-icon-corner';
-                let icon = document.createElement('i'); icon.className = card.icon; iconCorner.appendChild(icon);
-                let bottom = document.createElement('div'); bottom.className = 'card-title-bottom';
-                let title = document.createElement('h3'); title.innerText = card.title; bottom.appendChild(title);
-                bg.appendChild(iconCorner); bg.appendChild(bottom); link.appendChild(bg); cardDiv.appendChild(link);
-                
-                if (isEditMode) {
-                    let statsBadge = document.createElement('div'); statsBadge.className = 'stats-badge';
-                    statsBadge.innerHTML = `<i class="fas fa-eye"></i> ${card.clicks || 0}`;
-                    cardDiv.appendChild(statsBadge);
-                    let editOverlay = document.createElement('div'); editOverlay.className = 'edit-btn-overlay';
-                    editOverlay.innerHTML = `<button class="edit-btn" data-id="${card.id}" data-type="photo"><i class="fas fa-edit"></i></button><button class="delete-btn" data-id="${card.id}" data-type="photo"><i class="fas fa-trash"></i></button>`;
-                    cardDiv.appendChild(editOverlay);
-                }
-                photoGroup.appendChild(cardDiv);
-            });
-            container.appendChild(photoGroup);
-        }
+        let allCards = [...photoCards.map(c => ({ ...c, type: 'photo' })), ...iconCards.map(c => ({ ...c, type: 'icon' }))];
         
-        if (iconCards.length > 0) {
-            let iconGroup = document.createElement('div'); iconGroup.className = 'cards-grid';
-            iconCards.forEach(card => {
-                let cardDiv = document.createElement('div'); cardDiv.className = 'card-icon-only';
-                cardDiv.style.position = 'relative';
-                
-                let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.className = 'card-icon-link';
-                link.onclick = (e) => {
-                    e.preventDefault();
-                    incrementClicks('icon', card.id);
-                    window.open(card.link, '_blank');
-                };
-                
-                let iconWrap = document.createElement('div'); iconWrap.className = 'social-icon-big';
-                let icon = document.createElement('i'); icon.className = card.icon; iconWrap.appendChild(icon);
-                let info = document.createElement('div'); info.className = 'card-info';
-                let title = document.createElement('h4'); title.innerText = card.title; info.appendChild(title);
-                link.appendChild(iconWrap); link.appendChild(info); cardDiv.appendChild(link);
-                
-                if (isEditMode) {
-                    let statsBadge = document.createElement('div'); statsBadge.className = 'stats-badge';
-                    statsBadge.innerHTML = `<i class="fas fa-eye"></i> ${card.clicks || 0}`;
-                    cardDiv.appendChild(statsBadge);
-                    let editOverlay = document.createElement('div'); editOverlay.className = 'edit-btn-overlay';
-                    editOverlay.innerHTML = `<button class="edit-btn" data-id="${card.id}" data-type="icon"><i class="fas fa-edit"></i></button><button class="delete-btn" data-id="${card.id}" data-type="icon"><i class="fas fa-trash"></i></button>`;
-                    cardDiv.appendChild(editOverlay);
+        if (photoCards.length > 0 || iconCards.length > 0) {
+            let cardsGroup = document.createElement('div'); cardsGroup.className = 'cards-grid';
+            allCards.forEach(card => {
+                if (card.type === 'photo') {
+                    let cardDiv = document.createElement('div'); cardDiv.className = 'card-photo';
+                    cardDiv.style.position = 'relative';
+                    
+                    let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.style.textDecoration = 'none';
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        incrementClicks('photo', card.id);
+                        window.open(card.link, '_blank');
+                    };
+                    
+                    let bg = document.createElement('div'); bg.className = 'card-photo-bg'; bg.style.backgroundImage = `url('${card.img}')`;
+                    let iconCorner = document.createElement('div'); iconCorner.className = 'card-icon-corner';
+                    let icon = document.createElement('i'); icon.className = card.icon; iconCorner.appendChild(icon);
+                    let bottom = document.createElement('div'); bottom.className = 'card-title-bottom';
+                    let title = document.createElement('h3'); title.innerText = card.title; bottom.appendChild(title);
+                    bg.appendChild(iconCorner); bg.appendChild(bottom); link.appendChild(bg); cardDiv.appendChild(link);
+                    
+                    if (isEditMode) {
+                        let statsBadge = document.createElement('div'); statsBadge.className = 'stats-badge';
+                        statsBadge.innerHTML = `<i class="fas fa-eye"></i> ${card.clicks || 0}`;
+                        cardDiv.appendChild(statsBadge);
+                        let editOverlay = document.createElement('div'); editOverlay.className = 'edit-btn-overlay';
+                        editOverlay.innerHTML = `<button class="edit-btn" data-id="${card.id}" data-type="photo"><i class="fas fa-edit"></i></button><button class="delete-btn" data-id="${card.id}" data-type="photo"><i class="fas fa-trash"></i></button>`;
+                        cardDiv.appendChild(editOverlay);
+                    }
+                    cardsGroup.appendChild(cardDiv);
+                } else {
+                    let cardDiv = document.createElement('div'); cardDiv.className = 'card-icon-only';
+                    cardDiv.style.position = 'relative';
+                    
+                    let link = document.createElement('a'); link.href = card.link; link.target = '_blank'; link.className = 'card-icon-link';
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        incrementClicks('icon', card.id);
+                        window.open(card.link, '_blank');
+                    };
+                    
+                    let iconWrap = document.createElement('div'); iconWrap.className = 'social-icon-big';
+                    let icon = document.createElement('i'); icon.className = card.icon; iconWrap.appendChild(icon);
+                    let info = document.createElement('div'); info.className = 'card-info';
+                    let title = document.createElement('h4'); title.innerText = card.title; info.appendChild(title);
+                    link.appendChild(iconWrap); link.appendChild(info); cardDiv.appendChild(link);
+                    
+                    if (isEditMode) {
+                        let statsBadge = document.createElement('div'); statsBadge.className = 'stats-badge';
+                        statsBadge.innerHTML = `<i class="fas fa-eye"></i> ${card.clicks || 0}`;
+                        cardDiv.appendChild(statsBadge);
+                        let editOverlay = document.createElement('div'); editOverlay.className = 'edit-btn-overlay';
+                        editOverlay.innerHTML = `<button class="edit-btn" data-id="${card.id}" data-type="icon"><i class="fas fa-edit"></i></button><button class="delete-btn" data-id="${card.id}" data-type="icon"><i class="fas fa-trash"></i></button>`;
+                        cardDiv.appendChild(editOverlay);
+                    }
+                    cardsGroup.appendChild(cardDiv);
                 }
-                iconGroup.appendChild(cardDiv);
             });
-            container.appendChild(iconGroup);
+            container.appendChild(cardsGroup);
         }
         
         if (isEditMode) {
@@ -823,6 +1164,17 @@
                 };
             });
         }
+        
+        if (isOrganizing) enableSorting();
+    }
+    
+    function addItem(array, item) {
+        if (addPosition === 'top') {
+            array.unshift(item);
+        } else {
+            array.push(item);
+        }
+        return array;
     }
     
     function incrementClicks(type, id) {
@@ -1030,6 +1382,8 @@
                 };
             });
         }
+        
+        if (isOrganizing && mediaPosts.length > 0) enableSorting();
     }
     
     function openEditMediaPostModal(postId) {
@@ -1079,7 +1433,7 @@
             likes: likes,
             clicks: 0
         };
-        mediaPosts.unshift(newPost);
+        mediaPosts = addItem(mediaPosts, newPost);
         saveMediaPosts();
         renderMediaTab();
         renderTabs();
@@ -1154,6 +1508,21 @@
                 }
             };
         });
+        
+        if (isOrganizing && galleryItems.length > 0) enableSorting();
+    }
+    
+    async function addGalleryFromModal() {
+        const file = document.getElementById('galleryUpload').files[0];
+        if (!file) { showToast('Selecione uma imagem!'); return; }
+        const imgUrl = await uploadToImgBB(file);
+        if (!imgUrl) return;
+        const newItem = { id: Date.now().toString(), url: imgUrl, clicks: 0 };
+        galleryItems = addItem(galleryItems, newItem);
+        saveGallery(); renderGalleryTab(); renderTabs();
+        document.getElementById('addGalleryModal').style.display = 'none';
+        document.getElementById('galleryUpload').value = '';
+        showToast('Imagem adicionada!');
     }
     
     function renderShopTab() {
@@ -1228,6 +1597,27 @@
                 if (link && link !== '#') window.open(link, '_blank');
             };
         });
+        
+        if (isOrganizing && shopItems.length > 0) enableSorting();
+    }
+    
+    async function addShopFromModal() {
+        const title = document.getElementById('productTitle').value;
+        const price = document.getElementById('productPrice').value;
+        const file = document.getElementById('productUpload').files[0];
+        const link = document.getElementById('productLink').value;
+        if (!title || !file) { showToast('Preencha o nome e selecione uma imagem!'); return; }
+        const imgUrl = await uploadToImgBB(file);
+        if (!imgUrl) return;
+        const newItem = { id: Date.now().toString(), title, price: price || "R$ 0,00", img: imgUrl, link: link || "#", clicks: 0 };
+        shopItems = addItem(shopItems, newItem);
+        saveShop(); renderShopTab(); renderTabs();
+        document.getElementById('addShopModal').style.display = 'none';
+        document.getElementById('productTitle').value = '';
+        document.getElementById('productPrice').value = '';
+        document.getElementById('productLink').value = '';
+        document.getElementById('productUpload').value = '';
+        showToast('Produto adicionado!');
     }
     
     function resetAllStats() {
@@ -1320,7 +1710,12 @@
         if (!title || !link || !file) { showToast('Preencha todos os campos e selecione uma imagem!'); return; }
         const imgUrl = await uploadToImgBB(file);
         if (!imgUrl) return;
-        photoCards.push({ id: Date.now().toString(), title, link, icon: selectedPhotoIcon, img: imgUrl, clicks: 0 });
+        const newCard = { id: Date.now().toString(), title, link, icon: selectedPhotoIcon, img: imgUrl, clicks: 0 };
+        if (addPosition === 'top') {
+            photoCards.unshift(newCard);
+        } else {
+            photoCards.push(newCard);
+        }
         saveCards(); renderCards();
         document.getElementById('addPhotoCardModal').style.display = 'none';
         document.getElementById('photoCardTitle').value = '';
@@ -1333,42 +1728,17 @@
         const title = document.getElementById('iconCardTitle').value;
         const link = document.getElementById('iconCardLink').value;
         if (!title || !link) { showToast('Preencha todos os campos!'); return; }
-        iconCards.push({ id: Date.now().toString(), title, link, icon: selectedIconCardIcon, clicks: 0 });
+        const newCard = { id: Date.now().toString(), title, link, icon: selectedIconCardIcon, clicks: 0 };
+        if (addPosition === 'top') {
+            iconCards.unshift(newCard);
+        } else {
+            iconCards.push(newCard);
+        }
         saveCards(); renderCards();
         document.getElementById('addIconCardModal').style.display = 'none';
         document.getElementById('iconCardTitle').value = '';
         document.getElementById('iconCardLink').value = '';
         showToast('Card adicionado!');
-    }
-    
-    async function addGalleryFromModal() {
-        const file = document.getElementById('galleryUpload').files[0];
-        if (!file) { showToast('Selecione uma imagem!'); return; }
-        const imgUrl = await uploadToImgBB(file);
-        if (!imgUrl) return;
-        galleryItems.push({ id: Date.now().toString(), url: imgUrl, clicks: 0 });
-        saveGallery(); renderGalleryTab(); renderTabs();
-        document.getElementById('addGalleryModal').style.display = 'none';
-        document.getElementById('galleryUpload').value = '';
-        showToast('Imagem adicionada!');
-    }
-    
-    async function addShopFromModal() {
-        const title = document.getElementById('productTitle').value;
-        const price = document.getElementById('productPrice').value;
-        const file = document.getElementById('productUpload').files[0];
-        const link = document.getElementById('productLink').value;
-        if (!title || !file) { showToast('Preencha o nome e selecione uma imagem!'); return; }
-        const imgUrl = await uploadToImgBB(file);
-        if (!imgUrl) return;
-        shopItems.push({ id: Date.now().toString(), title, price: price || "R$ 0,00", img: imgUrl, link: link || "#", clicks: 0 });
-        saveShop(); renderShopTab(); renderTabs();
-        document.getElementById('addShopModal').style.display = 'none';
-        document.getElementById('productTitle').value = '';
-        document.getElementById('productPrice').value = '';
-        document.getElementById('productLink').value = '';
-        document.getElementById('productUpload').value = '';
-        showToast('Produto adicionado!');
     }
     
     async function adminLogin(email, password) {
@@ -1377,6 +1747,7 @@
             await auth.signInWithEmailAndPassword(email, password);
             currentAdmin = email; isEditMode = true;
             document.getElementById('editModeBar').style.display = 'flex';
+            document.getElementById('positionSelector').style.display = 'flex';
             document.getElementById('menuUsersBtn').style.display = 'flex';
             document.getElementById('menuPaymentRequestsBtn').style.display = 'flex';
             document.getElementById('menuPixBtn').style.display = 'flex';
@@ -1386,6 +1757,7 @@
             document.getElementById('menuLoginBtn').style.display = 'none';
             document.getElementById('menuLogoutBtn').style.display = 'none';
             document.getElementById('editBannerIcon').style.display = 'flex';
+            document.getElementById('heroBanner').classList.add('edit-mode-active');
             renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
             document.getElementById('adminLoginModal').style.display = 'none';
             showToast('Modo edição ativado!');
@@ -1395,6 +1767,7 @@
                 await auth.createUserWithEmailAndPassword(email, password);
                 currentAdmin = email; isEditMode = true;
                 document.getElementById('editModeBar').style.display = 'flex';
+                document.getElementById('positionSelector').style.display = 'flex';
                 document.getElementById('menuUsersBtn').style.display = 'flex';
                 document.getElementById('menuPaymentRequestsBtn').style.display = 'flex';
                 document.getElementById('menuPixBtn').style.display = 'flex';
@@ -1404,6 +1777,7 @@
                 document.getElementById('menuLoginBtn').style.display = 'none';
                 document.getElementById('menuLogoutBtn').style.display = 'none';
                 document.getElementById('editBannerIcon').style.display = 'flex';
+                document.getElementById('heroBanner').classList.add('edit-mode-active');
                 renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
                 document.getElementById('adminLoginModal').style.display = 'none';
                 showToast('Modo edição ativado!');
@@ -1416,7 +1790,13 @@
     
     function exitEditMode() {
         isEditMode = false; currentAdmin = null;
+        isOrganizing = false;
+        if (sortableCards) sortableCards.destroy();
+        if (sortableMedia) sortableMedia.destroy();
+        if (sortableGallery) sortableGallery.destroy();
+        if (sortableShop) sortableShop.destroy();
         document.getElementById('editModeBar').style.display = 'none';
+        document.getElementById('positionSelector').style.display = 'none';
         document.getElementById('menuUsersBtn').style.display = 'none';
         document.getElementById('menuPaymentRequestsBtn').style.display = 'none';
         document.getElementById('menuPixBtn').style.display = 'none';
@@ -1426,6 +1806,7 @@
         document.getElementById('menuLoginBtn').style.display = 'flex';
         document.getElementById('menuLogoutBtn').style.display = currentUser ? 'flex' : 'none';
         document.getElementById('editBannerIcon').style.display = 'none';
+        document.getElementById('heroBanner').classList.remove('edit-mode-active');
         renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderTabs();
         showToast('Modo edição desativado');
     }
@@ -1669,6 +2050,7 @@
         
         savePageBackground();
         updatePageBackground();
+        updateBannerShadow();
         document.getElementById('changeBackgroundModal').style.display = 'none';
         showToast('Fundo da página atualizado!');
     }
@@ -1677,8 +2059,72 @@
         pageBackground = { type: "color", value: "#050505" };
         savePageBackground();
         updatePageBackground();
+        updateBannerShadow();
         document.getElementById('changeBackgroundModal').style.display = 'none';
         showToast('Fundo resetado para o padrão!');
+    }
+    
+    function openChangeStickyColorModal() {
+        document.getElementById('stickyColorPicker').value = stickyHeaderColor === '#050505' ? '#050505' : stickyHeaderColor;
+        document.getElementById('changeStickyColorModal').style.display = 'flex';
+    }
+    
+    function saveStickyColor() {
+        const color = document.getElementById('stickyColorPicker').value;
+        stickyHeaderColor = color;
+        saveStickyColor();
+        updateStickyHeaderColor();
+        document.getElementById('changeStickyColorModal').style.display = 'none';
+        showToast('Cor do sticky header atualizada!');
+    }
+    
+    function openChangeIntroBgModal() {
+        document.getElementById('introBgColor').value = introBackground.type === 'color' ? introBackground.value : '#000000';
+        document.getElementById('changeIntroBgModal').style.display = 'flex';
+    }
+    
+    async function saveIntroBackground() {
+        const color = document.getElementById('introBgColor').value;
+        const file = document.getElementById('introBgUpload').files[0];
+        const url = document.getElementById('introBgUrl').value;
+        
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) {
+                introBackground = { type: "image", value: imgUrl };
+            }
+        } else if (url) {
+            introBackground = { type: "image", value: url };
+        } else if (color) {
+            introBackground = { type: "color", value: color };
+        }
+        
+        saveIntroBackground();
+        updateIntroBackgroundDisplay();
+        document.getElementById('changeIntroBgModal').style.display = 'none';
+        showToast('Fundo da intro atualizado!');
+    }
+    
+    function resetIntroBackground() {
+        introBackground = { type: "color", value: "#000000" };
+        saveIntroBackground();
+        updateIntroBackgroundDisplay();
+        document.getElementById('changeIntroBgModal').style.display = 'none';
+        showToast('Fundo da intro resetado!');
+    }
+    
+    function openEditBioModal() {
+        document.getElementById('bioInput').value = adminProfile.bio || "";
+        document.getElementById('editBioModal').style.display = 'flex';
+    }
+    
+    async function saveBio() {
+        const bio = document.getElementById('bioInput').value;
+        adminProfile.bio = bio || "👑 Criador de conteúdo exclusivo";
+        database.ref('adminProfile').set(adminProfile);
+        updateHeroBanner();
+        document.getElementById('editBioModal').style.display = 'none';
+        showToast('Biografia atualizada!');
     }
     
     let authModal = document.getElementById('authModal'), isLoginMode = false;
@@ -1715,7 +2161,31 @@
         document.getElementById('resetClickLogsBtn').onclick = () => resetClickLogs();
         document.getElementById('showPaymentRequestsBtn').onclick = () => { showPaymentRequestsModal(); hasNewPayment = false; updatePaymentButtonBadge(); };
         document.getElementById('changeBackgroundBtn').onclick = () => openChangeBackgroundModal();
+        document.getElementById('organizeItemsBtn').onclick = () => {
+            if (isOrganizing) {
+                disableSorting();
+                document.getElementById('organizeItemsBtn').style.background = 'rgba(255,255,255,0.1)';
+                isOrganizing = false;
+            } else {
+                isOrganizing = true;
+                enableSorting();
+                document.getElementById('organizeItemsBtn').style.background = '#1DA1F2';
+                showToast('Arraste os itens para reorganizar!');
+            }
+        };
+        document.getElementById('changeStickyColorBtn').onclick = () => openChangeStickyColorModal();
+        document.getElementById('changeIntroBackgroundBtn').onclick = () => openChangeIntroBgModal();
+        document.getElementById('editBioBtn').onclick = () => openEditBioModal();
         document.getElementById('exitEditModeBtn').onclick = exitEditMode;
+        
+        document.querySelectorAll('.pos-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                addPosition = btn.getAttribute('data-pos');
+                showToast(`Novos itens serão adicionados no ${addPosition === 'top' ? 'TOPO' : 'ÚLTIMO'}`);
+            };
+        });
         
         document.getElementById('closePhotoCardModal').onclick = () => document.getElementById('addPhotoCardModal').style.display = 'none';
         document.getElementById('closeIconCardModal').onclick = () => document.getElementById('addIconCardModal').style.display = 'none';
@@ -1736,6 +2206,9 @@
         document.getElementById('closeClickLogModal').onclick = () => document.getElementById('clickLogModal').style.display = 'none';
         document.getElementById('closeAdminModal').onclick = () => document.getElementById('adminLoginModal').style.display = 'none';
         document.getElementById('closeBackgroundModal').onclick = () => document.getElementById('changeBackgroundModal').style.display = 'none';
+        document.getElementById('closeStickyColorModal').onclick = () => document.getElementById('changeStickyColorModal').style.display = 'none';
+        document.getElementById('closeIntroBgModal').onclick = () => document.getElementById('changeIntroBgModal').style.display = 'none';
+        document.getElementById('closeBioModal').onclick = () => document.getElementById('editBioModal').style.display = 'none';
         
         document.getElementById('savePhotoCardBtn').onclick = addPhotoCardFromModal;
         document.getElementById('saveIconCardBtn').onclick = addIconCardFromModal;
@@ -1749,6 +2222,10 @@
         document.getElementById('saveLogoBtn').onclick = saveLogo;
         document.getElementById('saveBackgroundBtn').onclick = saveBackground;
         document.getElementById('resetBackgroundBtn').onclick = resetBackground;
+        document.getElementById('saveStickyColorBtn').onclick = saveStickyColor;
+        document.getElementById('saveIntroBgBtn').onclick = saveIntroBackground;
+        document.getElementById('resetIntroBgBtn').onclick = resetIntroBackground;
+        document.getElementById('saveBioBtn').onclick = saveBio;
         document.getElementById('emailAllApprovedBtn').onclick = () => sendEmailToUsers('approved');
         document.getElementById('emailAllRejectedBtn').onclick = () => sendEmailToUsers('rejected');
         
