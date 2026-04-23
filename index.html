@@ -411,8 +411,8 @@
             <img class="sticky-avatar" id="stickyAvatar" src="https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F">
             <div class="sticky-info">
                 <div class="sticky-name" id="stickyName">Fhellip <span class="verified-badge"><i class="fas fa-check"></i></span></div>
-                <div class="sticky-role">Criador</div>
-                <div class="sticky-bio" id="stickyBio">👑 Criador de conteúdo exclusivo</div>
+                <div class="sticky-role"></div>
+                <div class="sticky-bio" id="stickyBio"></div>
             </div>
         </div>
     </div>
@@ -426,8 +426,8 @@
 
     <!-- Posição dos itens (Topo/Último) -->
     <div id="positionSelector" class="position-options" style="display: none; margin-bottom: 15px;">
-        <button class="pos-btn" data-pos="top">📌 Adicionar no TOPO</button>
-        <button class="pos-btn active" data-pos="bottom">➕ Adicionar no ÚLTIMO</button>
+        <button class="pos-btn" data-pos="top"> Adicionar no TOPO</button>
+        <button class="pos-btn active" data-pos="bottom">Adicionar no ÚLTIMO</button>
     </div>
 
     <div id="dynamic-cards"></div>
@@ -437,7 +437,7 @@
     <div id="mediaPage" class="tab-content"></div>
     <div id="galleryPage" class="tab-content"></div>
     <div id="shopPage" class="tab-content"></div>
-    <div class="footer-note"><i class="fas fa-shield-alt"></i> exclusividade</div>
+    <div class="footer-note"><i class="fas fa-shield-alt"></i> Fhellip</div>
 </div>
 
 <div id="fullscreenModal" class="fullscreen-img-modal" onclick="closeFullscreen()">
@@ -461,7 +461,7 @@
 
 <div id="authModal" class="modal-overlay"><div class="modal-card"><h3 id="authTitle">Criar Conta</h3><div id="authFormContainer"><div class="input-group" id="nameGroup"><i class="fas fa-user"></i><input type="text" id="authName" class="modal-input" placeholder="Nome completo"></div><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="authEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="authPassword" class="modal-input" placeholder="Senha"></div><div class="input-group" id="confirmGroup"><i class="fas fa-check-circle"></i><input type="password" id="authConfirmPassword" class="modal-input" placeholder="Confirmar senha"></div><div id="authError" class="error-msg"></div><button id="authSubmitBtn" class="modal-btn">Criar Conta</button></div><div id="authSwitch" class="auth-switch">Já tem conta? <span>Fazer login</span></div><button id="closeAuthModal" class="modal-btn" style="margin-top:8px;background:rgba(255,255,255,0.1);">Fechar</button></div></div>
 
-<div id="adminLoginModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-crown" style="font-size:1.8rem;color:#ffd700;display:block;text-align:center;"></i><h3>Login Admin - Modo Edição</h3><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="adminEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="adminPassword" class="modal-input" placeholder="Senha"></div><div id="adminError" class="error-msg"></div><button id="adminLoginBtn" class="modal-btn modal-btn-primary">Entrar no Modo Edição</button><button id="closeAdminModal" class="modal-btn">Fechar</button></div></div>
+<div id="adminLoginModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-crown" style="font-size:1.8rem;color:#ffd700;display:block;text-align:center;"></i><h3>Seja bem-vindo</h3><div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="adminEmail" class="modal-input" placeholder="E-mail"></div><div class="input-group"><i class="fas fa-lock"></i><input type="password" id="adminPassword" class="modal-input" placeholder="Senha"></div><div id="adminError" class="error-msg"></div><button id="adminLoginBtn" class="modal-btn modal-btn-primary">Entrar no Modo Edição</button><button id="closeAdminModal" class="modal-btn">Fechar</button></div></div>
 
 <div id="paymentModal" class="modal-overlay"><div class="modal-card"><i class="fas fa-qrcode" style="font-size:1.8rem;color:#ccc;display:block;text-align:center;"></i><h3>Pagamento - Liberar Mídia</h3><div id="qrcode" style="display:flex;justify-content:center;margin:0.6rem 0;"></div><div class="pix-area"><div id="pixKeyDisplay">Carregando...</div><button class="copy-btn" id="copyPixBtn"><i class="fas fa-copy"></i> Copiar PIX</button></div><p style="text-align:center; font-size:0.8rem;">Valor: <strong>R$ <span id="pixValue">9,90</span></strong></p><button id="paymentCompletedBtn" class="modal-btn modal-btn-success"><i class="fas fa-check-circle"></i> Pagamento Concluído</button><p style="text-align:center; font-size:0.65rem; color:#888; margin-top:8px;">Após clicar, aguarde a liberação do administrador</p><button id="closePaymentModal" class="modal-btn" style="margin-top:6px;">Fechar</button></div></div>
 
