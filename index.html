@@ -56,7 +56,7 @@
         .sticky-role { font-size: 0.65rem; color: #888; margin-top: 2px; }
         .sticky-bio { font-size: 0.6rem; color: #aaa; margin-top: 2px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .verified-badge { background: #1DA1F2; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 7px; color: white; margin-left: 4px; }
-        .edit-mode-bar { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: rgba(10,10,15,0.95); backdrop-filter: blur(20px); border-radius: 30px; padding: 8px 12px; display: flex; gap: 8px; z-index: 1000; border: 0.5px solid rgba(255,255,255,0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.4); overflow-x: auto; max-width: 95%; white-space: nowrap; scrollbar-width: thin; }
+        .edit-mode-bar { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: rgba(10,10,15,0.95); backdrop-filter: blur(20px); border-radius: 30px; padding: 8px 12px; display: flex; gap: 8px; z-index: 1000; border: 0.5px solid rgba(255,255,255,0.15); overflow-x: auto; max-width: 95%; white-space: nowrap; scrollbar-width: thin; }
         .edit-mode-bar::-webkit-scrollbar { height: 3px; }
         .edit-mode-bar button { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 25px; cursor: pointer; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; font-size: 0.7rem; flex-shrink: 0; }
         .edit-mode-bar button i { font-size: 0.75rem; }
@@ -382,11 +382,6 @@
         return snapshot.val() === true;
     }
 
-    async function grantMediaAccess(mediaId) {
-        if (!currentUser) return;
-        await database.ref(`mediaAccess/${currentUser.email.replace(/\./g, ',')}/${mediaId}`).set(true);
-    }
-
     function renderIconGrid(containerId, selectedIcon, onSelect) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -628,21 +623,50 @@
 
     function renderTabs() {
         const tabsContainer = document.getElementById('tabsContainer');
-        const hasMedia = mediaPosts.length > 0, hasGallery = galleryItems.length > 0, hasShop = shopItems.length > 0, hasMusic = musicItems.length > 0;
-        if (!hasMedia && !hasGallery && !hasShop && !hasMusic) { tabsContainer.innerHTML = ''; return; }
+        const hasMedia = mediaPosts.length > 0;
+        const hasGallery = galleryItems.length > 0;
+        const hasShop = shopItems.length > 0;
+        const hasMusic = musicItems.length > 0;
+        
+        if (!hasMedia && !hasGallery && !hasShop && !hasMusic) {
+            tabsContainer.innerHTML = '';
+            return;
+        }
+        
         let tabsHtml = '';
-        if (hasMedia) tabsHtml += `<button class="tab-btn" data-page="media"><i class="fas fa-photo-video"></i> Midia</button>`;
-        if (hasGallery) tabsHtml += `<button class="tab-btn" data-page="gallery"><i class="fas fa-images"></i> Galeria</button>`;
-        if (hasShop) tabsHtml += `<button class="tab-btn" data-page="shop"><i class="fas fa-store"></i> Loja</button>`;
-        if (hasMusic) tabsHtml += `<button class="tab-btn" data-page="music"><i class="fas fa-music"></i> Musica</button>`;
+        if (hasMedia) tabsHtml += `<button class="tab-btn" data-page="media">Midia</button>`;
+        if (hasGallery) tabsHtml += `<button class="tab-btn" data-page="gallery">Galeria</button>`;
+        if (hasShop) tabsHtml += `<button class="tab-btn" data-page="shop">Loja</button>`;
+        if (hasMusic) tabsHtml += `<button class="tab-btn" data-page="music">Musica</button>`;
+        
         tabsContainer.innerHTML = tabsHtml;
-        let activeTab = localStorage.getItem('activeTab') || (hasMedia ? 'media' : (hasGallery ? 'gallery' : (hasShop ? 'shop' : 'music')));
+        
+        let activeTab = localStorage.getItem('activeTab');
+        if (!activeTab || !document.querySelector(`.tab-btn[data-page="${activeTab}"]`)) {
+            if (hasMedia) activeTab = 'media';
+            else if (hasGallery) activeTab = 'gallery';
+            else if (hasShop) activeTab = 'shop';
+            else if (hasMusic) activeTab = 'music';
+        }
+        
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.onclick = () => { localStorage.setItem('activeTab', btn.getAttribute('data-page')); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active-tab')); document.getElementById(`${btn.getAttribute('data-page')}Page`).classList.add('active-tab'); };
-            if (btn.getAttribute('data-page') === activeTab) btn.classList.add('active');
+            btn.onclick = () => {
+                const page = btn.getAttribute('data-page');
+                localStorage.setItem('activeTab', page);
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+                document.getElementById(`${page}Page`).classList.add('active-tab');
+            };
+            if (btn.getAttribute('data-page') === activeTab) {
+                btn.classList.add('active');
+            }
         });
-        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active-tab'));
-        if (document.getElementById(`${activeTab}Page`)) document.getElementById(`${activeTab}Page`).classList.add('active-tab');
+        
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+        if (document.getElementById(`${activeTab}Page`)) {
+            document.getElementById(`${activeTab}Page`).classList.add('active-tab');
+        }
     }
 
     function enableSorting(containerClass, type) {
@@ -907,7 +931,7 @@
     }
 
     async function saveProfile() {
-        if(!currentUser){showToast('Facao login primeiro!');openAuthModal();return;}
+        if(!currentUser){showToast('Faca login primeiro!');openAuthModal();return;}
         try{
             const newName=document.getElementById('profileNameInput').value;
             const file=document.getElementById('profileUpload').files[0];
@@ -1016,429 +1040,598 @@
     }
 
     function showUsersModal() {
-        const container=document.getElementById('usersListContainer');
-        const searchInput=document.getElementById('userSearchInput');
-        const renderUsers=(searchTerm='')=>{
-            database.ref('users').once('value',snapshot=>{
-                const users=snapshot.val();
-                if(!users){container.innerHTML='<div style="text-align:center;padding:30px;color:#666;">Nenhum usuario</div>';return;}
-                let usersArray=[];
-                for(const[key,userData] of Object.entries(users)){
-                    const email=userData.email||key.replace(/,/g,'.');
-                    const userProfile=userProfiles[email]||{};
-                    const createdAt = userData.createdAt ? new Date(userData.createdAt) : new Date();
-                    usersArray.push({email,name:userData.name||email.split('@')[0],hasAccess:userData.hasAccess||false,isBanned:userData.isBanned||false,createdAt:createdAt,avatar:userProfile.avatar||"",originalKey:key});
+        const container = document.getElementById('usersListContainer');
+        const searchInput = document.getElementById('userSearchInput');
+        
+        function renderUsers(searchTerm = '') {
+            database.ref('users').once('value', (snapshot) => {
+                const users = snapshot.val();
+                if (!users) {
+                    container.innerHTML = '<div style="text-align:center;padding:30px;">Nenhum usuario</div>';
+                    return;
                 }
-                usersArray.sort((a,b)=>b.createdAt - a.createdAt);
-                if(searchTerm){const term=searchTerm.toLowerCase();usersArray=usersArray.filter(u=>u.name.toLowerCase().includes(term)||u.email.toLowerCase().includes(term));}
-                let html='';
-                usersArray.forEach(user=>{
-                    const statusClass=user.isBanned?'banned-true':(user.hasAccess?'access-true':'access-false');
-                    const statusText=user.isBanned?'Banido':(user.hasAccess?'Liberado':'Pendente');
-                    const createdAtDate = user.createdAt;
-                    const formattedDate = createdAtDate.toLocaleDateString('pt-BR');
-                    const formattedTime = createdAtDate.toLocaleTimeString('pt-BR');
-                    const avatarUrl=user.avatar||`https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}`;
-                    html+=`<div class="user-item"><img class="user-avatar-small" src="${avatarUrl}" onerror="this.src='https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}'"><div class="user-info"><div class="user-name"><i class="fas fa-user-circle"></i> <strong>${escapeHtml(user.name)}</strong></div><div class="user-email">${user.email}</div><div class="user-date"><i class="fas fa-calendar-alt"></i> Criado em: ${formattedDate} as ${formattedTime}</div><div class="user-status ${statusClass}">${statusText}</div></div><div class="user-actions"><button class="paid" data-email="${user.email}" data-access="${!user.hasAccess}"><i class="fas ${user.hasAccess?'fa-lock':'fa-unlock-alt'}"></i></button><button class="block" data-email="${user.email}" data-ban="${!user.isBanned}"><i class="fas ${user.isBanned?'fa-user-check':'fa-ban'}"></i></button><button class="delete" data-email="${user.email}"><i class="fas fa-trash-alt"></i></button><button class="email-user" data-email="${user.email}" data-name="${user.name}" data-status="${user.hasAccess?'approved':'pending'}"><i class="fas fa-envelope"></i></button></div></div>`;
+                
+                let usersArray = [];
+                for (const [key, userData] of Object.entries(users)) {
+                    const email = userData.email || key.replace(/,/g, '.');
+                    const userProfile = userProfiles[email] || {};
+                    const createdAt = userData.createdAt ? new Date(userData.createdAt) : new Date();
+                    usersArray.push({
+                        email: email,
+                        name: userData.name || email.split('@')[0],
+                        hasAccess: userData.hasAccess || false,
+                        isBanned: userData.isBanned || false,
+                        createdAt: createdAt,
+                        avatar: userProfile.avatar || "",
+                        originalKey: key
+                    });
+                }
+                
+                usersArray.sort((a, b) => b.createdAt - a.createdAt);
+                
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    usersArray = usersArray.filter(u => 
+                        u.name.toLowerCase().includes(term) || 
+                        u.email.toLowerCase().includes(term)
+                    );
+                }
+                
+                let html = '';
+                usersArray.forEach(user => {
+                    const statusClass = user.isBanned ? 'banned-true' : (user.hasAccess ? 'access-true' : 'access-false');
+                    const statusText = user.isBanned ? 'Banido' : (user.hasAccess ? 'Liberado' : 'Pendente');
+                    const formattedDate = user.createdAt.toLocaleDateString('pt-BR');
+                    const formattedTime = user.createdAt.toLocaleTimeString('pt-BR');
+                    const avatarUrl = user.avatar || `https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}`;
+                    
+                    html += `<div class="user-item">
+                        <img class="user-avatar-small" src="${avatarUrl}">
+                        <div class="user-info">
+                            <div class="user-name"><i class="fas fa-user-circle"></i> <strong>${escapeHtml(user.name)}</strong></div>
+                            <div class="user-email">${user.email}</div>
+                            <div class="user-date"><i class="fas fa-calendar-alt"></i> Criado em: ${formattedDate} as ${formattedTime}</div>
+                            <div class="user-status ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="toggle-access" data-email="${user.email}" data-access="${!user.hasAccess}"><i class="fas ${user.hasAccess ? 'fa-lock' : 'fa-unlock-alt'}"></i></button>
+                            <button class="toggle-ban" data-email="${user.email}" data-ban="${!user.isBanned}"><i class="fas ${user.isBanned ? 'fa-user-check' : 'fa-ban'}"></i></button>
+                            <button class="delete-user" data-email="${user.email}"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>`;
                 });
-                container.innerHTML=html;
-                container.querySelectorAll('.paid').forEach(btn=>btn.onclick=()=>{const email=btn.getAttribute('data-email');database.ref(`users/${email.replace(/\./g,',')}`).update({hasAccess:btn.getAttribute('data-access')==='true'});renderUsers(searchTerm);showToast('Status alterado!');});
-                container.querySelectorAll('.block').forEach(btn=>btn.onclick=()=>{const email=btn.getAttribute('data-email');database.ref(`users/${email.replace(/\./g,',')}`).update({isBanned:btn.getAttribute('data-ban')==='true'});renderUsers(searchTerm);showToast('Status alterado!');});
-                container.querySelectorAll('.delete').forEach(btn=>btn.onclick=()=>{if(confirm('Excluir usuario?')){database.ref(`users/${btn.getAttribute('data-email').replace(/\./g,',')}`).remove();renderUsers(searchTerm);showToast('Usuario excluido!');}});
-                container.querySelectorAll('.email-user').forEach(btn=>btn.onclick=()=>{const email=btn.getAttribute('data-email');const name=btn.getAttribute('data-name');sendEmailToUser(email,name);});
+                container.innerHTML = html;
+                
+                document.querySelectorAll('.toggle-access').forEach(btn => {
+                    btn.onclick = () => {
+                        const email = btn.getAttribute('data-email');
+                        const newAccess = btn.getAttribute('data-access') === 'true';
+                        database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: newAccess });
+                        showToast(newAccess ? 'Usuario liberado!' : 'Usuario bloqueado!');
+                        renderUsers(searchTerm);
+                    };
+                });
+                
+                document.querySelectorAll('.toggle-ban').forEach(btn => {
+                    btn.onclick = () => {
+                        const email = btn.getAttribute('data-email');
+                        const newBan = btn.getAttribute('data-ban') === 'true';
+                        database.ref(`users/${email.replace(/\./g, ',')}`).update({ isBanned: newBan });
+                        showToast(newBan ? 'Usuario banido!' : 'Usuario desbanido!');
+                        renderUsers(searchTerm);
+                    };
+                });
+                
+                document.querySelectorAll('.delete-user').forEach(btn => {
+                    btn.onclick = () => {
+                        if (confirm('Tem certeza que deseja excluir este usuario?')) {
+                            const email = btn.getAttribute('data-email');
+                            database.ref(`users/${email.replace(/\./g, ',')}`).remove();
+                            showToast('Usuario excluido!');
+                            renderUsers(searchTerm);
+                        }
+                    };
+                });
             });
-        };
+        }
+        
         renderUsers('');
-        searchInput.oninput=(e)=>renderUsers(e.target.value);
-        document.getElementById('usersModal').style.display='flex';
-    }
-
-    function sendEmailToUser(email, name) {
-        const subject = 'Acesso Fhellip';
-        const body = `Ola ${name}! Seu acesso foi atualizado.`;
-        window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        showToast(`Abrindo email...`);
+        searchInput.oninput = (e) => renderUsers(e.target.value);
+        document.getElementById('usersModal').style.display = 'flex';
     }
 
     function showPaymentRequestsModal() {
-        const container=document.getElementById('paymentRequestsList');
-        container.innerHTML='<div style="text-align:center;padding:20px;"><i class="fas fa-spinner fa-spin"></i></div>';
-        document.getElementById('paymentRequestsModal').style.display='flex';
-        database.ref('paymentRequests').once('value',snapshot=>{
-            const requests=snapshot.val();
-            if(!requests){container.innerHTML='<div style="text-align:center;padding:30px;">Nenhuma solicitacao</div>';return;}
-            let html='';
-            for(const[id,req] of Object.entries(requests)){
-                const reqDate=new Date(req.timestamp);
-                const formattedDate = reqDate.toLocaleDateString('pt-BR') + ' ' + reqDate.toLocaleTimeString('pt-BR');
-                html+=`<div class="user-item"><div class="user-info"><div class="user-name"><strong>${escapeHtml(req.userName)}</strong></div><div class="user-email">${req.userEmail}</div><div class="user-date"><i class="fas fa-clock"></i> ${formattedDate}</div><div class="user-status pending">Aguardando pagamento: ${req.mediaId ? 'Midia especifica' : 'Geral'}</div></div><div class="user-actions"><button class="approve-payment" data-id="${id}" data-email="${req.userEmail}" data-name="${req.userName}" data-media="${req.mediaId||''}"><i class="fas fa-check-circle"></i> Aprovar</button></div></div>`;
+        const container = document.getElementById('paymentRequestsList');
+        container.innerHTML = '<div style="text-align:center;padding:20px;"><i class="fas fa-spinner fa-spin"></i></div>';
+        document.getElementById('paymentRequestsModal').style.display = 'flex';
+        
+        database.ref('paymentRequests').once('value', (snapshot) => {
+            const requests = snapshot.val();
+            if (!requests) {
+                container.innerHTML = '<div style="text-align:center;padding:30px;">Nenhuma solicitacao</div>';
+                return;
             }
-            container.innerHTML=html;
-            container.querySelectorAll('.approve-payment').forEach(btn=>btn.onclick=async()=>{
-                const id=btn.getAttribute('data-id'), email=btn.getAttribute('data-email'), name=btn.getAttribute('data-name'), mediaId=btn.getAttribute('data-media');
-                if(mediaId){await database.ref(`mediaAccess/${email.replace(/\./g,',')}/${mediaId}`).set(true);}
-                else{await database.ref(`users/${email.replace(/\./g,',')}`).update({hasAccess:true});}
-                await database.ref(`paymentRequests/${id}`).remove();
-                showToast(`Liberado para ${name}!`);
-                showPaymentRequestsModal();
+            
+            let html = '';
+            for (const [id, req] of Object.entries(requests)) {
+                const reqDate = new Date(req.timestamp);
+                const formattedDate = reqDate.toLocaleDateString('pt-BR') + ' ' + reqDate.toLocaleTimeString('pt-BR');
+                html += `<div class="user-item">
+                    <div class="user-info">
+                        <div class="user-name"><strong>${escapeHtml(req.userName)}</strong></div>
+                        <div class="user-email">${req.userEmail}</div>
+                        <div class="user-date"><i class="fas fa-clock"></i> ${formattedDate}</div>
+                        <div class="user-status pending">Aguardando pagamento: ${req.mediaId ? 'Midia especifica' : 'Acesso geral'}</div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="approve-payment" data-id="${id}" data-email="${req.userEmail}" data-name="${req.userName}" data-media="${req.mediaId || ''}"><i class="fas fa-check-circle"></i> Aprovar</button>
+                    </div>
+                </div>`;
+            }
+            container.innerHTML = html;
+            
+            document.querySelectorAll('.approve-payment').forEach(btn => {
+                btn.onclick = async () => {
+                    const id = btn.getAttribute('data-id');
+                    const email = btn.getAttribute('data-email');
+                    const name = btn.getAttribute('data-name');
+                    const mediaId = btn.getAttribute('data-media');
+                    
+                    if (mediaId) {
+                        await database.ref(`mediaAccess/${email.replace(/\./g, ',')}/${mediaId}`).set(true);
+                        showToast(`Midia liberada para ${name}!`);
+                    } else {
+                        await database.ref(`users/${email.replace(/\./g, ',')}`).update({ hasAccess: true });
+                        showToast(`Acesso liberado para ${name}!`);
+                    }
+                    
+                    await database.ref(`paymentRequests/${id}`).remove();
+                    showPaymentRequestsModal();
+                };
             });
         });
     }
 
-    function showPaymentModal(mediaId=null){
-        if(!currentUser){openAuthModal();return;}
+    function showPaymentModal(mediaId = null) {
+        if (!currentUser) {
+            openAuthModal();
+            return;
+        }
         refreshQRCode();
-        document.getElementById('paymentModal').style.display='flex';
-        window.currentPaymentMediaId=mediaId;
+        document.getElementById('paymentModal').style.display = 'flex';
+        window.currentPaymentMediaId = mediaId;
     }
 
-    async function requestPayment(mediaId=null){
-        if(!currentUser){showToast('Faca login primeiro!');return;}
-        await database.ref(`paymentRequests/${Date.now()}`).set({userName:currentUser.name,userEmail:currentUser.email,mediaId:mediaId,timestamp:new Date().toISOString()});
+    async function requestPayment(mediaId = null) {
+        if (!currentUser) {
+            showToast('Faca login primeiro!');
+            return;
+        }
+        await database.ref(`paymentRequests/${Date.now()}`).set({
+            userName: currentUser.name,
+            userEmail: currentUser.email,
+            mediaId: mediaId,
+            timestamp: new Date().toISOString()
+        });
         showToast('Solicitacao enviada! Aguarde aprovacao.');
-        document.getElementById('paymentModal').style.display='none';
+        document.getElementById('paymentModal').style.display = 'none';
     }
 
-    function refreshQRCode(){
-        const container=document.getElementById('qrcode');
-        if(!container)return;
-        container.innerHTML='';
-        if(pixConfig.qrCodeImage && pixConfig.qrCodeImage!==''){
-            const img=document.createElement('img');img.src=pixConfig.qrCodeImage;img.style.width='120px';img.style.height='120px';img.style.cursor='pointer';img.onclick=()=>openFullscreen(pixConfig.qrCodeImage);container.appendChild(img);
-        }else if(pixConfig.key && pixConfig.key!==''){
-            new QRCode(container,{text:`PIX:${pixConfig.key}|Valor:${pixConfig.value}`,width:120,height:120});
-            const qrCanvas=container.querySelector('canvas');
-            if(qrCanvas){qrCanvas.style.cursor='pointer';qrCanvas.onclick=()=>openFullscreen(qrCanvas.toDataURL());}
+    function refreshQRCode() {
+        const container = document.getElementById('qrcode');
+        if (!container) return;
+        container.innerHTML = '';
+        if (pixConfig.qrCodeImage && pixConfig.qrCodeImage !== '') {
+            const img = document.createElement('img');
+            img.src = pixConfig.qrCodeImage;
+            img.style.width = '120px';
+            img.style.height = '120px';
+            img.style.cursor = 'pointer';
+            img.onclick = () => openFullscreen(pixConfig.qrCodeImage);
+            container.appendChild(img);
+        } else if (pixConfig.key && pixConfig.key !== '') {
+            new QRCode(container, { text: `PIX:${pixConfig.key}|Valor:${pixConfig.value}`, width: 120, height: 120 });
+            const qrCanvas = container.querySelector('canvas');
+            if (qrCanvas) {
+                qrCanvas.style.cursor = 'pointer';
+                qrCanvas.onclick = () => openFullscreen(qrCanvas.toDataURL());
+            }
         }
     }
 
-    function updateHeroBanner(){
-        const banner=document.getElementById('heroBanner');
-        if(adminProfile.bannerImage) banner.style.backgroundImage=`url('${adminProfile.bannerImage}')`;
-        document.getElementById('bannerNameText').innerHTML=logoConfig.type==='image'&&logoConfig.imageUrl?`<img src="${logoConfig.imageUrl}" style="max-width:180px;height:auto;">`:(logoConfig.text||"Fhellip");
-        document.getElementById('stickyName').innerHTML=`${escapeHtml(adminProfile.name)} <span class="verified-badge"><i class="fas fa-check"></i></span>`;
-        document.getElementById('stickyBio').innerHTML=adminProfile.bio||"Criador de conteudo exclusivo";
-        const avatarUrl=adminProfile.avatar||"https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
-        document.getElementById('stickyAvatar').src=avatarUrl;
+    function updateHeroBanner() {
+        const banner = document.getElementById('heroBanner');
+        if (adminProfile.bannerImage) banner.style.backgroundImage = `url('${adminProfile.bannerImage}')`;
+        document.getElementById('bannerNameText').innerHTML = logoConfig.type === 'image' && logoConfig.imageUrl ? `<img src="${logoConfig.imageUrl}" style="max-width:180px;height:auto;">` : (logoConfig.text || "Fhellip");
+        document.getElementById('stickyName').innerHTML = `${escapeHtml(adminProfile.name)} <span class="verified-badge"><i class="fas fa-check"></i></span>`;
+        document.getElementById('stickyBio').innerHTML = adminProfile.bio || "Criador de conteudo exclusivo";
+        const avatarUrl = adminProfile.avatar || "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=36&name=F";
+        document.getElementById('stickyAvatar').src = avatarUrl;
     }
 
-    function updateProfileUI(){
-        if(currentUser && !isEditMode){
-            const userProfile=userProfiles[currentUser.email]||{};
+    function updateProfileUI() {
+        if (currentUser && !isEditMode) {
+            const userProfile = userProfiles[currentUser.email] || {};
             const userName = userProfile.name || currentUser.name;
-            const avatarUrl=userProfile.avatar?userProfile.avatar:`https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=80&name=${encodeURIComponent(userName)}`;
-            document.getElementById('menuAvatar').src=avatarUrl;
-            document.getElementById('menuName').innerText=userName;
-            document.getElementById('menuEmail').innerText=currentUser.email;
-            document.getElementById('editAvatarIconBtn').style.display='block';
-            document.getElementById('editNameIconBtn').style.display='block';
-        }else{
-            document.getElementById('menuAvatar').src="https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=80&name=Visitante";
-            document.getElementById('menuName').innerText="Visitante";
-            document.getElementById('menuEmail').innerText='Faca login';
-            document.getElementById('editAvatarIconBtn').style.display='none';
-            document.getElementById('editNameIconBtn').style.display='none';
+            const avatarUrl = userProfile.avatar ? userProfile.avatar : `https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=80&name=${encodeURIComponent(userName)}`;
+            document.getElementById('menuAvatar').src = avatarUrl;
+            document.getElementById('menuName').innerText = userName;
+            document.getElementById('menuEmail').innerText = currentUser.email;
+            document.getElementById('editAvatarIconBtn').style.display = 'block';
+            document.getElementById('editNameIconBtn').style.display = 'block';
+        } else {
+            document.getElementById('menuAvatar').src = "https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=80&name=Visitante";
+            document.getElementById('menuName').innerText = "Visitante";
+            document.getElementById('menuEmail').innerText = 'Faca login';
+            document.getElementById('editAvatarIconBtn').style.display = 'none';
+            document.getElementById('editNameIconBtn').style.display = 'none';
         }
     }
 
-    function updateMenuUI(){
-        if(currentUser && !isEditMode){document.getElementById('menuLoginBtn').style.display='none';document.getElementById('menuLogoutBtn').style.display='flex';}
-        else if(!isEditMode){document.getElementById('menuLoginBtn').style.display='flex';document.getElementById('menuLogoutBtn').style.display='none';}
-    }
-
-    function updatePageBackground(){
-        const bgDiv=document.getElementById('pageBackground');
-        if(pageBackground.type==='image'&&pageBackground.value){bgDiv.style.backgroundImage=`url('${pageBackground.value}')`;bgDiv.style.backgroundColor='transparent';}
-        else{bgDiv.style.backgroundImage='none';bgDiv.style.backgroundColor=pageBackground.value||'#050505';}
-    }
-
-    function updateIntroLogo(){
-        const introLogo=document.getElementById('introLogoText');
-        if(introLogo){
-            if(logoConfig.type==='image'&&logoConfig.imageUrl) introLogo.innerHTML=`<img src="${logoConfig.imageUrl}" style="max-width:180px;height:auto;">`;
-            else introLogo.innerHTML=logoConfig.text||"Fhellip";
+    function updateMenuUI() {
+        if (currentUser && !isEditMode) {
+            document.getElementById('menuLoginBtn').style.display = 'none';
+            document.getElementById('menuLogoutBtn').style.display = 'flex';
+        } else if (!isEditMode) {
+            document.getElementById('menuLoginBtn').style.display = 'flex';
+            document.getElementById('menuLogoutBtn').style.display = 'none';
         }
     }
 
-    function updateLogoDisplay(){
-        const heroDiv=document.getElementById('bannerNameText');
-        if(logoConfig.type==='image'&&logoConfig.imageUrl){heroDiv.innerHTML=`<img src="${logoConfig.imageUrl}" style="max-width:180px;height:auto;">`;heroDiv.style.background='none';heroDiv.style.webkitTextFillColor='initial';}
-        else{heroDiv.innerHTML=logoConfig.text||"Fhellip";heroDiv.style.color='white';heroDiv.style.webkitTextFillColor='white';}
+    function updatePageBackground() {
+        const bgDiv = document.getElementById('pageBackground');
+        if (pageBackground.type === 'image' && pageBackground.value) {
+            bgDiv.style.backgroundImage = `url('${pageBackground.value}')`;
+            bgDiv.style.backgroundColor = 'transparent';
+        } else {
+            bgDiv.style.backgroundImage = 'none';
+            bgDiv.style.backgroundColor = pageBackground.value || '#050505';
+        }
     }
 
-    function updateBannerDarkening(){
-        const banner=document.getElementById('heroBanner');
-        if(!banner)return;
-        const scrollY=window.scrollY;
-        if(scrollY>200){banner.classList.add('darkening-max');banner.classList.remove('darkening','darkening-more');}
-        else if(scrollY>100){banner.classList.add('darkening-more');banner.classList.remove('darkening','darkening-max');}
-        else if(scrollY>30){banner.classList.add('darkening');banner.classList.remove('darkening-more','darkening-max');}
-        else{banner.classList.remove('darkening','darkening-more','darkening-max');}
+    function updateIntroLogo() {
+        const introLogo = document.getElementById('introLogoText');
+        if (introLogo) {
+            if (logoConfig.type === 'image' && logoConfig.imageUrl) {
+                introLogo.innerHTML = `<img src="${logoConfig.imageUrl}" style="max-width:180px;height:auto;">`;
+            } else {
+                introLogo.innerHTML = logoConfig.text || "Fhellip";
+            }
+        }
     }
 
-    function showStats(){
-        let totalCardClicks=0, totalMediaClicks=0, totalGalleryClicks=0, totalShopClicks=0, totalMusicClicks=0;
-        photoCards.forEach(c=>totalCardClicks+=c.clicks||0);
-        iconCards.forEach(c=>totalCardClicks+=c.clicks||0);
-        mediaPosts.forEach(p=>totalMediaClicks+=p.clicks||0);
-        galleryItems.forEach(i=>totalGalleryClicks+=i.clicks||0);
-        shopItems.forEach(i=>totalShopClicks+=i.clicks||0);
-        musicItems.forEach(i=>totalMusicClicks+=i.clicks||0);
-        const statsHtml=`<div class="user-item"><div class="user-info"><strong><i class="fas fa-chart-line"></i> Cliques em Cards:</strong> ${totalCardClicks}</div></div><div class="user-item"><div class="user-info"><strong><i class="fas fa-eye"></i> Visualizacoes na Midia:</strong> ${totalMediaClicks}</div></div><div class="user-item"><div class="user-info"><strong><i class="fas fa-images"></i> Visualizacoes na Galeria:</strong> ${totalGalleryClicks}</div></div><div class="user-item"><div class="user-info"><strong><i class="fas fa-store"></i> Cliques na Loja:</strong> ${totalShopClicks}</div></div><div class="user-item"><div class="user-info"><strong><i class="fas fa-music"></i> Cliques na Musica:</strong> ${totalMusicClicks}</div></div><div class="user-item"><div class="user-info"><strong><i class="fas fa-photo-video"></i> Total de Midias:</strong> ${mediaPosts.length}</div></div><div class="user-item"><div class="user-info"><strong><i class="fas fa-history"></i> Total de Cliques Registrados:</strong> ${clickLogs.length}</div></div><div class="user-item"><div class="user-info"><strong><i class="fas fa-exclamation-triangle"></i> Tentativas Invalidas:</strong> ${failedLoginAttempts.length}</div></div>`;
-        document.getElementById('statsContent').innerHTML=statsHtml;
-        document.getElementById('statsModal').style.display='flex';
+    function updateLogoDisplay() {
+        const heroDiv = document.getElementById('bannerNameText');
+        if (logoConfig.type === 'image' && logoConfig.imageUrl) {
+            heroDiv.innerHTML = `<img src="${logoConfig.imageUrl}" style="max-width:180px;height:auto;">`;
+            heroDiv.style.background = 'none';
+        } else {
+            heroDiv.innerHTML = logoConfig.text || "Fhellip";
+            heroDiv.style.color = 'white';
+        }
     }
 
-    function resetAllStats(){
-        if(confirm('Tem certeza que deseja resetar TODAS as contagens?')){
-            photoCards.forEach(c=>c.clicks=0);iconCards.forEach(c=>c.clicks=0);mediaPosts.forEach(p=>p.clicks=0);galleryItems.forEach(i=>i.clicks=0);shopItems.forEach(i=>i.clicks=0);musicItems.forEach(i=>i.clicks=0);
-            saveCards();saveMediaPosts();saveGallery();saveShop();saveMusic();
-            renderCards();renderMediaTab();renderGalleryTab();renderShopTab();renderMusicTab();
+    function updateBannerDarkening() {
+        const banner = document.getElementById('heroBanner');
+        if (!banner) return;
+        const scrollY = window.scrollY;
+        if (scrollY > 200) {
+            banner.classList.add('darkening-max');
+            banner.classList.remove('darkening', 'darkening-more');
+        } else if (scrollY > 100) {
+            banner.classList.add('darkening-more');
+            banner.classList.remove('darkening', 'darkening-max');
+        } else if (scrollY > 30) {
+            banner.classList.add('darkening');
+            banner.classList.remove('darkening-more', 'darkening-max');
+        } else {
+            banner.classList.remove('darkening', 'darkening-more', 'darkening-max');
+        }
+    }
+
+    function showStats() {
+        let totalCardClicks = 0, totalMediaClicks = 0, totalGalleryClicks = 0, totalShopClicks = 0, totalMusicClicks = 0;
+        photoCards.forEach(c => totalCardClicks += c.clicks || 0);
+        iconCards.forEach(c => totalCardClicks += c.clicks || 0);
+        mediaPosts.forEach(p => totalMediaClicks += p.clicks || 0);
+        galleryItems.forEach(i => totalGalleryClicks += i.clicks || 0);
+        shopItems.forEach(i => totalShopClicks += i.clicks || 0);
+        musicItems.forEach(i => totalMusicClicks += i.clicks || 0);
+        
+        const statsHtml = `
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-chart-line"></i> Cliques em Cards:</strong> ${totalCardClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-eye"></i> Visualizacoes na Midia:</strong> ${totalMediaClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-images"></i> Visualizacoes na Galeria:</strong> ${totalGalleryClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-store"></i> Cliques na Loja:</strong> ${totalShopClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-music"></i> Cliques na Musica:</strong> ${totalMusicClicks}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-photo-video"></i> Total de Midias:</strong> ${mediaPosts.length}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-history"></i> Total de Cliques Registrados:</strong> ${clickLogs.length}</div></div>
+            <div class="user-item"><div class="user-info"><strong><i class="fas fa-exclamation-triangle"></i> Tentativas Invalidas:</strong> ${failedLoginAttempts.length}</div></div>
+        `;
+        document.getElementById('statsContent').innerHTML = statsHtml;
+        document.getElementById('statsModal').style.display = 'flex';
+    }
+
+    function resetAllStats() {
+        if (confirm('Tem certeza que deseja resetar TODAS as contagens?')) {
+            photoCards.forEach(c => c.clicks = 0);
+            iconCards.forEach(c => c.clicks = 0);
+            mediaPosts.forEach(p => p.clicks = 0);
+            galleryItems.forEach(i => i.clicks = 0);
+            shopItems.forEach(i => i.clicks = 0);
+            musicItems.forEach(i => i.clicks = 0);
+            saveCards(); saveMediaPosts(); saveGallery(); saveShop(); saveMusic();
+            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab();
             showToast('Todas as contagens resetadas!');
         }
     }
 
-    function openAuthModal(){updateAuthForm();document.getElementById('authModal').style.display='flex';}
-    function closeAuthModal(){document.getElementById('authModal').style.display='none';}
-    let isLoginMode=false;
-    function updateAuthForm(){
-        if(isLoginMode){
-            document.getElementById('authTitle').innerText="Entrar";
-            document.getElementById('nameGroup').style.display='none';
-            document.getElementById('confirmGroup').style.display='none';
-            document.getElementById('authSubmitBtn').innerText="Entrar";
-            document.getElementById('authSwitch').innerHTML='Nao tem conta? <span>Criar conta</span>';
-        }else{
-            document.getElementById('authTitle').innerText="Criar Conta";
-            document.getElementById('nameGroup').style.display='block';
-            document.getElementById('confirmGroup').style.display='block';
-            document.getElementById('authSubmitBtn').innerText="Criar Conta";
-            document.getElementById('authSwitch').innerHTML='Ja tem conta? <span>Fazer login</span>';
+    function openAuthModal() { updateAuthForm(); document.getElementById('authModal').style.display = 'flex'; }
+    function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+    
+    let isLoginMode = false;
+    function updateAuthForm() {
+        if (isLoginMode) {
+            document.getElementById('authTitle').innerText = "Entrar";
+            document.getElementById('nameGroup').style.display = 'none';
+            document.getElementById('confirmGroup').style.display = 'none';
+            document.getElementById('authSubmitBtn').innerText = "Entrar";
+            document.getElementById('authSwitch').innerHTML = 'Nao tem conta? <span>Criar conta</span>';
+        } else {
+            document.getElementById('authTitle').innerText = "Criar Conta";
+            document.getElementById('nameGroup').style.display = 'block';
+            document.getElementById('confirmGroup').style.display = 'block';
+            document.getElementById('authSubmitBtn').innerText = "Criar Conta";
+            document.getElementById('authSwitch').innerHTML = 'Ja tem conta? <span>Fazer login</span>';
         }
-        document.getElementById('authError').innerText='';
+        document.getElementById('authError').innerText = '';
     }
 
-    async function savePixConfig(){
-        const key=document.getElementById('pixKeyConfig').value;
-        const value=document.getElementById('pixValueConfig').value;
-        const file=document.getElementById('qrCodeImageUpload').files[0];
-        if(file){const imgUrl=await uploadToImgBB(file);if(imgUrl)pixConfig.qrCodeImage=imgUrl;}
-        if(key)pixConfig.key=key;
-        if(value)pixConfig.value=value;
+    async function savePixConfig() {
+        const key = document.getElementById('pixKeyConfig').value;
+        const value = document.getElementById('pixValueConfig').value;
+        const file = document.getElementById('qrCodeImageUpload').files[0];
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) pixConfig.qrCodeImage = imgUrl;
+        }
+        if (key) pixConfig.key = key;
+        if (value) pixConfig.value = value;
         database.ref('pixConfig').set(pixConfig);
-        document.getElementById('pixKeyDisplay').innerText=pixConfig.key;
-        document.getElementById('pixValue').innerText=pixConfig.value;
+        document.getElementById('pixKeyDisplay').innerText = pixConfig.key;
+        document.getElementById('pixValue').innerText = pixConfig.value;
         refreshQRCode();
-        document.getElementById('pixConfigModal').style.display='none';
+        document.getElementById('pixConfigModal').style.display = 'none';
         showToast('PIX configurado!');
     }
 
-    async function saveLogo(){
-        const text=document.getElementById('logoTextInput').value;
-        const file=document.getElementById('logoUpload').files[0];
-        const url=document.getElementById('logoUrlInput').value;
-        if(file){const imgUrl=await uploadToImgBB(file);if(imgUrl)logoConfig={type:"image",imageUrl:imgUrl,text:text||"Fhellip"};}
-        else if(url){logoConfig={type:"image",imageUrl:url,text:text||"Fhellip"};}
-        else if(text){logoConfig={type:"text",text:text,imageUrl:""};}
-        else{logoConfig={type:"text",text:"Fhellip",imageUrl:""};}
+    async function saveLogo() {
+        const text = document.getElementById('logoTextInput').value;
+        const file = document.getElementById('logoUpload').files[0];
+        const url = document.getElementById('logoUrlInput').value;
+        
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) logoConfig = { type: "image", imageUrl: imgUrl, text: text || "Fhellip" };
+        } else if (url) {
+            logoConfig = { type: "image", imageUrl: url, text: text || "Fhellip" };
+        } else if (text) {
+            logoConfig = { type: "text", text: text, imageUrl: "" };
+        } else {
+            logoConfig = { type: "text", text: "Fhellip", imageUrl: "" };
+        }
         database.ref('logoConfig').set(logoConfig);
         updateLogoDisplay();
         updateIntroLogo();
-        document.getElementById('logoConfigModal').style.display='none';
+        document.getElementById('logoConfigModal').style.display = 'none';
         showToast('Logo personalizado!');
     }
 
-    async function changeBannerImage(){
-        const input=document.createElement('input');input.type='file';input.accept='image/*';
-        input.onchange=async(e)=>{const file=e.target.files[0];if(file){const url=await uploadToImgBB(file);if(url){adminProfile.bannerImage=url;database.ref('adminProfile').set(adminProfile);updateHeroBanner();showToast('Banner atualizado!');}}};
+    async function changeBannerImage() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const url = await uploadToImgBB(file);
+                if (url) {
+                    adminProfile.bannerImage = url;
+                    database.ref('adminProfile').set(adminProfile);
+                    updateHeroBanner();
+                    showToast('Banner atualizado!');
+                }
+            }
+        };
         input.click();
     }
 
-    async function saveBackground(){
-        const file=document.getElementById('backgroundUpload').files[0];
-        const url=document.getElementById('backgroundUrl').value;
-        const color=document.getElementById('backgroundColor').value;
-        if(file){const imgUrl=await uploadToImgBB(file);if(imgUrl)pageBackground={type:"image",value:imgUrl};}
-        else if(url){pageBackground={type:"image",value:url};}
-        else if(color){pageBackground={type:"color",value:color};}
+    async function saveBackground() {
+        const file = document.getElementById('backgroundUpload').files[0];
+        const color = document.getElementById('backgroundColor').value;
+        if (file) {
+            const imgUrl = await uploadToImgBB(file);
+            if (imgUrl) pageBackground = { type: "image", value: imgUrl };
+        } else if (color) {
+            pageBackground = { type: "color", value: color };
+        }
         savePageBackground();
         updatePageBackground();
-        document.getElementById('changeBackgroundModal').style.display='none';
+        document.getElementById('changeBackgroundModal').style.display = 'none';
         showToast('Fundo atualizado!');
     }
 
-    function resetBackground(){
-        pageBackground={type:"color",value:"#050505"};
+    function resetBackground() {
+        pageBackground = { type: "color", value: "#050505" };
         savePageBackground();
         updatePageBackground();
-        document.getElementById('changeBackgroundModal').style.display='none';
+        document.getElementById('changeBackgroundModal').style.display = 'none';
         showToast('Fundo resetado!');
     }
 
-    function openEditBioModal(){
-        document.getElementById('bioInput').value=adminProfile.bio||"";
-        document.getElementById('editBioModal').style.display='flex';
+    function openEditBioModal() {
+        document.getElementById('bioInput').value = adminProfile.bio || "";
+        document.getElementById('editBioModal').style.display = 'flex';
     }
 
-    async function saveBio(){
-        const bio=document.getElementById('bioInput').value;
-        adminProfile.bio=bio||"Criador de conteudo exclusivo";
+    async function saveBio() {
+        const bio = document.getElementById('bioInput').value;
+        adminProfile.bio = bio || "Criador de conteudo exclusivo";
         database.ref('adminProfile').set(adminProfile);
         updateHeroBanner();
-        document.getElementById('editBioModal').style.display='none';
+        document.getElementById('editBioModal').style.display = 'none';
         showToast('Biografia atualizada!');
     }
 
-    function loadAllData(){
-        database.ref('cards').on('value',(snapshot)=>{const data=snapshot.val();photoCards=data?.photoCards||[];iconCards=data?.iconCards||[];renderCards();});
-        database.ref('mediaPosts').on('value',(snapshot)=>{mediaPosts=snapshot.val()?Object.values(snapshot.val()):[];renderMediaTab();renderTabs();});
-        database.ref('gallery').on('value',(snapshot)=>{galleryItems=snapshot.val()?.items||[];renderGalleryTab();renderTabs();});
-        database.ref('shop').on('value',(snapshot)=>{shopItems=snapshot.val()?.items||[];renderShopTab();renderTabs();});
-        database.ref('music').on('value',(snapshot)=>{musicItems=snapshot.val()?.items||[];renderMusicTab();renderTabs();});
-        database.ref('pixConfig').on('value',(snapshot)=>{if(snapshot.val())pixConfig=snapshot.val();document.getElementById('pixKeyDisplay').innerText=pixConfig.key||"Chave nao configurada";document.getElementById('pixValue').innerText=pixConfig.value;refreshQRCode();});
-        database.ref('logoConfig').on('value',(snapshot)=>{if(snapshot.val())logoConfig=snapshot.val();updateLogoDisplay();updateIntroLogo();});
-        database.ref('userProfiles').on('value',(snapshot)=>{if(snapshot.val())userProfiles=snapshot.val();updateProfileUI();});
-        database.ref('adminProfile').on('value',(snapshot)=>{if(snapshot.val()){adminProfile=snapshot.val();updateHeroBanner();renderMediaTab();}});
-        database.ref('clickLogs').on('value',(snapshot)=>{clickLogs=snapshot.val()?Object.values(snapshot.val()):[];});
-        database.ref('failedLoginAttempts').on('value',(snapshot)=>{failedLoginAttempts=snapshot.val()?Object.values(snapshot.val()):[];});
-        database.ref('paymentRequests').on('value',()=>{});
-        database.ref('pageBackground').on('value',(snapshot)=>{if(snapshot.val())pageBackground=snapshot.val();updatePageBackground();});
+    function loadAllData() {
+        database.ref('cards').on('value', (snapshot) => { const data = snapshot.val(); photoCards = data?.photoCards || []; iconCards = data?.iconCards || []; renderCards(); });
+        database.ref('mediaPosts').on('value', (snapshot) => { mediaPosts = snapshot.val() ? Object.values(snapshot.val()) : []; renderMediaTab(); renderTabs(); });
+        database.ref('gallery').on('value', (snapshot) => { galleryItems = snapshot.val()?.items || []; renderGalleryTab(); renderTabs(); });
+        database.ref('shop').on('value', (snapshot) => { shopItems = snapshot.val()?.items || []; renderShopTab(); renderTabs(); });
+        database.ref('music').on('value', (snapshot) => { musicItems = snapshot.val()?.items || []; renderMusicTab(); renderTabs(); });
+        database.ref('pixConfig').on('value', (snapshot) => { if (snapshot.val()) pixConfig = snapshot.val(); document.getElementById('pixKeyDisplay').innerText = pixConfig.key || "Chave nao configurada"; document.getElementById('pixValue').innerText = pixConfig.value; refreshQRCode(); });
+        database.ref('logoConfig').on('value', (snapshot) => { if (snapshot.val()) logoConfig = snapshot.val(); updateLogoDisplay(); updateIntroLogo(); });
+        database.ref('userProfiles').on('value', (snapshot) => { if (snapshot.val()) userProfiles = snapshot.val(); updateProfileUI(); });
+        database.ref('adminProfile').on('value', (snapshot) => { if (snapshot.val()) { adminProfile = snapshot.val(); updateHeroBanner(); renderMediaTab(); } });
+        database.ref('clickLogs').on('value', (snapshot) => { clickLogs = snapshot.val() ? Object.values(snapshot.val()) : []; });
+        database.ref('failedLoginAttempts').on('value', (snapshot) => { failedLoginAttempts = snapshot.val() ? Object.values(snapshot.val()) : []; });
+        database.ref('pageBackground').on('value', (snapshot) => { if (snapshot.val()) pageBackground = snapshot.val(); updatePageBackground(); });
     }
 
-    function openProfileEditModal(){
-        if(!currentUser){showToast('Faca login!');openAuthModal();return;}
-        document.getElementById('profileNameInput').value=currentUser.name;
-        document.getElementById('profileEditModal').style.display='flex';
+    function openProfileEditModal() {
+        if (!currentUser) { showToast('Faca login!'); openAuthModal(); return; }
+        document.getElementById('profileNameInput').value = currentUser.name;
+        document.getElementById('profileEditModal').style.display = 'flex';
     }
 
-    async function init(){
+    async function init() {
         loadAllData();
-        renderIconGrid('photoCardIconGrid',selectedPhotoIcon,(icon)=>{selectedPhotoIcon=icon;});
-        renderIconGrid('iconCardIconGrid',selectedIconCardIcon,(icon)=>{selectedIconCardIcon=icon;});
+        renderIconGrid('photoCardIconGrid', selectedPhotoIcon, (icon) => { selectedPhotoIcon = icon; });
+        renderIconGrid('iconCardIconGrid', selectedIconCardIcon, (icon) => { selectedIconCardIcon = icon; });
 
-        document.getElementById('showAddPhotoCardModalBtn').onclick=()=>document.getElementById('addPhotoCardModal').style.display='flex';
-        document.getElementById('showAddIconCardModalBtn').onclick=()=>document.getElementById('addIconCardModal').style.display='flex';
-        document.getElementById('showAddMediaPostModalBtn').onclick=()=>document.getElementById('addMediaPostModal').style.display='flex';
-        document.getElementById('showAddGalleryModalBtn').onclick=()=>document.getElementById('addGalleryModal').style.display='flex';
-        document.getElementById('showAddShopModalBtn').onclick=()=>document.getElementById('addShopModal').style.display='flex';
-        document.getElementById('showAddMusicModalBtn').onclick=()=>document.getElementById('addMusicModal').style.display='flex';
-        document.getElementById('showStatsBtn').onclick=showStats;
-        document.getElementById('resetStatsBtn').onclick=resetAllStats;
-        document.getElementById('resetClickLogsBtn').onclick=resetClickLogs;
-        document.getElementById('showPaymentRequestsBtn').onclick=showPaymentRequestsModal;
-        document.getElementById('changeBackgroundBtn').onclick=()=>document.getElementById('changeBackgroundModal').style.display='flex';
-        document.getElementById('organizeItemsBtn').onclick=()=>{
-            if(isOrganizing){
-                isOrganizing=false;
-                Object.values(sortableObjects).forEach(s=>{if(s) s.destroy();});
-                sortableObjects={};
-                document.querySelectorAll('.cards-grid, .media-feed, .gallery-grid, .shop-grid, .music-grid').forEach(grid=>grid.classList.remove('sortable-enabled'));
-                document.querySelectorAll('.sort-handle').forEach(handle=>handle.remove());
-                renderCards();renderMediaTab();renderGalleryTab();renderShopTab();renderMusicTab();
-                document.getElementById('organizeItemsBtn').style.background='rgba(255,255,255,0.1)';
+        document.getElementById('showAddPhotoCardModalBtn').onclick = () => document.getElementById('addPhotoCardModal').style.display = 'flex';
+        document.getElementById('showAddIconCardModalBtn').onclick = () => document.getElementById('addIconCardModal').style.display = 'flex';
+        document.getElementById('showAddMediaPostModalBtn').onclick = () => document.getElementById('addMediaPostModal').style.display = 'flex';
+        document.getElementById('showAddGalleryModalBtn').onclick = () => document.getElementById('addGalleryModal').style.display = 'flex';
+        document.getElementById('showAddShopModalBtn').onclick = () => document.getElementById('addShopModal').style.display = 'flex';
+        document.getElementById('showAddMusicModalBtn').onclick = () => document.getElementById('addMusicModal').style.display = 'flex';
+        document.getElementById('showStatsBtn').onclick = showStats;
+        document.getElementById('resetStatsBtn').onclick = resetAllStats;
+        document.getElementById('resetClickLogsBtn').onclick = resetClickLogs;
+        document.getElementById('showPaymentRequestsBtn').onclick = showPaymentRequestsModal;
+        document.getElementById('changeBackgroundBtn').onclick = () => document.getElementById('changeBackgroundModal').style.display = 'flex';
+        document.getElementById('organizeItemsBtn').onclick = () => {
+            if (isOrganizing) {
+                isOrganizing = false;
+                Object.values(sortableObjects).forEach(s => { if (s) s.destroy(); });
+                sortableObjects = {};
+                document.querySelectorAll('.cards-grid, .media-feed, .gallery-grid, .shop-grid, .music-grid').forEach(grid => grid.classList.remove('sortable-enabled'));
+                document.querySelectorAll('.sort-handle').forEach(handle => handle.remove());
+                renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab();
+                document.getElementById('organizeItemsBtn').style.background = 'rgba(255,255,255,0.1)';
                 showToast('Modo organizacao desativado');
-            }else{
-                isOrganizing=true;
-                enableSorting('cards-grid','cards');
-                enableSorting('media-feed','media');
-                enableSorting('gallery-grid','gallery');
-                enableSorting('shop-grid','shop');
-                enableSorting('music-grid','music');
-                document.getElementById('organizeItemsBtn').style.background='#1DA1F2';
+            } else {
+                isOrganizing = true;
+                enableSorting('cards-grid', 'cards');
+                enableSorting('media-feed', 'media');
+                enableSorting('gallery-grid', 'gallery');
+                enableSorting('shop-grid', 'shop');
+                enableSorting('music-grid', 'music');
+                document.getElementById('organizeItemsBtn').style.background = '#1DA1F2';
                 showToast('Arraste os itens para reorganizar!');
             }
         };
-        document.getElementById('editBioBtn').onclick=openEditBioModal;
-        document.getElementById('exitEditModeBtn').onclick=exitEditMode;
-        document.getElementById('showClickLogBtn').onclick=showClickLogModal;
+        document.getElementById('editBioBtn').onclick = openEditBioModal;
+        document.getElementById('exitEditModeBtn').onclick = exitEditMode;
+        document.getElementById('showClickLogBtn').onclick = showClickLogModal;
 
-        document.querySelectorAll('.pos-btn').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.pos-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');addPosition=btn.getAttribute('data-pos');showToast(`Novos itens no ${addPosition==='top'?'TOPO':'ULTIMO'}`);});
+        document.querySelectorAll('.pos-btn').forEach(btn => btn.onclick = () => { document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); addPosition = btn.getAttribute('data-pos'); showToast(`Novos itens no ${addPosition === 'top' ? 'TOPO' : 'ULTIMO'}`); });
 
-        const modalButtons=['closePhotoCardModal','closeIconCardModal','closeMediaPostModal','closeGalleryModal','closeShopModal','closeMusicModal','closeAuthModal','closePaymentModal','closeUsersModal','closePaymentRequestsModal','closePixModal','closeProfileModal','closeAdminProfileModal','closeLogoModal','closeStatsModal','closeClickLogModal','closeAdminModal','closeBackgroundModal','closeBioModal'];
-        modalButtons.forEach(id=>{const btn=document.getElementById(id);if(btn)btn.onclick=()=>btn.closest('.modal-overlay').style.display='none';});
+        const modalButtons = ['closePhotoCardModal', 'closeIconCardModal', 'closeMediaPostModal', 'closeGalleryModal', 'closeShopModal', 'closeMusicModal', 'closeAuthModal', 'closePaymentModal', 'closeUsersModal', 'closePaymentRequestsModal', 'closePixModal', 'closeProfileModal', 'closeAdminProfileModal', 'closeLogoModal', 'closeStatsModal', 'closeClickLogModal', 'closeAdminModal', 'closeBackgroundModal', 'closeBioModal'];
+        modalButtons.forEach(id => { const btn = document.getElementById(id); if (btn) btn.onclick = () => btn.closest('.modal-overlay').style.display = 'none'; });
 
-        document.getElementById('savePhotoCardBtn').onclick=addPhotoCardFromModal;
-        document.getElementById('saveIconCardBtn').onclick=addIconCardFromModal;
-        document.getElementById('saveMediaPostBtn').onclick=addMediaPost;
-        document.getElementById('saveGalleryBtn').onclick=addGalleryFromModal;
-        document.getElementById('saveProductBtn').onclick=addShopFromModal;
-        document.getElementById('saveMusicBtn').onclick=addMusicFromModal;
-        document.getElementById('saveProfileBtn').onclick=saveProfile;
-        document.getElementById('saveAdminProfileBtn').onclick=saveAdminProfile;
-        document.getElementById('paymentCompletedBtn').onclick=()=>requestPayment(window.currentPaymentMediaId);
-        document.getElementById('saveLogoBtn').onclick=saveLogo;
-        document.getElementById('saveBackgroundBtn').onclick=saveBackground;
-        document.getElementById('resetBackgroundBtn').onclick=resetBackground;
-        document.getElementById('saveBioBtn').onclick=saveBio;
-        document.getElementById('savePixConfigBtn').onclick=savePixConfig;
+        document.getElementById('savePhotoCardBtn').onclick = addPhotoCardFromModal;
+        document.getElementById('saveIconCardBtn').onclick = addIconCardFromModal;
+        document.getElementById('saveMediaPostBtn').onclick = addMediaPost;
+        document.getElementById('saveGalleryBtn').onclick = addGalleryFromModal;
+        document.getElementById('saveProductBtn').onclick = addShopFromModal;
+        document.getElementById('saveMusicBtn').onclick = addMusicFromModal;
+        document.getElementById('saveProfileBtn').onclick = saveProfile;
+        document.getElementById('saveAdminProfileBtn').onclick = saveAdminProfile;
+        document.getElementById('paymentCompletedBtn').onclick = () => requestPayment(window.currentPaymentMediaId);
+        document.getElementById('saveLogoBtn').onclick = saveLogo;
+        document.getElementById('saveBackgroundBtn').onclick = saveBackground;
+        document.getElementById('resetBackgroundBtn').onclick = resetBackground;
+        document.getElementById('saveBioBtn').onclick = saveBio;
+        document.getElementById('savePixConfigBtn').onclick = savePixConfig;
 
-        document.getElementById('profileIconBtn').onclick=()=>{document.getElementById('sideMenu').classList.add('open');document.getElementById('menuOverlay').style.display='block';document.body.style.overflow='hidden';};
-        document.getElementById('closeMenuBtn').onclick=()=>{document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';document.body.style.overflow='';};
-        document.getElementById('menuOverlay').onclick=()=>{document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';document.body.style.overflow='';};
-        document.getElementById('menuLoginBtn').onclick=()=>{openAuthModal();document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';};
-        document.getElementById('menuLogoutBtn').onclick=()=>{logout();document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';};
-        document.getElementById('menuUsersBtn').onclick=()=>{showUsersModal();document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';};
-        document.getElementById('menuPaymentRequestsBtn').onclick=()=>{showPaymentRequestsModal();document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';};
-        document.getElementById('menuPixBtn').onclick=()=>{document.getElementById('pixKeyConfig').value=pixConfig.key||"";document.getElementById('pixValueConfig').value=pixConfig.value;document.getElementById('pixConfigModal').style.display='flex';document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';};
-        document.getElementById('menuProfileEditBtn').onclick=()=>{document.getElementById('adminProfileNameInput').value=adminProfile.name;document.getElementById('adminProfileEditModal').style.display='flex';document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';};
-        document.getElementById('menuLogoBtn').onclick=()=>{document.getElementById('logoTextInput').value=logoConfig.text||"Fhellip";document.getElementById('logoUrlInput').value=logoConfig.imageUrl||"";document.getElementById('logoConfigModal').style.display='flex';document.getElementById('sideMenu').classList.remove('open');document.getElementById('menuOverlay').style.display='none';};
-        document.getElementById('editBannerIcon').onclick=changeBannerImage;
-        document.getElementById('editAvatarIconBtn').onclick=openProfileEditModal;
-        document.getElementById('editNameIconBtn').onclick=openProfileEditModal;
-        document.getElementById('stickyAvatar').onclick=()=>{if(isEditMode)document.getElementById('adminProfileEditModal').style.display='flex';};
+        document.getElementById('profileIconBtn').onclick = () => { document.getElementById('sideMenu').classList.add('open'); document.getElementById('menuOverlay').style.display = 'block'; document.body.style.overflow = 'hidden'; };
+        document.getElementById('closeMenuBtn').onclick = () => { document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; document.body.style.overflow = ''; };
+        document.getElementById('menuOverlay').onclick = () => { document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; document.body.style.overflow = ''; };
+        document.getElementById('menuLoginBtn').onclick = () => { openAuthModal(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuLogoutBtn').onclick = () => { logout(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuUsersBtn').onclick = () => { showUsersModal(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuPaymentRequestsBtn').onclick = () => { showPaymentRequestsModal(); document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuPixBtn').onclick = () => { document.getElementById('pixKeyConfig').value = pixConfig.key || ""; document.getElementById('pixValueConfig').value = pixConfig.value; document.getElementById('pixConfigModal').style.display = 'flex'; document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuProfileEditBtn').onclick = () => { document.getElementById('adminProfileNameInput').value = adminProfile.name; document.getElementById('adminProfileEditModal').style.display = 'flex'; document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('menuLogoBtn').onclick = () => { document.getElementById('logoTextInput').value = logoConfig.text || "Fhellip"; document.getElementById('logoUrlInput').value = logoConfig.imageUrl || ""; document.getElementById('logoConfigModal').style.display = 'flex'; document.getElementById('sideMenu').classList.remove('open'); document.getElementById('menuOverlay').style.display = 'none'; };
+        document.getElementById('editBannerIcon').onclick = changeBannerImage;
+        document.getElementById('editAvatarIconBtn').onclick = openProfileEditModal;
+        document.getElementById('editNameIconBtn').onclick = openProfileEditModal;
+        document.getElementById('stickyAvatar').onclick = () => { if (isEditMode) document.getElementById('adminProfileEditModal').style.display = 'flex'; };
 
-        document.getElementById('bannerNameClick').onclick=()=>{if(!isEditMode&&!currentUser)document.getElementById('adminLoginModal').style.display='flex';};
-        document.getElementById('stickyName').onclick=()=>{if(!isEditMode&&!currentUser)document.getElementById('adminLoginModal').style.display='flex';};
-        document.getElementById('adminLoginBtn').onclick=async()=>{const email=document.getElementById('adminEmail').value,password=document.getElementById('adminPassword').value;await adminLogin(email,password);};
-        document.getElementById('authSwitch').onclick=()=>{isLoginMode=!isLoginMode;updateAuthForm();};
-        document.getElementById('authSubmitBtn').onclick=async()=>{
-            let email=document.getElementById('authEmail').value,password=document.getElementById('authPassword').value;
-            if(isLoginMode){
-                let result=await loginUser(email,password);
-                if(result==="success"){closeAuthModal();updateProfileUI();updateMenuUI();renderMediaTab();showToast('Login realizado!');}
-                else document.getElementById('authError').innerText=result;
-            }else{
-                let name=document.getElementById('authName').value,confirm=document.getElementById('authConfirmPassword').value;
-                let result=await registerUser(name,email,password,confirm);
-                if(result==="success"){closeAuthModal();updateProfileUI();updateMenuUI();showToast('Conta criada!');}
-                else document.getElementById('authError').innerText=result;
+        document.getElementById('bannerNameClick').onclick = () => { if (!isEditMode && !currentUser) document.getElementById('adminLoginModal').style.display = 'flex'; };
+        document.getElementById('stickyName').onclick = () => { if (!isEditMode && !currentUser) document.getElementById('adminLoginModal').style.display = 'flex'; };
+        document.getElementById('adminLoginBtn').onclick = async () => { const email = document.getElementById('adminEmail').value, password = document.getElementById('adminPassword').value; await adminLogin(email, password); };
+        document.getElementById('authSwitch').onclick = () => { isLoginMode = !isLoginMode; updateAuthForm(); };
+        document.getElementById('authSubmitBtn').onclick = async () => {
+            let email = document.getElementById('authEmail').value, password = document.getElementById('authPassword').value;
+            if (isLoginMode) {
+                let result = await loginUser(email, password);
+                if (result === "success") { closeAuthModal(); updateProfileUI(); updateMenuUI(); renderMediaTab(); showToast('Login realizado!'); }
+                else document.getElementById('authError').innerText = result;
+            } else {
+                let name = document.getElementById('authName').value, confirm = document.getElementById('authConfirmPassword').value;
+                let result = await registerUser(name, email, password, confirm);
+                if (result === "success") { closeAuthModal(); updateProfileUI(); updateMenuUI(); showToast('Conta criada!'); }
+                else document.getElementById('authError').innerText = result;
             }
         };
-        document.getElementById('copyPixBtn').onclick=()=>{if(pixConfig.key){navigator.clipboard.writeText(pixConfig.key);showToast('Chave PIX copiada!');}};
+        document.getElementById('copyPixBtn').onclick = () => { if (pixConfig.key) { navigator.clipboard.writeText(pixConfig.key); showToast('Chave PIX copiada!'); } };
 
-        const stickyHeader=document.getElementById('stickyHeader');
-        window.addEventListener('scroll',()=>{updateBannerDarkening();if(window.scrollY>80)stickyHeader.classList.add('visible');else stickyHeader.classList.remove('visible');});
+        const stickyHeader = document.getElementById('stickyHeader');
+        window.addEventListener('scroll', () => { updateBannerDarkening(); if (window.scrollY > 80) stickyHeader.classList.add('visible'); else stickyHeader.classList.remove('visible'); });
 
-        const savedAdmin=localStorage.getItem('fhellip_admin_logged');
-        if(savedAdmin==='true' && !isEditMode){
-            isEditMode=true;currentAdmin='fhellip@gmail.com';
-            document.getElementById('editModeBar').style.display='flex';
-            document.getElementById('positionSelector').style.display='flex';
-            document.getElementById('menuUsersBtn').style.display='flex';
-            document.getElementById('menuPaymentRequestsBtn').style.display='flex';
-            document.getElementById('menuPixBtn').style.display='flex';
-            document.getElementById('menuProfileEditBtn').style.display='flex';
-            document.getElementById('menuLogoBtn').style.display='flex';
-            document.getElementById('menuDivider').style.display='block';
-            document.getElementById('menuLoginBtn').style.display='none';
-            document.getElementById('menuLogoutBtn').style.display='none';
-            document.getElementById('editBannerIcon').style.display='flex';
+        const savedAdmin = localStorage.getItem('fhellip_admin_logged');
+        if (savedAdmin === 'true' && !isEditMode) {
+            isEditMode = true; currentAdmin = 'fhellip@gmail.com';
+            document.getElementById('editModeBar').style.display = 'flex';
+            document.getElementById('positionSelector').style.display = 'flex';
+            document.getElementById('menuUsersBtn').style.display = 'flex';
+            document.getElementById('menuPaymentRequestsBtn').style.display = 'flex';
+            document.getElementById('menuPixBtn').style.display = 'flex';
+            document.getElementById('menuProfileEditBtn').style.display = 'flex';
+            document.getElementById('menuLogoBtn').style.display = 'flex';
+            document.getElementById('menuDivider').style.display = 'block';
+            document.getElementById('menuLoginBtn').style.display = 'none';
+            document.getElementById('menuLogoutBtn').style.display = 'none';
+            document.getElementById('editBannerIcon').style.display = 'flex';
             document.getElementById('heroBanner').classList.add('edit-mode-active');
-            renderCards();renderMediaTab();renderGalleryTab();renderShopTab();renderMusicTab();renderTabs();
+            renderCards(); renderMediaTab(); renderGalleryTab(); renderShopTab(); renderMusicTab(); renderTabs();
             showToast('Modo edicao restaurado!');
         }
 
-        const savedUser=localStorage.getItem('fhellip_current_user');
-        if(savedUser && !isEditMode){
-            currentUser=JSON.parse(savedUser);
-            const userSnapshot=await database.ref(`users/${currentUser.email.replace(/\./g,',')}`).once('value');
-            const userData=userSnapshot.val();
-            if(userData)currentUser.name=userData.name;
-            updateProfileUI();updateMenuUI();renderMediaTab();
+        const savedUser = localStorage.getItem('fhellip_current_user');
+        if (savedUser && !isEditMode) {
+            currentUser = JSON.parse(savedUser);
+            const userSnapshot = await database.ref(`users/${currentUser.email.replace(/\./g, ',')}`).once('value');
+            const userData = userSnapshot.val();
+            if (userData) currentUser.name = userData.name;
+            updateProfileUI(); updateMenuUI(); renderMediaTab();
         }
-        updateProfileUI();updateMenuUI();
+        updateProfileUI(); updateMenuUI();
 
-        setTimeout(()=>{const intro=document.getElementById('introOverlay');if(intro)intro.remove();},3300);
+        setTimeout(() => { const intro = document.getElementById('introOverlay'); if (intro) intro.remove(); }, 3300);
     }
 
     init();
