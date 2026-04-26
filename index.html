@@ -197,10 +197,10 @@
     <div id="editModeBar" class="edit-mode-bar" style="display: none;">
         <button id="showAddPhotoCardModalBtn"><i class="fas fa-image"></i> Card Foto</button>
         <button id="showAddIconCardModalBtn"><i class="fas fa-icons"></i> Card Icone</button>
-        <button id="showAddMediaPostModalBtn"><i class="fas fa-plus-circle"></i> Midia</button>
+        <button id="showAddMediaPostModalBtn"><i class="fas fa-plus-circle"></i>Mídia</button>
         <button id="showAddGalleryModalBtn"><i class="fas fa-images"></i> Galeria</button>
         <button id="showAddShopModalBtn"><i class="fas fa-store"></i> Loja</button>
-        <button id="showAddMusicModalBtn"><i class="fas fa-music"></i> Musica</button>
+        <button id="showAddMusicModalBtn"><i class="fas fa-music"></i> Música</button>
         <button id="showStatsBtn"><i class="fas fa-chart-bar"></i> Stats</button>
         <button id="resetStatsBtn"><i class="fas fa-sync-alt"></i> Reset Stats</button>
         <button id="resetClickLogsBtn"><i class="fas fa-trash-alt"></i> Reset Logs</button>
@@ -388,16 +388,16 @@
     // CORREÇÃO CRÍTICA: Função que verifica se o usuário tem acesso à mídia
     async function hasMediaAccess(mediaId) {
         if (!currentUser) return false;
-        
+
         // Primeiro verifica se o usuário está banido
         const userSnapshot = await database.ref(`users/${currentUser.email.replace(/\./g, ',')}`).once('value');
         const userData = userSnapshot.val();
-        
+
         if (userData?.isBanned) return false;
-        
+
         // CORREÇÃO: Verifica o campo hasAccess que é controlado pelo admin
         if (userData?.hasAccess !== true) return false;
-        
+
         // Se tiver acesso geral, pode ver todas as mídias
         return true;
     }
@@ -518,7 +518,7 @@
                     return;
                 }
                 openFullscreen(post.imageUrl);
-                if (!isEditMode) { post.clicks = (post.clicks || 0) + 1; saveMediaPosts(); addClickLog('Midia', postId); renderMediaTab(); }
+                if (!isEditMode) { post.clicks = (post.clicks || 0) + 1; saveMediaPosts(); addClickLog('Mídia', postId); renderMediaTab(); }
             };
         });
 
@@ -628,7 +628,7 @@
                 const id = card.getAttribute('data-id');
                 const link = card.getAttribute('data-link');
                 const item = musicItems.find(i => i.id === id);
-                if (item && !isEditMode) { item.clicks = (item.clicks || 0) + 1; saveMusic(); addClickLog('Musica', id); renderMusicTab(); }
+                if (item && !isEditMode) { item.clicks = (item.clicks || 0) + 1; saveMusic(); addClickLog('Música', id); renderMusicTab(); }
                 if (link && link !== '#') window.open(link, '_blank');
             };
         });
@@ -646,20 +646,20 @@
         const hasGallery = galleryItems.length > 0;
         const hasShop = shopItems.length > 0;
         const hasMusic = musicItems.length > 0;
-        
+
         if (!hasMedia && !hasGallery && !hasShop && !hasMusic) {
             tabsContainer.innerHTML = '';
             return;
         }
-        
+
         let tabsHtml = '';
-        if (hasMedia) tabsHtml += `<button class="tab-btn" data-page="media">Midia</button>`;
+        if (hasMedia) tabsHtml += `<button class="tab-btn" data-page="media">Mídia</button>`;
         if (hasGallery) tabsHtml += `<button class="tab-btn" data-page="gallery">Galeria</button>`;
         if (hasShop) tabsHtml += `<button class="tab-btn" data-page="shop">Loja</button>`;
-        if (hasMusic) tabsHtml += `<button class="tab-btn" data-page="music">Musica</button>`;
-        
+        if (hasMusic) tabsHtml += `<button class="tab-btn" data-page="music">Música</button>`;
+
         tabsContainer.innerHTML = tabsHtml;
-        
+
         let activeTab = localStorage.getItem('activeTab');
         if (!activeTab || !document.querySelector(`.tab-btn[data-page="${activeTab}"]`)) {
             if (hasMedia) activeTab = 'media';
@@ -667,7 +667,7 @@
             else if (hasShop) activeTab = 'shop';
             else if (hasMusic) activeTab = 'music';
         }
-        
+
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.onclick = () => {
                 const page = btn.getAttribute('data-page');
@@ -681,7 +681,7 @@
                 btn.classList.add('active');
             }
         });
-        
+
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
         if (document.getElementById(`${activeTab}Page`)) {
             document.getElementById(`${activeTab}Page`).classList.add('active-tab');
@@ -817,7 +817,7 @@
         if(newArtist) item.artist=newArtist;
         if(newLink) item.link=newLink;
         const input = document.createElement('input'); input.type='file'; input.accept='image/*';
-        input.onchange = async(e)=>{const file=e.target.files[0];if(file){const url=await uploadToImgBB(file);if(url){item.imageUrl=url;saveMusic();renderMusicTab();showToast('Musica atualizada!');}}};
+        input.onchange = async(e)=>{const file=e.target.files[0];if(file){const url=await uploadToImgBB(file);if(url){item.imageUrl=url;saveMusic();renderMusicTab();showToast('Música atualizada!');}}};
         input.click();
     }
 
@@ -1061,7 +1061,7 @@
     function showUsersModal() {
         const container = document.getElementById('usersListContainer');
         const searchInput = document.getElementById('userSearchInput');
-        
+
         function renderUsers(searchTerm = '') {
             database.ref('users').once('value', (snapshot) => {
                 const users = snapshot.val();
@@ -1069,7 +1069,7 @@
                     container.innerHTML = '<div style="text-align:center;padding:30px;">Nenhum usuario</div>';
                     return;
                 }
-                
+
                 let usersArray = [];
                 for (const [key, userData] of Object.entries(users)) {
                     const email = userData.email || key.replace(/,/g, '.');
@@ -1085,9 +1085,9 @@
                         originalKey: key
                     });
                 }
-                
+
                 usersArray.sort((a, b) => b.createdAt - a.createdAt);
-                
+
                 if (searchTerm) {
                     const term = searchTerm.toLowerCase();
                     usersArray = usersArray.filter(u => 
@@ -1095,7 +1095,7 @@
                         u.email.toLowerCase().includes(term)
                     );
                 }
-                
+
                 let html = '';
                 usersArray.forEach(user => {
                     let statusClass, statusText;
@@ -1109,11 +1109,11 @@
                         statusClass = 'access-false';
                         statusText = '🟡 Pendente';
                     }
-                    
+
                     const formattedDate = user.createdAt.toLocaleDateString('pt-BR');
                     const formattedTime = user.createdAt.toLocaleTimeString('pt-BR');
                     const avatarUrl = user.avatar || `https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}`;
-                    
+
                     html += `<div class="user-item" data-user-email="${user.email}">
                         <img class="user-avatar-small" src="${avatarUrl}">
                         <div class="user-info">
@@ -1133,14 +1133,14 @@
                     </div>`;
                 });
                 container.innerHTML = html;
-                
+
                 document.querySelectorAll('.toggle-ban').forEach(btn => {
                     btn.onclick = async (e) => {
                         e.stopPropagation();
                         const email = btn.getAttribute('data-email');
                         const current = btn.getAttribute('data-current') === 'true';
                         const newBan = !current;
-                        
+
                         const userPath = `users/${email.replace(/\./g, ',')}`;
                         if (newBan) {
                             await database.ref(userPath).update({ isBanned: true, hasAccess: false });
@@ -1152,7 +1152,7 @@
                         renderUsers(searchInput.value);
                     };
                 });
-                
+
                 document.querySelectorAll('.delete-user').forEach(btn => {
                     btn.onclick = async (e) => {
                         e.stopPropagation();
@@ -1166,7 +1166,7 @@
                 });
             });
         }
-        
+
         renderUsers('');
         searchInput.oninput = (e) => renderUsers(e.target.value);
         document.getElementById('usersModal').style.display = 'flex';
@@ -1176,7 +1176,7 @@
     function showUsersManagerModal() {
         const container = document.getElementById('usersManagerList');
         const searchInput = document.getElementById('usersManagerSearch');
-        
+
         function renderUsers(searchTerm = '') {
             database.ref('users').once('value', (snapshot) => {
                 const users = snapshot.val();
@@ -1184,7 +1184,7 @@
                     container.innerHTML = '<div style="text-align:center;padding:30px;">Nenhum usuario encontrado</div>';
                     return;
                 }
-                
+
                 let usersArray = [];
                 for (const [key, userData] of Object.entries(users)) {
                     const email = userData.email || key.replace(/,/g, '.');
@@ -1203,9 +1203,9 @@
                         });
                     }
                 }
-                
+
                 usersArray.sort((a, b) => b.createdAt - a.createdAt);
-                
+
                 if (searchTerm) {
                     const term = searchTerm.toLowerCase();
                     usersArray = usersArray.filter(u => 
@@ -1213,18 +1213,18 @@
                         u.email.toLowerCase().includes(term)
                     );
                 }
-                
+
                 if (usersArray.length === 0) {
                     container.innerHTML = '<div style="text-align:center;padding:30px;color:rgba(255,255,255,0.5);"><i class="fas fa-info-circle"></i><p style="font-size:0.7rem;">Nenhum usuario encontrado</p></div>';
                     return;
                 }
-                
+
                 let html = '';
                 usersArray.forEach(user => {
                     const formattedDate = user.createdAt.toLocaleDateString('pt-BR');
                     const avatarUrl = user.avatar || `https://ui-avatars.com/api/?background=1DA1F2&color=fff&size=40&name=${encodeURIComponent(user.name)}`;
                     const hasAccess = user.hasAccess;
-                    
+
                     html += `<div class="user-item" data-user-email="${user.email}">
                         <img class="user-avatar-small" src="${avatarUrl}">
                         <div class="user-info">
@@ -1243,7 +1243,7 @@
                     </div>`;
                 });
                 container.innerHTML = html;
-                
+
                 // Botão BLOQUEAR acesso - IMPEDE o usuário de ver o conteúdo
                 document.querySelectorAll('.btn-block-access').forEach(btn => {
                     btn.onclick = async (e) => {
@@ -1255,7 +1255,7 @@
                         renderUsers(searchInput.value);
                     };
                 });
-                
+
                 // Botão LIBERAR acesso - PERMITE o usuário ver o conteúdo
                 document.querySelectorAll('.btn-unblock-access').forEach(btn => {
                     btn.onclick = async (e) => {
@@ -1269,7 +1269,7 @@
                 });
             });
         }
-        
+
         renderUsers('');
         searchInput.oninput = (e) => renderUsers(e.target.value);
         document.getElementById('usersManagerModal').style.display = 'flex';
@@ -1279,14 +1279,14 @@
         const container = document.getElementById('paymentRequestsList');
         container.innerHTML = '<div style="text-align:center;padding:20px;"><i class="fas fa-spinner fa-spin"></i></div>';
         document.getElementById('paymentRequestsModal').style.display = 'flex';
-        
+
         database.ref('paymentRequests').once('value', (snapshot) => {
             const requests = snapshot.val();
             if (!requests || Object.keys(requests).length === 0) {
                 container.innerHTML = '<div style="text-align:center;padding:30px;">Nenhuma solicitacao de pagamento pendente</div>';
                 return;
             }
-            
+
             let html = '';
             for (const [id, req] of Object.entries(requests)) {
                 const reqDate = new Date(req.timestamp);
@@ -1306,18 +1306,18 @@
                 </div>`;
             }
             container.innerHTML = html;
-            
+
             document.querySelectorAll('.approve-payment').forEach(btn => {
                 btn.onclick = async () => {
                     const id = btn.getAttribute('data-id');
                     const email = btn.getAttribute('data-email');
                     const name = btn.getAttribute('data-name');
                     const mediaId = btn.getAttribute('data-media');
-                    
+
                     const originalText = btn.innerHTML;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
                     btn.disabled = true;
-                    
+
                     try {
                         if (mediaId) {
                             const mediaPath = `mediaAccess/${email.replace(/\./g, ',')}/${mediaId}`;
@@ -1490,7 +1490,7 @@
         galleryItems.forEach(i => totalGalleryClicks += i.clicks || 0);
         shopItems.forEach(i => totalShopClicks += i.clicks || 0);
         musicItems.forEach(i => totalMusicClicks += i.clicks || 0);
-        
+
         const statsHtml = `
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-chart-line"></i> Cliques em Cards:</strong> ${totalCardClicks}</div></div>
             <div class="user-item"><div class="user-info"><strong><i class="fas fa-eye"></i> Visualizacoes na Midia:</strong> ${totalMediaClicks}</div></div>
@@ -1521,7 +1521,7 @@
 
     function openAuthModal() { updateAuthForm(); document.getElementById('authModal').style.display = 'flex'; }
     function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
-    
+
     let isLoginMode = false;
     function updateAuthForm() {
         if (isLoginMode) {
@@ -1562,7 +1562,7 @@
         const text = document.getElementById('logoTextInput').value;
         const file = document.getElementById('logoUpload').files[0];
         const url = document.getElementById('logoUrlInput').value;
-        
+
         if (file) {
             const imgUrl = await uploadToImgBB(file);
             if (imgUrl) logoConfig = { type: "image", imageUrl: imgUrl, text: text || "Fhellip" };
