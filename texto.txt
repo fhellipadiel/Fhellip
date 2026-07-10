@@ -1,0 +1,178 @@
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { Plus, X, ChevronLeft, ChevronRight, User, Check, List, Trash } from 'lucide-react';
+
+export default function App() {
+  const [transactions, setTransactions] = useState(() => JSON.parse(localStorage.getItem('transactions')) || []);
+  const [history, setHistory] = useState(() => JSON.parse(localStorage.getItem('history')) || []);
+  const [profileImage, setProfileImage] = useState(() => localStorage.getItem('profileImage') || null);
+  const [percentage, setPercentage] = useState(() => JSON.parse(localStorage.getItem('percentage')) || 2);
+  const [isEditingPercentage, setIsEditingPercentage] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const fileInputRef = useRef(null);
+  
+  const [formData, setFormData] = useState({ nome: '', documento: '', valorRaw: '0', data: selectedDate });
+
+  useEffect(() => {
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+    localStorage.setItem('history', JSON.stringify(history));
+    localStorage.setItem('percentage', JSON.stringify(percentage));
+    if (profileImage) localStorage.setItem('profileImage', profileImage);
+  }, [transactions, history, percentage, profileImage]);
+
+  const total = useMemo(() => transactions.reduce((acc, curr) => acc + (curr.valor || 0), 0), [transactions]);
+  const calculatedValue = useMemo(() => total * (percentage / 100), [total, percentage]);
+  const filteredTransactions = useMemo(() => transactions.filter(t => t.data === selectedDate), [transactions, selectedDate]);
+  const datesWithEntries = useMemo(() => [...new Set(transactions.map(t => t.data))], [transactions]);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => setProfileImage(event.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const maskDocument = (v) => {
+    v = v.replace(/\D/g, '');
+    if (v.length > 14) v = v.substring(0, 14);
+    return v.length <= 11 
+      ? v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+      : v.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+  };
+
+  const confirmAndReset = useCallback(() => {
+    if (transactions.length === 0) return;
+    const sortedDates = [...new Set(transactions.map(t => t.data))].sort();
+    const range = `${sortedDates[0].split('-')[2]}/${sortedDates[0].split('-')[1]} a ${sortedDates[sortedDates.length - 1].split('-')[2]}/${sortedDates[sortedDates.length - 1].split('-')[1]}`;
+    setHistory(prev => [...prev, { id: Date.now(), range, finalValue: calculatedValue }]);
+    setTransactions([]);
+  }, [transactions, calculatedValue]);
+
+  const deleteFromHistory = (id) => setHistory(prev => prev.filter(h => h.id !== id));
+  const deleteTransaction = (id) => setTransactions(prev => prev.filter(t => t.id !== id));
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setTransactions(prev => [...prev, { ...formData, valor: parseFloat(formData.valorRaw) / 100, id: Date.now() }]);
+    setIsFormOpen(false);
+    setFormData({ nome: '', documento: '', valorRaw: '0', data: selectedDate });
+  };
+
+  const getCalendarDays = () => {
+    const y = currentDate.getFullYear(), m = currentDate.getMonth();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const firstDay = new Date(y, m, 1).getDay();
+    const days = Array(firstDay).fill(null);
+    for (let i = 1; i <= daysInMonth; i++) {
+        days.push(`${y}-${String(m + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`);
+    }
+    return days;
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white p-4 font-sans pb-24">
+      <div className="max-w-md mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-full bg-white/10 overflow-hidden flex items-center justify-center border border-white/10">
+              {profileImage ? <img src={profileImage} className="w-full h-full object-cover" alt="Perfil" /> : <User size={20} />}
+            </button>
+            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
+            <span className="font-bold">Fhellip Adiel</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsEditingPercentage(true)} className="font-bold bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent text-sm">
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(calculatedValue)}
+            </button>
+            <button onClick={() => setIsHistoryOpen(true)} className="p-2 bg-white/10 rounded-full"><List size={18}/></button>
+            <button onClick={confirmAndReset} className="text-white"><Check size={22} /></button>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-white to-gray-400 text-black p-6 rounded-[24px] mb-6">
+          <p className="text-xs font-bold uppercase tracking-widest opacity-70">Saldo Total</p>
+          <h2 className="text-4xl font-bold mt-1">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</h2>
+        </div>
+
+        <div className="bg-white/5 p-4 rounded-2xl mb-6">
+          <div className="flex justify-between mb-4">
+            <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}><ChevronLeft/></button>
+            <span className="font-bold">{currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</span>
+            <button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}><ChevronRight/></button>
+          </div>
+          <div className="grid grid-cols-7 gap-2 text-center">
+            {['D','S','T','Q','Q','S','S'].map((d,i) => <div key={i} className="text-[10px] text-gray-500">{d}</div>)}
+            {getCalendarDays().map((d, i) => d ? (
+              <button key={i} onClick={() => setSelectedDate(d)} className={`h-10 flex flex-col items-center justify-center rounded-lg ${selectedDate === d ? 'bg-white text-black' : 'hover:bg-white/10'}`}>
+                {parseInt(d.split('-')[2])}
+                {datesWithEntries.includes(d) && <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1" />}
+              </button>
+            ) : <div key={i} />)}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {filteredTransactions.map(t => (
+            <div key={t.id} className="bg-white/5 p-4 rounded-2xl flex justify-between items-center">
+              <div><p className="font-bold">{t.nome}</p><p className="text-xs text-gray-400">{t.documento}</p></div>
+              <div className="flex items-center gap-4">
+                <span className="font-bold">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(t.valor)}</span>
+                <button onClick={() => deleteTransaction(t.id)} className="text-red-500"><Trash size={16}/></button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button onClick={() => setIsFormOpen(true)} className="fixed bottom-8 right-8 bg-white text-black p-4 rounded-full shadow-2xl z-40"><Plus size={28} /></button>
+
+        {isEditingPercentage && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+            <div className="bg-neutral-900 p-6 rounded-2xl w-64 text-center">
+              <h3 className="mb-4 font-bold">Porcentagem (%)</h3>
+              <input type="number" className="w-full bg-white/10 p-3 rounded-xl text-center text-xl font-bold mb-4" value={percentage} onChange={e => setPercentage(parseFloat(e.target.value))} />
+              <button onClick={() => setIsEditingPercentage(false)} className="w-full bg-white text-black py-3 rounded-xl font-bold">SALVAR</button>
+            </div>
+          </div>
+        )}
+
+        {isHistoryOpen && (
+          <div className="fixed inset-0 bg-black/90 flex items-end z-50">
+            <div className="bg-neutral-900 w-full max-h-[80vh] p-6 rounded-t-[32px] overflow-y-auto">
+              <div className="flex justify-between mb-6">
+                <h2 className="font-bold text-xl">Histórico</h2>
+                <button onClick={() => setIsHistoryOpen(false)}><X/></button>
+              </div>
+              {history.map(h => (
+                <div key={h.id} className="bg-white/5 p-4 mb-3 rounded-xl flex justify-between items-center">
+                  <span>Dias: {h.range}</span>
+                  <div className="flex items-center gap-4">
+                      <span className="font-bold">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(h.finalValue)}</span>
+                      <button onClick={() => deleteFromHistory(h.id)} className="text-red-500"><Trash size={16}/></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {isFormOpen && (
+          <div className="fixed inset-0 bg-black/80 flex items-end justify-center z-50">
+            <form onSubmit={handleSubmit} className="bg-neutral-900 w-full max-w-md p-6 rounded-t-[32px] space-y-4">
+              <div className="flex justify-between mb-4"><h2>Nova Anotação</h2><button type="button" onClick={() => setIsFormOpen(false)}><X/></button></div>
+              <input required className="w-full bg-white/5 p-4 rounded-xl" placeholder="Nome" onChange={e => setFormData(p => ({...p, nome: e.target.value}))} />
+              <input required className="w-full bg-white/5 p-4 rounded-xl" placeholder="CPF/CNPJ" value={formData.documento} onChange={e => setFormData(p => ({...p, documento: maskDocument(e.target.value)}))} />
+              <input required className="w-full bg-white/5 p-4 rounded-xl" placeholder="R$ 0,00" value={new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(parseFloat(formData.valorRaw)/100)} onChange={e => setFormData(p => ({...p, valorRaw: e.target.value.replace(/\D/g, '')}))} />
+              <input required type="date" className="w-full bg-white/5 p-4 rounded-xl" value={formData.data} onChange={e => setFormData(p => ({...p, data: e.target.value}))} />
+              <button className="w-full bg-white text-black py-4 rounded-xl font-bold">SALVAR</button>
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
