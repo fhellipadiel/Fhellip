@@ -103,13 +103,13 @@
                 document.getElementById('totalDisplay').innerText = total.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
             }
             document.getElementById('calcBtn').innerText = ((viewMode === 'current' ? trans.filter(t => t.data == selectedDate).reduce((a,b)=>a+b.valor,0) : 0) * (percent/100)).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-
+            
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = ['D','S','T','Q','Q','S','S'].map(d => `<div class="text-gray-500 font-bold">${d}</div>`).join('');
             const daysInMonth = new Date(curr.getFullYear(), curr.getMonth()+1, 0).getDate();
             const firstDay = new Date(curr.getFullYear(), curr.getMonth(), 1).getDay();
             for(let i=0; i<firstDay; i++) grid.innerHTML += '<div></div>';
-
+            
             for(let i=1; i<=daysInMonth; i++) {
                 const dStr = `${curr.getFullYear()}-${String(curr.getMonth()+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                 const hasEntry = trans.some(t => t.data === dStr);
@@ -131,7 +131,7 @@
                         <button onclick="deleteTrans(${t.id})" class="text-red-500"><i data-lucide="trash-2" size="18"></i></button>
                     </div>
                 </div>`).join('') : '<p class="text-center text-gray-500">Visualizando dia de fechamento.</p>';
-
+            
             document.getElementById('monthDisplay').innerText = curr.toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
             localStorage.setItem('transactions', JSON.stringify(trans));
             localStorage.setItem('closingDates', JSON.stringify(closingDates));
@@ -162,7 +162,7 @@
         });
 
         function deleteTrans(id) { trans = trans.filter(t => t.id !== id); render(); }
-
+        
         function deleteHistory(index) { 
             const removed = history.splice(index, 1);
             const dateStr = removed[0].dateKey;
@@ -172,11 +172,11 @@
             renderHistory(); 
             render(); 
         }
-
+        
         function renderHistory() {
             document.getElementById('historyList').innerHTML = [...history].reverse().map((h, i) => `
                 <div class="bg-white/5 p-3 rounded-xl flex justify-between items-center">
-                    <div><p class="text-xs opacity-70">${h.range}</p><p class="font-bold">${h.finalValue.toLocaleString('pt-BR',{style:'currency', currency:'BRL'})}</p></div>
+                    <div><p class="text-xs opacity-70">${h.range}</p><p class="font-bold">${h.finalValue.toLocaleString('pt-BR',{style:'currency', currency:'BRL'})}</p><p class="text-xs text-green-400">Comissão: ${h.percentValue.toLocaleString('pt-BR',{style:'currency', currency:'BRL'})}</p></div>
                     <button onclick="deleteHistory(${history.length - 1 - i})" class="text-red-500"><i data-lucide="trash-2" size="18"></i></button>
                 </div>`).join('');
             lucide.createIcons();
@@ -186,31 +186,30 @@
         document.getElementById('openHistoryBtn').onclick = () => { document.getElementById('modalOverlay').classList.remove('hidden'); document.getElementById('historyModal').classList.remove('hidden'); renderHistory(); };
         document.getElementById('calcBtn').onclick = () => { document.getElementById('modalOverlay').classList.remove('hidden'); document.getElementById('percentModal').classList.remove('hidden'); document.getElementById('inputPercent').value = percent; };
         document.getElementById('saveBtn').onclick = () => { trans.push({id:Date.now(), nome:document.getElementById('inputNome').value, doc:document.getElementById('inputDoc').value, valor:parseInt(valorRaw)/100, data:document.getElementById('inputData').value}); closeModals(); render(); };
-
+        
         document.getElementById('confirmBtn').onclick = () => { 
             const dateKey = selectedDate;
-            // Se a data selecionada não tiver transações próprias, busca todas as anteriores pendentes
-            let dailyTotal = trans.filter(t => t.data === dateKey).reduce((a,b)=>a+b.valor,0);
             let targetTransactions = trans.filter(t => t.data === dateKey);
+            let dailyTotal = targetTransactions.reduce((a,b)=>a+b.valor,0);
 
             if (dailyTotal === 0) {
                 targetTransactions = trans.filter(t => t.data <= dateKey);
                 dailyTotal = targetTransactions.reduce((a,b)=>a+b.valor,0);
             }
-
-            history.push({dateKey, range: 'Fechamento '+dateKey, finalValue: dailyTotal}); 
+            
+            const percentValue = dailyTotal * (percent / 100);
+            history.push({dateKey, range: 'Fechamento '+dateKey, finalValue: dailyTotal, percentValue}); 
             closingDates.push(dateKey);
-
-            // Remove as transações que foram fechadas
+            
             trans = trans.filter(t => !targetTransactions.includes(t));
-
+            
             localStorage.setItem('history', JSON.stringify(history)); 
             viewMode = 'closed';
             render(); 
         };
-
+        
         document.getElementById('savePercent').onclick = () => { percent = parseInt(document.getElementById('inputPercent').value); closeModals(); render(); };
-
+        
         document.getElementById('inputValor').oninput = (e) => { valorRaw = e.target.value.replace(/\D/g, ''); e.target.value = (parseInt(valorRaw || 0) / 100).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); };
         document.getElementById('prevMonth').onclick = () => { curr.setMonth(curr.getMonth()-1); render(); };
         document.getElementById('nextMonth').onclick = () => { curr.setMonth(curr.getMonth()+1); render(); };
